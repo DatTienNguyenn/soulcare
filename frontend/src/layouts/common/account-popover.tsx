@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
@@ -11,7 +13,7 @@ import Typography from '@mui/material/Typography';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+import axios, { endpoints } from 'src/utils/axios';
 
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -37,14 +39,50 @@ const OPTIONS = [
 
 // ----------------------------------------------------------------------
 
+type CurrentUserResponse = {
+  id?: string;
+  displayName?: string;
+  email?: string;
+  role?: string;
+  photoURL?: string | null;
+};
+
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user } = useMockedUser();
+  const { user: authUser, logout } = useAuthContext();
 
-  const { logout } = useAuthContext();
+  const [backendUser, setBackendUser] = useState<CurrentUserResponse | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get(endpoints.auth.me);
+
+        if (!active) {
+          return;
+        }
+
+        setBackendUser(res.data?.data ?? null);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCurrentUser();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const popover = usePopover();
+
+  const user = backendUser ?? authUser;
+
+  const avatarLabel = (user?.displayName || user?.email || 'U').charAt(0).toUpperCase();
 
   const handleLogout = async () => {
     try {
@@ -81,25 +119,25 @@ export default function AccountPopover() {
       >
         <Avatar
           src={user?.photoURL}
-          alt={user?.displayName}
+          alt={user?.displayName || user?.email || 'User'}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {user?.displayName?.charAt(0).toUpperCase()}
+          {avatarLabel}
         </Avatar>
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.displayName || 'User'}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            {user?.email || 'No email'}
           </Typography>
         </Box>
 

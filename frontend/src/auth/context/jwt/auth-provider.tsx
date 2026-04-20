@@ -6,14 +6,6 @@ import { AuthContext } from './auth-context';
 import { setSession, isValidToken } from './utils';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
-// ----------------------------------------------------------------------
-/**
- * NOTE:
- * We only build demo at basic level.
- * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
- */
-// ----------------------------------------------------------------------
-
 enum Types {
   INITIAL = 'INITIAL',
   LOGIN = 'LOGIN',
@@ -90,8 +82,7 @@ export function AuthProvider({ children }: Props) {
         setSession(accessToken);
 
         const res = await axios.get(endpoints.auth.me);
-
-        const { user } = res.data;
+        const user = res.data?.data;
 
         dispatch({
           type: Types.INITIAL,
