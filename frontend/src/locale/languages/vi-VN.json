@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "Soul Care",
+    "title": "Soul Care - Trợ thủ hằng ngày của bạn"
+  },
+  "common": {
+    "home": "Trang chủ",
+    "dashboard": "Bảng điều khiển",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "close": "Đóng",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "noData": "Không có dữ liệu"
+  },
+  "language": {
+    "title": "Ngôn ngữ",
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  },
+  "pages": {
+    "analytics": {
+      "title": "Bảng điều khiển: Phân tích"
+    },
+    "diary": {
+      "title": "Nhật ký của tôi"
+    },
+    "draw": {
+      "title": "Bảng vẽ"
+    },
+    "selfTest": {
+      "title": "Tự kiểm tra"
+    }
+  },
+  "selfTest": {
+    "header": "Bài kiểm tra tự đánh giá sức khỏe tâm thần",
+    "description": "Thực hiện các bài kiểm tra tâm lý dựa trên bằng chứng để hiểu rõ hơn về sức khỏe cảm xúc của bạn",
+    "disclaimerTitle": "Miễn trừ trách nhiệm",
+    "disclaimerBody": "Các công cụ tự đánh giá này chỉ mang tính tham khảo và không nên sử dụng để thay thế cho đánh giá chuyên nghiệp về sức khỏe tâm thần. Nếu bạn đang gặp vấn đề về sức khỏe tâm thần, vui lòng tham khảo ý kiến của chuyên gia y tế có trình độ.",
+    "availableTests": "Các bài kiểm tra hiện có",
+    "measures": "Đo lường:",
+    "questions": "{{count}} Câu hỏi",
+    "takeTest": "Bắt đầu kiểm tra",
+    "previousResults": "Kết quả kiểm tra trước",
+    "scoreLabel": "Điểm:",
+    "exitTest": "Thoát bài kiểm tra",
+    "questionProgress": "Câu hỏi {{current}} trên {{total}}",
+    "progressComplete": "Hoàn thành {{percent}}%",
+    "testResults": "Kết quả bài kiểm tra",
+    "yourScore": "Điểm của bạn",
+    "scoringGuide": "Bảng điểm",
+    "recommendation": "Khuyến nghị",
+    "backToTests": "Quay lại bài kiểm tra",
+    "retakeTest": "Làm lại bài kiểm tra",
+    "submitTest": "Gửi bài kiểm tra",
+    "previous": "Trước",
+    "next": "Tiếp",
+    "recommendationNormal": "Tiếp tục duy trì các chiến lược đối phó lành mạnh và lối sống cân bằng. Hãy cân nhắc tập thể dục đều đặn, thiền định và kết nối xã hội.",
+    "recommendationModerate": "Hãy xem xét tìm kiếm sự hướng dẫn từ chuyên gia sức khỏe tâm thần. Trị liệu hoặc tư vấn có thể hữu ích.",
+    "recommendationSevere": "Nên tìm kiếm hỗ trợ sức khỏe tâm thần chuyên nghiệp càng sớm càng tốt. Liên hệ với nhà cung cấp dịch vụ y tế hoặc chuyên gia sức khỏe tâm thần."
+  },
+  "analytics": {
+    "header": {
+      "title": "Hành trình sức khỏe tâm thần của bạn",
+      "description": "Theo dõi sức khỏe cảm xúc và các mô hình hoạt động của bạn theo thời gian"
+    },
+    "noTestData": "Không có dữ liệu bài kiểm tra",
+    "score": "Điểm",
+    "diaryEntries": "Mục nhật ký",
+    "drawings": "Bản vẽ",
+    "daysWithActivity": "ngày có hoạt động",
+    "avgPerDay": "/ngày trung bình",
+    "diaryActivityTitle": "Hoạt động viết nhật ký",
+    "drawingActivityTitle": "Hoạt động vẽ",
+    "year": "Năm",
+    "month": "Tháng",
+    "entries": "Số lần",
+    "sessions": "Phiên",
+    "testScoresTitle": "Điểm kiểm tra tâm lý",
+    "testScoresDescription": "Theo dõi tiến trình của bạn theo thời gian",
+    "test": "Bài kiểm tra",
+    "tests": {
+      "dass21": "DASS-21",
+      "phq9": "PHQ-9",
+      "gad7": "GAD-7"
+    },
+    "legend": {
+      "normal": "Bình thường",
+      "mild": "Nhẹ",
+      "moderate": "Trung bình",
+      "severe": "Nặng",
+      "verySevere": "Rất nặng"
+    },
+    "week": "Tuần {{number}}",
+    "weekdays": ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+    "activityTooltip": "{{count}} {{title}}"
+  },
+  "diary": {
+    "header": "Nhật ký của tôi",
+    "newEntry": "Mục mới",
+    "editEntry": "Chỉnh sửa mục nhập",
+    "selectDate": "Chọn ngày",
+    "date": "Ngày",
+    "noEntry": "Không có mục nhật ký cho ngày này",
+    "noEntryMessage": "Nhấp \"{{newEntry}}\" để tạo mục mới",
+    "lastUpdated": "Cập nhật lần cuối",
+    "createNew": "Tạo mục nhật ký mới",
+    "enterTitle": "Nhập tiêu đề nhật ký",
+    "enterContent": "Nhập nội dung nhật ký của bạn...",
+    "addTags": "Thêm thẻ (cách nhau bằng dấu phẩy)",
+    "selectMood": "Chọn tâm trạng của bạn",
+    "title": "Tiêu đề",
+    "content": "Nội dung",
+    "tags": "Thẻ",
+    "mood": "Tâm trạng",
+    "delete": "Xóa mục nhập",
+    "dialogDeleteConfirm": "Bạn có chắc không?",
+    "recentEntries": "Các mục gần đây",
+    "moodCalendar": "Lịch tâm trạng",
+    "weekdays": ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+    "viewFull": "Xem đầy đủ"
+  },
+  "draw": {
+    "header": "Canvas của tôi",
+    "subtitle": "Vẽ, phác thảo và thể hiện sáng tạo của bạn",
+    "undo": "Hoàn tác",
+    "undoTooltip": "Hoàn tác (Ctrl+Z)",
+    "redo": "Làm lại",
+    "redoTooltip": "Làm lại (Ctrl+Y)",
+    "clear": "Xóa",
+    "download": "Tải xuống",
+    "tools": "Công cụ",
+    "toolDraw": "Vẽ",
+    "toolPaint": "Tô",
+    "toolLine": "Đường thẳng",
+    "toolRectangle": "Chữ nhật",
+    "toolTriangle": "Tam giác",
+    "toolStar": "Ngôi sao",
+    "color": "Màu",
+    "colorPlaceholder": "#000000",
+    "brushSize": "Kích thước bàn chải: {{size}}px",
+    "shapeSize": "Kích thước hình: {{size}}px",
+    "opacity": "Độ mờ: {{value}}%"
+  },
+  "login": {
+    "header": "Chào mừng bạn quay trở lại",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "rememberMe": "Tham gia vào SoulCare",
+    "forgotPassword": "Quên mật khẩu?",
+    "createAccount": "Tạo tài khoản?",
+    "noAccount": "Người dùng mới?",
+    "signUp": "Đăng ký",
+    "signIn": "Đăng nhập"
+  },
+  "signup": {
+    "header": "Tham gia SoulCare hôm nay",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "haveAccount": "Đã có tài khoản?",
+    "signUp": "Đăng ký",
+    "signIn": "Đăng nhập",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "createAccount": "Tạo tài khoản",
+    "rememberMe": "Bắt đầu hoàn toàn miễn phí!",
+    "policy1": "Bằng cách đăng ký, bạn đồng ý với ",
+    "policy2": " và ",
+    "termService": "Điều khoản Dịch vụ",
+    "privacyPolicy": "Chính sách Bảo mật"
+  }
+}

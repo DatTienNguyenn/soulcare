@@ -1,0 +1,178 @@
+{
+  "app": {
+    "name": "Soul Care",
+    "title": "Soul Care - Your Daily Companion"
+  },
+  "common": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "noData": "No data available"
+  },
+  "language": {
+    "title": "Language",
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  },
+  "pages": {
+    "analytics": {
+      "title": "Dashboard: Analytics"
+    },
+    "diary": {
+      "title": "My Diary"
+    },
+    "draw": {
+      "title": "Drawing Board"
+    },
+    "selfTest": {
+      "title": "Self Test"
+    }
+  },
+  "selfTest": {
+    "header": "Mental Health Self-Assessment Tests",
+    "description": "Take evidence-based mental health assessments to understand your emotional well-being",
+    "disclaimerTitle": "Disclaimer",
+    "disclaimerBody": "These self-assessment tools are for informational purposes only and should not be used as a substitute for professional mental health evaluation. If you are experiencing mental health concerns, please consult with a qualified healthcare professional.",
+    "availableTests": "Available Tests",
+    "measures": "Measures:",
+    "questions": "{{count}} Questions",
+    "takeTest": "Take Test",
+    "previousResults": "Previous Test Results",
+    "scoreLabel": "Score:",
+    "exitTest": "Exit Test",
+    "questionProgress": "Question {{current}} of {{total}}",
+    "progressComplete": "{{percent}}% Complete",
+    "testResults": "Test Results",
+    "yourScore": "Your Score",
+    "scoringGuide": "Scoring Guide",
+    "recommendation": "Recommendation",
+    "backToTests": "Back to Tests",
+    "retakeTest": "Retake Test",
+    "submitTest": "Submit Test",
+    "previous": "Previous",
+    "next": "Next",
+    "recommendationNormal": "Continue maintaining healthy coping strategies and a balanced lifestyle. Consider regular exercise, meditation, and social connections.",
+    "recommendationModerate": "Consider reaching out to a mental health professional for guidance. Therapy or counseling might be beneficial.",
+    "recommendationSevere": "It is strongly recommended to seek professional mental health support as soon as possible. Contact a healthcare provider or mental health specialist."
+  },
+  "analytics": {
+    "header": {
+      "title": "Your Mental Health Journey",
+      "description": "Track your emotional well-being and activity patterns over time"
+    },
+    "noTestData": "No test data available",
+    "score": "Score",
+    "diaryEntries": "Diary Entries",
+    "drawings": "Drawings",
+    "daysWithActivity": "days with activity",
+    "avgPerDay": "/day avg",
+    "diaryActivityTitle": "Diary Writing Activity",
+    "drawingActivityTitle": "Drawing Activity",
+    "year": "Year",
+    "month": "Month",
+    "entries": "Entries",
+    "sessions": "Sessions",
+    "testScoresTitle": "Mental Health Test Scores",
+    "testScoresDescription": "Track your progress over time",
+    "test": "Test",
+    "tests": {
+      "dass21": "DASS-21",
+      "phq9": "PHQ-9",
+      "gad7": "GAD-7"
+    },
+    "legend": {
+      "normal": "Normal",
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe",
+      "verySevere": "Very Severe"
+    },
+    "week": "Week {{number}}",
+    "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "activityTooltip": "{{count}} {{title}}"
+  },
+  "diary": {
+    "header": "My Diary",
+    "newEntry": "New Entry",
+    "editEntry": "Edit Entry",
+    "selectDate": "Select Date",
+    "date": "Date",
+    "noEntry": "No diary entry for this date",
+    "noEntryMessage": "Click \"{{newEntry}}\" to create one",
+    "lastUpdated": "Last updated",
+    "createNew": "Create New Diary Entry",
+    "enterTitle": "Enter diary title",
+    "enterContent": "Enter your diary content...",
+    "addTags": "Add tags (comma-separated)",
+    "selectMood": "Select your mood",
+    "title": "Title",
+    "content": "Content",
+    "tags": "Tags",
+    "mood": "Mood",
+    "delete": "Delete Entry",
+    "dialogDeleteConfirm": "Are you sure?",
+    "recentEntries": "Recent Entries",
+    "moodCalendar": "Mood Calendar",
+    "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "viewFull": "View Full"
+  },
+  "draw": {
+    "header": "My Canvas",
+    "subtitle": "Draw, sketch, and express your creativity",
+    "undo": "Undo",
+    "undoTooltip": "Undo (Ctrl+Z)",
+    "redo": "Redo",
+    "redoTooltip": "Redo (Ctrl+Y)",
+    "clear": "Clear",
+    "download": "Download",
+    "tools": "Tools",
+    "toolDraw": "Draw",
+    "toolPaint": "Paint",
+    "toolLine": "Line",
+    "toolRectangle": "Rectangle",
+    "toolTriangle": "Triangle",
+    "toolStar": "Star",
+    "color": "Color",
+    "colorPlaceholder": "#000000",
+    "brushSize": "Brush Size: {{size}}px",
+    "shapeSize": "Shape Size: {{size}}px",
+    "opacity": "Opacity: {{value}}%"
+  },
+  "login": {
+    "header": "Hi, Welcome Back!",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Sign in to SoulCare",
+    "forgotPassword": "Forgot Password?",
+    "createAccount": "Create an account?",
+    "noAccount": "New user?",
+    "signIn": "Sign In"
+  },
+  "signup": {
+    "header": "Join SoulCare Today!",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "haveAccount": "Already have an account?",
+    "signUp": "Sign Up",
+    "signIn": "Sign In",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "createAccount": "Create Account",
+    "rememberMe": "Get started absolutely free!",
+    "policy1": "By signing up, I agree to the ",
+    "policy2": " and ",
+    "termService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
+  }
+}
