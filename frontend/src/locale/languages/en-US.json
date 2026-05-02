@@ -124,7 +124,12 @@
     "recentEntries": "Recent Entries",
     "moodCalendar": "Mood Calendar",
     "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    "viewFull": "View Full"
+    "viewFull": "View Full",
+    "titleAndContentRequired": "Title and content are required",
+    "updateFailed": "Failed to update diary entry",
+    "createFailed": "Failed to create diary entry",
+    "deleteFailed": "Failed to delete diary entry",
+    "saveFailed": "Failed to save diary entry"
   },
   "draw": {
     "header": "My Canvas",

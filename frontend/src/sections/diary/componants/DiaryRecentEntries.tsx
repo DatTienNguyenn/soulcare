@@ -10,7 +10,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { Box, Card, Stack, Typography } from '@mui/material';
-import { IDiaryEntry } from 'src/_mock/_diary';
+import { IDiaryEntry } from 'src/utils/diary-api';
 
 type DiaryRecentEntriesProps = {
   entries: IDiaryEntry[];
@@ -47,7 +47,11 @@ export default function DiaryRecentEntries({
     ? weekdays
     : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const getEntryForDay = (day: Date) => entries.find((entry) => isSameDay(entry.date, day));
+  const getEntryForDay = (day: Date) =>
+    entries.find((entry) => {
+      const entryDate = entry.date ? new Date(entry.date) : null;
+      return entryDate ? isSameDay(entryDate, day) : false;
+    });
 
   return (
     <Card sx={{ p: 2 }}>

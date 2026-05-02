@@ -1,7 +1,7 @@
 import { alpha } from '@mui/material/styles';
 import { Avatar, Box, Card, Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { IDiaryEntry } from 'src/_mock/_diary';
+import { IDiaryEntry } from 'src/utils/diary-api';
 import DiaryTags from './DiaryTags';
 
 type MoodInfo = {
@@ -71,7 +71,7 @@ export default function DiaryEntryCard({ diaryEntry, moodInfo, t, onClick }: Dia
             </Box>
           </Box>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-            {format(diaryEntry.date, 'EEEE, MMMM d, yyyy')}
+            {diaryEntry.date ? format(new Date(diaryEntry.date), 'EEEE, MMMM d, yyyy') : 'No date'}
           </Typography>
         </Box>
 
@@ -90,7 +90,10 @@ export default function DiaryEntryCard({ diaryEntry, moodInfo, t, onClick }: Dia
         </Paper>
 
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {t('diary.lastUpdated')}: {format(diaryEntry.updatedAt, 'MMM d, yyyy h:mm a')}
+          {t('diary.lastUpdated')}:{' '}
+          {diaryEntry.updatedAt
+            ? format(new Date(diaryEntry.updatedAt), 'MMM d, yyyy h:mm a')
+            : 'N/A'}
         </Typography>
       </Stack>
     </Card>
