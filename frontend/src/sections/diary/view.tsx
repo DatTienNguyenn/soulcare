@@ -1,10 +1,21 @@
 import { useState, useEffect } from 'react';
 import { format, startOfToday, isSameDay } from 'date-fns';
-import { Box, Card, Grid, Stack, TextField, Container } from '@mui/material';
+import {
+  Box,
+  Card,
+  Grid,
+  Stack,
+  TextField,
+  Container,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locale/use-locales';
-import { _diaryData, IDiaryEntry, MOOD_OPTIONS } from 'src/_mock/_diary';
+import { MOOD_OPTIONS } from 'src/type/diary';
+import { IDiaryEntry, IDiaryRequest } from 'src/utils/diary-api';
+import { useDiary } from 'src/hooks/use-diary';
 
 import DiaryHeader from './componants/DiaryHeader';
 import DiaryEntryCard from './componants/DiaryEntryCard';
@@ -16,23 +27,34 @@ import DiaryEntryDialog from './componants/DiaryEntryDialog';
 export default function DiaryView() {
   const settings = useSettingsContext();
   const { t } = useLocales();
+  const { diaries, loading, error, fetchDiaries, addDiary, editDiary, removeDiary } = useDiary();
+
   const [selectedDate, setSelectedDate] = useState<Date>(startOfToday());
   const [diaryEntry, setDiaryEntry] = useState<IDiaryEntry | null>(null);
-  const [entries, setEntries] = useState<IDiaryEntry[]>(_diaryData);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [editMood, setEditMood] = useState<IDiaryEntry['mood']>('calm');
   const [editTags, setEditTags] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Fetch diaries on component mount
+  useEffect(() => {
+    fetchDiaries();
+  }, [fetchDiaries]);
 
   useEffect(() => {
-    const entry = entries.find((e) => isSameDay(e.date, selectedDate));
+    const entry = diaries.find((e) => {
+      const entryDate = e.date ? new Date(e.date) : new Date();
+      return isSameDay(entryDate, selectedDate);
+    });
     if (entry) {
       setDiaryEntry(entry);
       setEditTitle(entry.title);
       setEditContent(entry.content);
       setEditMood(entry.mood);
-      setEditTags(entry.tags);
+      setEditTags(entry.tags || []);
     } else {
       setDiaryEntry(null);
       setEditTitle('');
@@ -40,43 +62,71 @@ export default function DiaryView() {
       setEditMood('calm');
       setEditTags([]);
     }
-  }, [selectedDate, entries]);
+  }, [selectedDate, diaries]);
 
   const getMoodInfo = (mood: IDiaryEntry['mood']) => MOOD_OPTIONS.find((m) => m.value === mood);
 
-  const handleSaveEntry = () => {
+  const handleSaveEntry = async () => {
     if (!editTitle.trim() || !editContent.trim()) {
+      setSaveError(t('diary.titleAndContentRequired'));
       return;
     }
 
-    const now = new Date();
-    const newEntry: IDiaryEntry = {
-      id: diaryEntry?.id || `diary-${Date.now()}`,
-      date: selectedDate,
+    setSaveLoading(true);
+    setSaveError(null);
+
+    const entryData: IDiaryRequest = {
       title: editTitle,
       content: editContent,
       mood: editMood,
       tags: editTags,
-      createdAt: diaryEntry?.createdAt || now,
-      updatedAt: now,
+      status: 'PUBLISHED',
+      diaryDate: selectedDate,
     };
 
-    const updatedEntries = diaryEntry
-      ? entries.map((e) => (e.id === diaryEntry.id ? newEntry : e))
-      : [...entries, newEntry].sort((a, b) => b.date.getTime() - a.date.getTime());
-
-    setEntries(updatedEntries);
-    setDiaryEntry(newEntry);
-    setOpenDialog(false);
+    try {
+      if (diaryEntry) {
+        // Update existing entry
+        const updated = await editDiary(diaryEntry.id, entryData);
+        if (updated) {
+          setDiaryEntry(updated);
+          setOpenDialog(false);
+        } else {
+          setSaveError(t('diary.updateFailed'));
+        }
+      } else {
+        // Create new entry
+        const created = await addDiary(entryData);
+        if (created) {
+          setDiaryEntry(created);
+          setOpenDialog(false);
+        } else {
+          setSaveError(t('diary.createFailed'));
+        }
+      }
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : t('diary.saveFailed'));
+    } finally {
+      setSaveLoading(false);
+    }
   };
 
-  const handleDeleteEntry = () => {
+  const handleDeleteEntry = async () => {
     if (diaryEntry) {
-      setEntries(entries.filter((e) => e.id !== diaryEntry.id));
-      setDiaryEntry(null);
-      setEditTitle('');
-      setEditContent('');
-      setEditTags([]);
+      setSaveLoading(true);
+      setSaveError(null);
+      try {
+        await removeDiary(diaryEntry.id);
+        setDiaryEntry(null);
+        setEditTitle('');
+        setEditContent('');
+        setEditTags([]);
+        setOpenDialog(false);
+      } catch (err) {
+        setSaveError(err instanceof Error ? err.message : t('diary.deleteFailed'));
+      } finally {
+        setSaveLoading(false);
+      }
     }
   };
 
@@ -86,9 +136,22 @@ export default function DiaryView() {
 
   const moodInfo = getMoodInfo(diaryEntry?.mood || editMood);
 
+  if (loading && diaries.length === 0) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Stack spacing={3}>
+        {error && <Alert severity="error">{error}</Alert>}
         <DiaryHeader
           title={t('diary.header')}
           buttonLabel={diaryEntry ? t('diary.editEntry') : t('diary.newEntry')}
@@ -122,7 +185,7 @@ export default function DiaryView() {
 
           <Grid item xs={12} md={4}>
             <DiaryRecentEntries
-              entries={entries}
+              entries={diaries}
               selectedDate={selectedDate}
               onSelectDate={setSelectedDate}
               getMoodInfo={getMoodInfo}
@@ -134,7 +197,10 @@ export default function DiaryView() {
 
       <DiaryEntryDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={() => {
+          setOpenDialog(false);
+          setSaveError(null);
+        }}
         diaryEntry={diaryEntry}
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
@@ -148,6 +214,8 @@ export default function DiaryView() {
         onTagsChange={setEditTags}
         onSave={handleSaveEntry}
         onDelete={handleDeleteEntry}
+        loading={saveLoading}
+        error={saveError}
         t={t}
       />
     </Container>

@@ -10,8 +10,11 @@ import {
   Stack,
   TextField,
   Typography,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
-import { IDiaryEntry, MOOD_OPTIONS } from 'src/_mock/_diary';
+import { IDiaryEntry } from 'src/utils/diary-api';
+import { MOOD_OPTIONS } from 'src/type/diary';
 
 type DiaryEntryDialogProps = {
   open: boolean;
@@ -27,8 +30,10 @@ type DiaryEntryDialogProps = {
   onMoodChange: (mood: IDiaryEntry['mood']) => void;
   editTags: string[];
   onTagsChange: (tags: string[]) => void;
-  onSave: VoidFunction;
-  onDelete: VoidFunction;
+  onSave: () => Promise<void>;
+  onDelete: () => Promise<void>;
+  loading?: boolean;
+  error?: string | null;
   t: any;
 };
 
@@ -48,6 +53,8 @@ export default function DiaryEntryDialog({
   onTagsChange,
   onSave,
   onDelete,
+  loading = false,
+  error = null,
   t,
 }: DiaryEntryDialogProps) {
   return (
@@ -56,6 +63,11 @@ export default function DiaryEntryDialog({
         {diaryEntry ? `${t('common.edit')} ${t('diary.header')}` : t('diary.createNew')}
       </DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <Stack spacing={2}>
           <TextField
             fullWidth
@@ -69,6 +81,7 @@ export default function DiaryEntryDialog({
             InputLabelProps={{
               shrink: true,
             }}
+            disabled={loading}
           />
 
           <TextField
@@ -77,6 +90,7 @@ export default function DiaryEntryDialog({
             value={editTitle}
             onChange={(e) => onTitleChange(e.target.value)}
             placeholder={t('diary.enterTitle')}
+            disabled={loading}
           />
 
           <Box>
@@ -87,17 +101,18 @@ export default function DiaryEntryDialog({
               {MOOD_OPTIONS.map((mood) => (
                 <Avatar
                   key={mood.value}
-                  onClick={() => onMoodChange(mood.value as IDiaryEntry['mood'])}
+                  onClick={() => !loading && onMoodChange(mood.value as IDiaryEntry['mood'])}
                   sx={{
                     bgcolor: mood.color,
-                    cursor: 'pointer',
+                    cursor: loading ? 'not-allowed' : 'pointer',
                     border:
                       editMood === mood.value
                         ? (theme) => `3px solid ${theme.palette.primary.main}`
                         : '3px solid transparent',
                     transition: 'all 0.2s',
+                    opacity: loading ? 0.6 : 1,
                     '&:hover': {
-                      transform: 'scale(1.1)',
+                      transform: loading ? 'none' : 'scale(1.1)',
                     },
                   }}
                 >
@@ -115,6 +130,7 @@ export default function DiaryEntryDialog({
             placeholder={t('diary.enterContent')}
             multiline
             rows={6}
+            disabled={loading}
           />
 
           <Box>
@@ -126,24 +142,27 @@ export default function DiaryEntryDialog({
               value={editTags.join(', ')}
               onChange={(e) => onTagsChange(e.target.value.split(',').map((tag) => tag.trim()))}
               placeholder={t('diary.addTags')}
+              disabled={loading}
             />
           </Box>
         </Stack>
       </DialogContent>
       <DialogActions>
         {diaryEntry && (
-          <Button color="error" onClick={onDelete}>
-            {t('diary.delete')}
+          <Button color="error" onClick={onDelete} disabled={loading}>
+            {loading ? <CircularProgress size={20} /> : t('diary.delete')}
           </Button>
         )}
         <Box sx={{ flex: 1 }} />
-        <Button onClick={onClose}>{t('common.cancel')}</Button>
+        <Button onClick={onClose} disabled={loading}>
+          {t('common.cancel')}
+        </Button>
         <Button
           variant="contained"
           onClick={onSave}
-          disabled={!editTitle.trim() || !editContent.trim()}
+          disabled={!editTitle.trim() || !editContent.trim() || loading}
         >
-          {t('common.save')}
+          {loading ? <CircularProgress size={20} color="inherit" /> : t('common.save')}
         </Button>
       </DialogActions>
     </Dialog>

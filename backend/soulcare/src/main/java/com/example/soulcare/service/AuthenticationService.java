@@ -1,4 +1,4 @@
-package com.example.soulcare.auth;
+package com.example.soulcare.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

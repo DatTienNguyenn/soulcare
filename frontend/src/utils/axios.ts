@@ -50,4 +50,12 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
+  diary: {
+    list: '/api/v1/diaries',
+    create: '/api/v1/diaries',
+    details: (id: string) => `/api/v1/diaries/${id}`,
+    update: (id: string) => `/api/v1/diaries/${id}`,
+    delete: (id: string) => `/api/v1/diaries/${id}`,
+    range: '/api/v1/diaries/range',
+  },
 };

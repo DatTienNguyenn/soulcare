@@ -1,4 +1,4 @@
-package com.example.soulcare.auth;
+package com.example.soulcare.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +10,7 @@ import com.example.soulcare.dto.ApiResponse;
 import com.example.soulcare.dto.AuthResponse;
 import com.example.soulcare.dto.LoginRequest;
 import com.example.soulcare.dto.RegisterRequest;
+import com.example.soulcare.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -32,6 +32,9 @@ CREATE TABLE specialists (
 CREATE TABLE diaries (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id uuid NOT NULL REFERENCES patients(id),
+    title VARCHAR(255),
+    mood VARCHAR(20) CHECK (mood IN ('neutral', 'happy', 'sad', 'excited', 'calm', 'stress')),
+    date Date,
     content text, -- Nội dung thô (Bảo mật: Chuyên gia không xem trực tiếp)
     status varchar(20) CHECK (status IN ('DRAFT', 'PUBLISHED', 'ARCHIVED')),
     hashtag text, -- Phân loại từ người dùng hoặc AI
