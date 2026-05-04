@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-import { HOST_API } from 'src/config-global';
+import { HOST_API, ASSETS_API } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -13,12 +13,33 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
+// Assets API Instance
+// ----------------------------------------------------------------------
+
+export const assetAxiosInstance = axios.create({ baseURL: ASSETS_API });
+
+assetAxiosInstance.interceptors.response.use(
+  (res) => res,
+  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+);
+
 // ----------------------------------------------------------------------
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   const [url, config] = Array.isArray(args) ? args : [args];
 
   const res = await axiosInstance.get(url, { ...config });
+
+  return res.data;
+};
+
+// Asset Fetcher
+// ----------------------------------------------------------------------
+
+export const assetFetcher = async (args: string | [string, AxiosRequestConfig]) => {
+  const [url, config] = Array.isArray(args) ? args : [args];
+
+  const res = await assetAxiosInstance.get(url, { ...config });
 
   return res.data;
 };
