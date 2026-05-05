@@ -1,4 +1,4 @@
-package com.example.soulcare.user;
+package com.example.soulcare.service;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import com.example.soulcare.model.User;
 import com.example.soulcare.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,19 @@ public class UserService {
                 .role(user.getRole())
                 .photoURL(null)
                 .build();
+    }
+
+    public List<UserProfileResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> UserProfileResponse.builder()
+                        .id(user.getId())
+                        .displayName(toDisplayName(user.getEmail()))
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .photoURL(null)
+                        .build())
+                .toList();
     }
 
     private String toDisplayName(String email) {

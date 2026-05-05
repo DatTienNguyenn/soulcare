@@ -135,7 +135,7 @@ export default function TestManagementView() {
   };
 
   const handleDeleteTest = async (testId: string) => {
-    if (window.confirm('Are you sure you want to delete this test?')) {
+    if (window.confirm(t('testManagement.deleteConfirm'))) {
       try {
         await removeTest(testId);
       } catch (err) {
@@ -160,10 +160,8 @@ export default function TestManagementView() {
         {/* Header */}
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <div>
-            <h1 style={{ margin: 0 }}>Test Management</h1>
-            <p style={{ margin: '8px 0 0 0', color: '#666' }}>
-              Manage mental health assessment tests
-            </p>
+            <h1 style={{ margin: 0 }}>{t('testManagement.title')}</h1>
+            <p style={{ margin: '8px 0 0 0', color: '#666' }}>{t('testManagement.subtitle')}</p>
           </div>
           <Button
             variant="contained"
@@ -171,7 +169,7 @@ export default function TestManagementView() {
             onClick={() => handleOpenDialog()}
             disabled={loading}
           >
-            New Test
+            {t('testManagement.newTest')}
           </Button>
         </Stack>
 
@@ -192,20 +190,20 @@ export default function TestManagementView() {
                   <Table>
                     <TableHead>
                       <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                        <TableCell>Test Name</TableCell>
-                        <TableCell align="center">Short Name</TableCell>
-                        <TableCell align="center">Questions</TableCell>
-                        <TableCell align="center">Duration</TableCell>
-                        <TableCell align="center">Status</TableCell>
-                        <TableCell align="center">Created</TableCell>
-                        <TableCell align="right">Actions</TableCell>
+                        <TableCell>{t('testManagement.table.testName')}</TableCell>
+                        <TableCell align="center">{t('testManagement.table.shortName')}</TableCell>
+                        <TableCell align="center">{t('testManagement.table.questions')}</TableCell>
+                        <TableCell align="center">{t('testManagement.table.duration')}</TableCell>
+                        <TableCell align="center">{t('testManagement.table.status')}</TableCell>
+                        <TableCell align="center">{t('testManagement.table.created')}</TableCell>
+                        <TableCell align="right">{t('testManagement.table.actions')}</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {tests.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                            No tests found. Create a new test to get started.
+                            {t('testManagement.noTests')}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -232,20 +230,20 @@ export default function TestManagementView() {
                             <TableCell align="center">
                               {test.createdAt
                                 ? new Date(test.createdAt).toLocaleDateString()
-                                : 'N/A'}
+                                : t('testManagement.other.notAvailable')}
                             </TableCell>
                             <TableCell align="right">
                               <IconButton
                                 size="small"
                                 onClick={() => handleOpenDialog(test)}
-                                title="Edit"
+                                title={t('testManagement.actions.edit')}
                               >
                                 <Iconify icon="solar:pen-bold" width={20} />
                               </IconButton>
                               <IconButton
                                 size="small"
                                 onClick={() => handleDeleteTest(test.id)}
-                                title="Delete"
+                                title={t('testManagement.actions.delete')}
                               >
                                 <Iconify icon="solar:trash-bin-trash-bold" width={20} />
                               </IconButton>
@@ -264,41 +262,45 @@ export default function TestManagementView() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingTest ? 'Edit Test' : 'Create New Test'}</DialogTitle>
+        <DialogTitle>
+          {editingTest
+            ? t('testManagement.dialog.editTitle')
+            : t('testManagement.dialog.createTitle')}
+        </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Stack spacing={2}>
             <TextField
               fullWidth
-              label="Test Name"
+              label={t('testManagement.dialog.testName')}
               name="name"
               value={formData.name}
               onChange={handleFormChange}
-              placeholder="e.g., Depression Anxiety Stress Scale-21"
+              placeholder={t('testManagement.dialog.testNamePlaceholder')}
               required
             />
             <TextField
               fullWidth
-              label="Short Name"
+              label={t('testManagement.dialog.shortName')}
               name="shortName"
               value={formData.shortName}
               onChange={handleFormChange}
-              placeholder="e.g., DASS-21"
+              placeholder={t('testManagement.dialog.shortNamePlaceholder')}
               required
             />
             <TextField
               fullWidth
-              label="Description"
+              label={t('testManagement.dialog.description')}
               name="description"
               value={formData.description}
               onChange={handleFormChange}
               multiline
               rows={2}
-              placeholder="Brief description of the test"
+              placeholder={t('testManagement.dialog.descriptionPlaceholder')}
             />
             <TextField
               fullWidth
               type="number"
-              label="Number of Questions"
+              label={t('testManagement.dialog.totalQuestions')}
               name="totalQuestions"
               value={formData.totalQuestions}
               onChange={handleFormChange}
@@ -306,17 +308,17 @@ export default function TestManagementView() {
             />
             <TextField
               fullWidth
-              label="Duration"
+              label={t('testManagement.dialog.duration')}
               name="duration"
               value={formData.duration}
               onChange={handleFormChange}
-              placeholder="e.g., 3-5 minutes"
+              placeholder={t('testManagement.dialog.durationPlaceholder')}
             />
             <Stack direction="row" spacing={2}>
               <TextField
                 fullWidth
                 type="number"
-                label="Min Score"
+                label={t('testManagement.dialog.minScore')}
                 name="minScore"
                 value={formData.minScore}
                 onChange={handleFormChange}
@@ -324,7 +326,7 @@ export default function TestManagementView() {
               <TextField
                 fullWidth
                 type="number"
-                label="Max Score"
+                label={t('testManagement.dialog.maxScore')}
                 name="maxScore"
                 value={formData.maxScore}
                 onChange={handleFormChange}
@@ -333,7 +335,7 @@ export default function TestManagementView() {
             <TextField
               fullWidth
               select
-              label="Status"
+              label={t('testManagement.dialog.status')}
               name="status"
               value={formData.status}
               onChange={handleFormChange}
@@ -341,16 +343,22 @@ export default function TestManagementView() {
                 native: true,
               }}
             >
-              <option value="ACTIVE">Active</option>
-              <option value="INACTIVE">Inactive</option>
-              <option value="ARCHIVED">Archived</option>
+              <option value="ACTIVE">{t('testManagement.dialog.statusActive')}</option>
+              <option value="INACTIVE">{t('testManagement.dialog.statusInactive')}</option>
+              <option value="ARCHIVED">{t('testManagement.dialog.statusArchived')}</option>
             </TextField>
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>{t('testManagement.dialog.cancel')}</Button>
           <Button variant="contained" onClick={handleSaveTest} disabled={submitting}>
-            {submitting ? <CircularProgress size={24} /> : editingTest ? 'Update' : 'Create'}
+            {submitting ? (
+              <CircularProgress size={24} />
+            ) : editingTest ? (
+              t('testManagement.dialog.update')
+            ) : (
+              t('testManagement.dialog.create')
+            )}
           </Button>
         </DialogActions>
       </Dialog>
