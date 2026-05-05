@@ -180,5 +180,69 @@
     "policy2": " và ",
     "termService": "Điều khoản Dịch vụ",
     "privacyPolicy": "Chính sách Bảo mật"
+  },
+  "userManagement": {
+    "title": "Quản lý Người dùng",
+    "subtitle": "Quản lý người dùng hệ thống và vai trò",
+    "loadingError": "Không thể tải người dùng. Vui lòng thử lại sau.",
+    "noUsers": "Không tìm thấy người dùng",
+    "table": {
+      "displayName": "Tên Hiển Thị",
+      "email": "Email",
+      "role": "Vai Trò",
+      "userId": "ID Người Dùng"
+    },
+    "roles": {
+      "admin": "Quản Trị Viên",
+      "specialist": "Chuyên Gia",
+      "patient": "Bệnh Nhân",
+      "unknown": "Không Xác Định"
+    }
+  },
+  "testManagement": {
+    "title": "Quản lý Bài Kiểm tra",
+    "subtitle": "Quản lý các bài kiểm tra đánh giá sức khỏe tâm thần",
+    "newTest": "Bài Kiểm tra Mới",
+    "loadingError": "Không thể tải bài kiểm tra. Vui lòng thử lại sau.",
+    "noTests": "Không tìm thấy bài kiểm tra. Tạo bài kiểm tra mới để bắt đầu.",
+    "deleteConfirm": "Bạn có chắc không?",
+    "table": {
+      "testName": "Tên Bài Kiểm tra",
+      "shortName": "Tên Viết Tắt",
+      "questions": "Câu Hỏi",
+      "duration": "Thời Gian",
+      "status": "Trạng Thái",
+      "created": "Tạo",
+      "actions": "Hành Động"
+    },
+    "dialog": {
+      "createTitle": "Tạo Bài Kiểm tra Mới",
+      "editTitle": "Chỉnh sửa Bài Kiểm tra",
+      "testName": "Tên Bài Kiểm tra",
+      "shortName": "Tên Viết Tắt",
+      "description": "Mô Tả",
+      "totalQuestions": "Số Lượng Câu Hỏi",
+      "duration": "Thời Gian",
+      "minScore": "Điểm Tối Thiểu",
+      "maxScore": "Điểm Tối Đa",
+      "status": "Trạng Thái",
+      "testNamePlaceholder": "Ví dụ: Thang đo Trầm cảm Lo âu Căng thẳng-21",
+      "shortNamePlaceholder": "Ví dụ: DASS-21",
+      "descriptionPlaceholder": "Mô tả ngắn gọn về bài kiểm tra",
+      "durationPlaceholder": "Ví dụ: 3-5 phút",
+      "statusActive": "Hoạt Động",
+      "statusInactive": "Không Hoạt Động",
+      "statusArchived": "Lưu Trữ",
+      "cancel": "Hủy",
+      "create": "Tạo",
+      "update": "Cập Nhật"
+    },
+    "actions": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa"
+    },
+    "other": {
+      "notAvailable": "N/A"
+    }
   }
 }
