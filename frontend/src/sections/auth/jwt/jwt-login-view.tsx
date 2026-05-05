@@ -20,24 +20,30 @@ import { useLocales } from 'src/locale/use-locales';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { LoadingScreen } from 'src/components/loading-screen';
 import MenuItem from '@mui/material/MenuItem/MenuItem';
+
+// Helper function to get redirect path based on role
+const getRedirectPath = (role: string): string => {
+  if (role === 'ADMIN' || role === 'admin') {
+    return paths.admin.root; // '/admin'
+  }
+  return paths.dashboard.root; // '/dashboard'
+};
 
 // ----------------------------------------------------------------------
 
 export default function JwtLoginView() {
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
   const { t } = useLocales();
 
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [redirectPending, setRedirectPending] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -70,28 +76,22 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const message = await login?.(data.email, data.password, data.role);
+      // Login - this updates auth context with user data including role
+      await login?.(data.email, data.password, data.role);
 
-      setSuccessMsg(message || 'Login successful');
-      setOpenSnackbar(true);
+      setIsRedirecting(true);
       setErrorMsg('');
-      setRedirectPending(true);
+
+      // Redirect immediately based on role (no delay)
+      const redirectPath = returnTo || getRedirectPath(data.role);
+      router.push(redirectPath);
     } catch (error) {
       console.error(error);
       reset();
       setErrorMsg(typeof error === 'string' ? error : error.message);
-      setOpenSnackbar(false);
-      setRedirectPending(false);
+      setIsRedirecting(false);
     }
   });
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-    // Redirect after snackbar closes
-    if (redirectPending) {
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    }
-  };
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
@@ -151,32 +151,23 @@ export default function JwtLoginView() {
 
   return (
     <>
-      {renderHead}
+      {isRedirecting && <LoadingScreen />}
 
-      {/* <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert> */}
+      {!isRedirecting && (
+        <>
+          {renderHead}
 
-      {!!errorMsg && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {errorMsg}
-        </Alert>
+          {!!errorMsg && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {errorMsg}
+            </Alert>
+          )}
+
+          <FormProvider methods={methods} onSubmit={onSubmit}>
+            {renderForm}
+          </FormProvider>
+        </>
       )}
-
-      <FormProvider methods={methods} onSubmit={onSubmit}>
-        {renderForm}
-      </FormProvider>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          {successMsg}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
