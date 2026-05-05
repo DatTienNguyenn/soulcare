@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -31,8 +33,8 @@ public class MentalHealthTest {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "duration", length = 50)
-    private String duration;
+    @Column(name = "duration")
+    private Integer duration; // Duration in minutes
 
     @Column(name = "total_questions")
     private Integer totalQuestions;
@@ -44,6 +46,7 @@ public class MentalHealthTest {
     private Integer maxScore;
 
     @Column(name = "scoring_guide", columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String scoringGuide; // JSON string for flexibility
 
     @Column(name = "status")

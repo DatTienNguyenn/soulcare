@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 // import { useSetState } from 'src/hooks/use-boolean';
 import { useMentalHealthTest } from 'src/hooks/use-mental-health-test';
+import { useTestQuestion } from 'src/hooks/use-test-question';
 import { useLocales } from 'src/locale/use-locales';
 
 import {
@@ -30,13 +31,18 @@ import {
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import Scrollbar from 'src/components/scrollbar';
-import { IMentalHealthTest, IMentalHealthTestRequest } from 'src/utils/test-api';
+import {
+  IMentalHealthTest,
+  IMentalHealthTestRequest,
+  ITestQuestionRequest,
+} from 'src/utils/test-api';
+import { QuestionForm, QuestionsList } from '../question-management';
 
 interface FormDataState {
   name: string;
   shortName: string;
   totalQuestions: number;
-  duration: string;
+  duration: number;
   minScore: number;
   maxScore: number;
   description: string;
@@ -49,6 +55,15 @@ export default function TestManagementView() {
   const { t } = useLocales();
   const { tests, loading, error, fetchAllTests, addTest, editTest, removeTest } =
     useMentalHealthTest();
+  const {
+    questions,
+    loading: questionsLoading,
+    error: questionsError,
+    fetchTestQuestions,
+    addQuestion,
+    editQuestion,
+    removeQuestion,
+  } = useTestQuestion();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editingTest, setEditingTest] = useState<IMentalHealthTest | null>(null);
@@ -56,7 +71,7 @@ export default function TestManagementView() {
     name: '',
     shortName: '',
     totalQuestions: 0,
-    duration: '',
+    duration: 0,
     minScore: 0,
     maxScore: 100,
     description: '',
@@ -64,6 +79,14 @@ export default function TestManagementView() {
     status: 'ACTIVE',
   });
   const [submitting, setSubmitting] = useState(false);
+
+  // Question Management State
+  const [showQuestionsDialog, setShowQuestionsDialog] = useState(false);
+  const [selectedTestForQuestions, setSelectedTestForQuestions] =
+    useState<IMentalHealthTest | null>(null);
+  const [openQuestionForm, setOpenQuestionForm] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<any>(null);
+  const [questionSubmitting, setQuestionSubmitting] = useState(false);
 
   // Load tests on component mount
   useEffect(() => {
@@ -90,7 +113,7 @@ export default function TestManagementView() {
         name: '',
         shortName: '',
         totalQuestions: 0,
-        duration: '',
+        duration: 0,
         minScore: 0,
         maxScore: 100,
         description: '',
@@ -148,10 +171,64 @@ export default function TestManagementView() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: ['totalQuestions', 'minScore', 'maxScore'].includes(name)
+      [name]: ['totalQuestions', 'minScore', 'maxScore', 'duration'].includes(name)
         ? parseInt(value) || 0
         : value,
     });
+  };
+
+  // Question Management Handlers
+  const handleOpenQuestionsDialog = async (test: IMentalHealthTest) => {
+    setSelectedTestForQuestions(test);
+    setShowQuestionsDialog(true);
+    await fetchTestQuestions(test.id);
+  };
+
+  const handleCloseQuestionsDialog = () => {
+    setShowQuestionsDialog(false);
+    setSelectedTestForQuestions(null);
+  };
+
+  const handleOpenQuestionForm = (question?: any) => {
+    setEditingQuestion(question || null);
+    setOpenQuestionForm(true);
+  };
+
+  const handleCloseQuestionForm = () => {
+    setOpenQuestionForm(false);
+    setEditingQuestion(null);
+  };
+
+  const handleSaveQuestion = async (data: ITestQuestionRequest) => {
+    if (!selectedTestForQuestions) return;
+
+    try {
+      setQuestionSubmitting(true);
+      if (editingQuestion) {
+        await editQuestion(selectedTestForQuestions.id, editingQuestion.id, data);
+      } else {
+        await addQuestion(selectedTestForQuestions.id, data);
+      }
+      handleCloseQuestionForm();
+      await fetchTestQuestions(selectedTestForQuestions.id);
+    } catch (err) {
+      console.error('Failed to save question:', err);
+    } finally {
+      setQuestionSubmitting(false);
+    }
+  };
+
+  const handleDeleteQuestion = async (questionId: string) => {
+    if (!selectedTestForQuestions) return;
+
+    if (window.confirm(t('questionManagement.deleteConfirm'))) {
+      try {
+        await removeQuestion(selectedTestForQuestions.id, questionId);
+        await fetchTestQuestions(selectedTestForQuestions.id);
+      } catch (err) {
+        console.error('Failed to delete question:', err);
+      }
+    }
   };
 
   return (
@@ -235,6 +312,13 @@ export default function TestManagementView() {
                             <TableCell align="right">
                               <IconButton
                                 size="small"
+                                onClick={() => handleOpenQuestionsDialog(test)}
+                                title={t('questionManagement.actions.manageQuestions')}
+                              >
+                                <Iconify icon="solar:list-bold" width={20} />
+                              </IconButton>
+                              <IconButton
+                                size="small"
                                 onClick={() => handleOpenDialog(test)}
                                 title={t('testManagement.actions.edit')}
                               >
@@ -308,11 +392,13 @@ export default function TestManagementView() {
             />
             <TextField
               fullWidth
+              type="number"
               label={t('testManagement.dialog.duration')}
               name="duration"
               value={formData.duration}
               onChange={handleFormChange}
-              placeholder={t('testManagement.dialog.durationPlaceholder')}
+              placeholder="e.g., 5"
+              inputProps={{ min: 0 }}
             />
             <Stack direction="row" spacing={2}>
               <TextField
@@ -362,6 +448,27 @@ export default function TestManagementView() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Questions List Dialog */}
+      <QuestionsList
+        open={showQuestionsDialog}
+        questions={questions}
+        loading={questionsLoading}
+        error={questionsError}
+        onClose={handleCloseQuestionsDialog}
+        onAdd={handleOpenQuestionForm}
+        onEdit={handleOpenQuestionForm}
+        onDelete={handleDeleteQuestion}
+      />
+
+      {/* Question Form Dialog */}
+      <QuestionForm
+        open={openQuestionForm}
+        question={editingQuestion}
+        onClose={handleCloseQuestionForm}
+        onSubmit={handleSaveQuestion}
+        submitting={questionSubmitting}
+      />
     </Container>
   );
 }

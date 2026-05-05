@@ -243,5 +243,45 @@
     "other": {
       "notAvailable": "N/A"
     }
+  },
+  "questionManagement": {
+    "title": "Manage Questions",
+    "subtitle": "Manage questions and options for this test",
+    "newQuestion": "New Question",
+    "noQuestions": "No questions yet. Add a question to get started.",
+    "loadingError": "Failed to load questions. Please try again later.",
+    "deleteConfirm": "Are you sure you want to delete this question?",
+    "table": {
+      "questionText": "Question",
+      "type": "Type",
+      "options": "Options",
+      "weight": "Weight",
+      "order": "Order",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "createTitle": "Create New Question",
+      "editTitle": "Edit Question",
+      "questionText": "Question Text",
+      "questionType": "Question Type",
+      "questionOrder": "Question Order",
+      "scoreWeight": "Score Weight",
+      "multipleChoice": "Multiple Choice",
+      "ratingScale": "Rating Scale",
+      "textQuestion": "Text Question",
+      "addOption": "Add Option",
+      "optionText": "Option Text",
+      "optionValue": "Option Value (Score)",
+      "optionOrder": "Option Order",
+      "removeOption": "Remove",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "manageQuestions": "Manage Questions"
+    }
   }
 }
