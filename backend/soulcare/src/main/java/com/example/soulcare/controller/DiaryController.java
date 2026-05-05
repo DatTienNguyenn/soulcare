@@ -80,20 +80,24 @@ public class DiaryController {
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {
-        try {
-            // Extract username (email) from authentication
-            String email = authentication.getName();
-            
-            // Find user by email
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            
-            // Find patient by user ID
-            return patientRepository.findByUserId(user.getId())
-                    .map(patient -> patient.getId())
-                    .orElseThrow(() -> new RuntimeException("Patient profile not found for this user"));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract patient ID from authentication: " + e.getMessage());
+        // Extract username (email) from authentication
+        String email = authentication.getName();
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Block admin role from accessing diary APIs
+        if (user.getRole() == com.example.soulcare.model.Role.ADMIN) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN,
+                "Admins cannot access diary data"
+            );
         }
+        // Find patient by user ID
+        return patientRepository.findByUserId(user.getId())
+                .map(patient -> patient.getId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "Patient profile not found for this user"
+                ));
     }
 }

@@ -167,6 +167,7 @@ export default function JwtRegisterView() {
       <RHFSelect name="role" label="Role">
         <MenuItem value="PATIENT">Patient</MenuItem>
         <MenuItem value="SPECIALIST">Specialist</MenuItem>
+        <MenuItem value="ADMIN">Admin</MenuItem>
       </RHFSelect>
 
       <LoadingButton
