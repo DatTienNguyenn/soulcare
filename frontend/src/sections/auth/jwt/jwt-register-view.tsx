@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -21,10 +20,18 @@ import { useLocales } from 'src/locale/use-locales';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
+import { LoadingScreen } from 'src/components/loading-screen';
+
+// Helper function to get redirect path based on role
+const getRedirectPath = (role: string): string => {
+  if (role === 'ADMIN' || role === 'admin') {
+    return paths.admin.root; // '/admin'
+  }
+  return paths.dashboard.root; // '/dashboard'
+};
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +42,7 @@ export default function JwtRegisterView() {
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [redirectPending, setRedirectPending] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -74,36 +79,22 @@ export default function JwtRegisterView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const message = await register?.(
-        data.email,
-        data.password,
-        data.firstName,
-        data.lastName,
-        data.role
-      );
+      // Register - this updates auth context with user data including role
+      await register?.(data.email, data.password, data.firstName, data.lastName, data.role);
 
-      setSuccessMsg(message || 'User registered successfully');
-      setOpenSnackbar(true);
+      setIsRedirecting(true);
       setErrorMsg('');
-      setRedirectPending(true);
+
+      // Redirect immediately based on role (no delay)
+      const redirectPath = returnTo || getRedirectPath(data.role);
+      router.push(redirectPath);
     } catch (error) {
       console.error(error);
       reset();
       setErrorMsg(typeof error === 'string' ? error : error.message);
-      setOpenSnackbar(false);
-      setRedirectPending(false);
+      setIsRedirecting(false);
     }
   });
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-    // Redirect after snackbar closes
-    if (redirectPending) {
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    }
-  };
-  // }
-  // });
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
@@ -185,30 +176,25 @@ export default function JwtRegisterView() {
 
   return (
     <>
-      {renderHead}
+      {isRedirecting && <LoadingScreen />}
 
-      {!!errorMsg && (
-        <Alert severity="error" sx={{ m: 3 }}>
-          {errorMsg}
-        </Alert>
+      {!isRedirecting && (
+        <>
+          {renderHead}
+
+          {!!errorMsg && (
+            <Alert severity="error" sx={{ m: 3 }}>
+              {errorMsg}
+            </Alert>
+          )}
+
+          <FormProvider methods={methods} onSubmit={onSubmit}>
+            {renderForm}
+          </FormProvider>
+
+          {renderTerms}
+        </>
       )}
-
-      <FormProvider methods={methods} onSubmit={onSubmit}>
-        {renderForm}
-      </FormProvider>
-
-      {renderTerms}
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          {successMsg}
-        </Alert>
-      </Snackbar>
     </>
   );
 }

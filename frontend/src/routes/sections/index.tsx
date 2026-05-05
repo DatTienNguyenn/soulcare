@@ -1,10 +1,11 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 
-import { PATH_AFTER_LOGIN } from 'src/config-global';
+import { RoleBasedRedirect } from 'src/auth/guard/role-based-redirect';
 
 import { mainRoutes } from './main';
 import { authRoutes } from './auth';
 import { dashboardRoutes } from './dashboard';
+import { adminRoutes } from './admin';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +13,7 @@ export default function Router() {
   return useRoutes([
     {
       path: '/',
-      element: <Navigate to={PATH_AFTER_LOGIN} replace />,
+      element: <RoleBasedRedirect />,
     },
 
     // Auth routes
@@ -20,6 +21,9 @@ export default function Router() {
 
     // Dashboard routes
     ...dashboardRoutes,
+
+    // Admin routes
+    ...adminRoutes,
 
     // Main routes
     ...mainRoutes,

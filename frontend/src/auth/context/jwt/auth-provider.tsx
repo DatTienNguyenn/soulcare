@@ -81,18 +81,69 @@ export function AuthProvider({ children }: Props) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const res = await axios.get(endpoints.auth.me);
-        const user = res.data?.data;
+        try {
+          const res = await axios.get(endpoints.auth.me);
+          const user = res.data?.data;
 
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: {
-              ...user,
-              accessToken,
+          dispatch({
+            type: Types.INITIAL,
+            payload: {
+              user: {
+                ...user,
+                accessToken,
+              },
             },
-          },
-        });
+          });
+        } catch (error) {
+          // If /api/v1/users/me fails, try to decode token to get user info
+          console.warn('Failed to fetch user from /api/v1/users/me, using token data', error);
+
+          // Decode JWT to get user info (basic decoding without verification)
+          try {
+            const base64Url = accessToken.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+              atob(base64)
+                .split('')
+                .map((c) => {
+                  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                })
+                .join('')
+            );
+
+            const tokenData = JSON.parse(jsonPayload);
+            console.log('Decoded token data:', tokenData);
+
+            dispatch({
+              type: Types.INITIAL,
+              payload: {
+                user: {
+                  id: tokenData.sub || tokenData.email || 'unknown',
+                  email: tokenData.email || tokenData.sub || 'unknown',
+                  displayName: tokenData.name || tokenData.email || 'User',
+                  role: tokenData.role || 'PATIENT',
+                  photoURL: null,
+                  phoneNumber: null,
+                  country: null,
+                  address: null,
+                  state: null,
+                  city: null,
+                  zipCode: null,
+                  company: null,
+                  accessToken,
+                },
+              },
+            });
+          } catch (decodeError) {
+            console.error('Failed to decode token:', decodeError);
+            dispatch({
+              type: Types.INITIAL,
+              payload: {
+                user: null,
+              },
+            });
+          }
+        }
       } else {
         dispatch({
           type: Types.INITIAL,

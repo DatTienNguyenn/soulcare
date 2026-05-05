@@ -64,21 +64,54 @@ CREATE TABLE ai_sentiment (
     CHECK (diary_id IS NOT NULL OR picture_id IS NOT NULL) -- Ít nhất phải có 1 trong 2
 );
 
-CREATE TABLE psychological_tests (
+-- Mental Health Tests (Test Definitions)
+CREATE TABLE mental_health_tests (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title varchar(255), -- Ví dụ: DASS-21
+    test_name varchar(255) NOT NULL,
+    short_name varchar(50),
     description text,
-    config jsonb
+    duration varchar(50), -- e.g., "3-5 minutes"
+    total_questions integer,
+    min_score integer,
+    max_score integer,
+    scoring_guide jsonb, -- JSON object with scoring categories and ranges
+    status varchar(20) CHECK (status IN ('ACTIVE', 'INACTIVE', 'ARCHIVED')) DEFAULT 'ACTIVE',
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now(),
+    created_by varchar(255), -- Admin email who created the test
+    CONSTRAINT valid_scores CHECK (min_score <= max_score)
 );
 
+-- Create index for faster queries
+CREATE INDEX idx_mental_health_tests_status ON mental_health_tests(status);
+
+-- Test Results (User Test Submissions)
 CREATE TABLE test_results (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    patient_id uuid NOT NULL REFERENCES patients(id),
-    test_id uuid NOT NULL REFERENCES psychological_tests(id),
-    depression_score int,
-    anxiety_score int,
-    stress_score int,
-    created_at timestamp DEFAULT now()
+    patient_id uuid NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+    test_id uuid NOT NULL REFERENCES mental_health_tests(id) ON DELETE RESTRICT,
+    test_name varchar(255), -- Denormalized for display
+    score integer,
+    max_score integer,
+    level varchar(50), -- e.g., 'Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'
+    description text, -- Result interpretation/feedback
+    answers jsonb, -- JSON object: {"questionId": score, ...}
+    created_at timestamp DEFAULT now(),
+    CONSTRAINT valid_test_score CHECK (score >= 0 AND max_score > 0)
+);
+
+-- Create indexes for faster queries
+CREATE INDEX idx_test_results_patient_id ON test_results(patient_id);
+CREATE INDEX idx_test_results_test_id ON test_results(test_id);
+CREATE INDEX idx_test_results_created_at ON test_results(created_at);
+
+-- Keep backward compatibility with old psychological_tests structure
+CREATE TABLE psychological_tests (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title varchar(255),
+    description text,
+    config jsonb,
+    DEPRECATED BOOLEAN DEFAULT true
 );
 
 -- --- PHÂN HỆ TƯ VẤN & EHR (BỆNH ÁN ĐIỆN TỬ) ---
@@ -137,3 +170,15 @@ $$ language 'plpgsql';
 
 CREATE TRIGGER update_diaries_modtime BEFORE UPDATE ON diaries FOR EACH ROW EXECUTE PROCEDURE update_last_update_column();
 CREATE TRIGGER update_pictures_modtime BEFORE UPDATE ON pictures FOR EACH ROW EXECUTE PROCEDURE update_last_update_column();
+
+-- --- AUTO-UPDATE FOR MENTAL HEALTH TESTS ---
+
+CREATE OR REPLACE FUNCTION update_mental_health_tests_modtime()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = now();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_mental_health_tests_modtime BEFORE UPDATE ON mental_health_tests FOR EACH ROW EXECUTE PROCEDURE update_mental_health_tests_modtime();
