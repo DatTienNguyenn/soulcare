@@ -114,6 +114,12 @@ export default function QuestionForm({
   };
 
   const handleSubmit = async () => {
+    if (!formData.questionText?.trim()) {
+      console.error('Question text is required');
+      alert('Question text is required');
+      return;
+    }
+
     try {
       await onSubmit(formData);
       onClose();
@@ -153,7 +159,7 @@ export default function QuestionForm({
             <MenuItem value="MULTIPLE_CHOICE">
               {t('questionManagement.dialog.multipleChoice')}
             </MenuItem>
-            <MenuItem value="RATING_SCALE">{t('questionManagement.dialog.ratingScale')}</MenuItem>
+            {/* <MenuItem value="RATING_SCALE">{t('questionManagement.dialog.ratingScale')}</MenuItem> */}
             <MenuItem value="TEXT">{t('questionManagement.dialog.textQuestion')}</MenuItem>
           </TextField>
 

@@ -190,7 +190,8 @@ export default function TestManagementView() {
   };
 
   const handleOpenQuestionForm = (question?: any) => {
-    setEditingQuestion(question || null);
+    console.log('handleOpenQuestionForm called with:', question);
+    setEditingQuestion(question && question.id ? question : null);
     setOpenQuestionForm(true);
   };
 
@@ -200,13 +201,18 @@ export default function TestManagementView() {
   };
 
   const handleSaveQuestion = async (data: ITestQuestionRequest) => {
-    if (!selectedTestForQuestions) return;
+    if (!selectedTestForQuestions) {
+      console.error('No test selected for question');
+      return;
+    }
 
     try {
       setQuestionSubmitting(true);
-      if (editingQuestion) {
+      if (editingQuestion && editingQuestion.id) {
+        // console.log('Editing question:', editingQuestion.id);
         await editQuestion(selectedTestForQuestions.id, editingQuestion.id, data);
       } else {
+        // console.log('Creating new question');
         await addQuestion(selectedTestForQuestions.id, data);
       }
       handleCloseQuestionForm();
