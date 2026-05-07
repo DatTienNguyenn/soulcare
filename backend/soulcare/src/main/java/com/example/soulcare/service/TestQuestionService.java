@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,9 +31,13 @@ public class TestQuestionService {
                 .scoreWeight(request.getScoreWeight() != null ? request.getScoreWeight() : 1)
                 .build();
 
+        // Initialize options list
+        question.setOptions(new ArrayList<>());
+
+        // Save question first to get the ID
         TestQuestion savedQuestion = testQuestionRepository.save(question);
 
-        // Save options if provided
+        // Add options if provided - set questionId before adding to ensure FK is set
         if (request.getOptions() != null && !request.getOptions().isEmpty()) {
             List<QuestionOption> options = request.getOptions().stream()
                     .map(optRequest -> QuestionOption.builder()
@@ -42,11 +47,10 @@ public class TestQuestionService {
                             .optionOrder(optRequest.getOptionOrder())
                             .build())
                     .collect(Collectors.toList());
-            savedQuestion.setOptions(questionOptionRepository.saveAll(options));
-        } else {
-            savedQuestion.setOptions(List.of());
+            savedQuestion.getOptions().addAll(options);
+            testQuestionRepository.save(savedQuestion);
         }
-
+        
         return mapToResponse(savedQuestion);
     }
 
@@ -73,20 +77,42 @@ public class TestQuestionService {
         question.setQuestionOrder(request.getQuestionOrder());
         question.setScoreWeight(request.getScoreWeight() != null ? request.getScoreWeight() : 1);
 
-        // Update options if provided
-        if (request.getOptions() != null) {
-            questionOptionRepository.deleteByQuestionId(questionId);
-            List<QuestionOption> newOptions = request.getOptions().stream()
-                    .map(optRequest -> QuestionOption.builder()
-                            .questionId(questionId)
-                            .optionText(optRequest.getOptionText())
-                            .optionValue(optRequest.getOptionValue())
-                            .optionOrder(optRequest.getOptionOrder())
-                            .build())
+        // Update options intelligently - only delete what's gone, update what exists, add what's new
+        if (request.getOptions() != null && !request.getOptions().isEmpty()) {
+            // Delete options that are no longer in the request by optionOrder
+            List<Integer> requestedOrders = request.getOptions().stream()
+                    .map(opt -> opt.getOptionOrder())
                     .collect(Collectors.toList());
-            question.setOptions(questionOptionRepository.saveAll(newOptions));
+            
+            question.getOptions().removeIf(opt -> !requestedOrders.contains(opt.getOptionOrder()));
+            
+            // Update existing options and add new ones
+            for (var reqOpt : request.getOptions()) {
+                QuestionOption existing = question.getOptions().stream()
+                        .filter(opt -> opt.getOptionOrder().equals(reqOpt.getOptionOrder()))
+                        .findFirst()
+                        .orElse(null);
+                
+                if (existing != null) {
+                    // Update existing option attributes
+                    existing.setOptionText(reqOpt.getOptionText());
+                    existing.setOptionValue(reqOpt.getOptionValue());
+                    existing.setOptionOrder(reqOpt.getOptionOrder());
+                } else {
+                    // Add new option
+                    QuestionOption newOption = QuestionOption.builder()
+                            .questionId(questionId)
+                            .optionText(reqOpt.getOptionText())
+                            .optionValue(reqOpt.getOptionValue())
+                            .optionOrder(reqOpt.getOptionOrder())
+                            .build();
+                    question.getOptions().add(newOption);
+                }
+            }
         } else {
-            question.setOptions(List.of());
+            // No options provided, delete all
+            questionOptionRepository.deleteByQuestionId(questionId);
+            question.getOptions().clear();
         }
 
         TestQuestion updated = testQuestionRepository.save(question);
