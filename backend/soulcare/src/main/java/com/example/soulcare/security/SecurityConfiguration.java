@@ -37,7 +37,15 @@ public class SecurityConfiguration {
             // 2. Disable CSRF vì chúng ta dùng JWT (quy trình trị liệu khép kín) 
             .csrf(AbstractHttpConfigurer::disable) 
             .authorizeHttpRequests(auth -> auth
+                // Public endpoints - no authentication required
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                // Allow GET requests to tests (public read access)
+                .requestMatchers("GET", "/api/v1/tests").permitAll()
+                .requestMatchers("GET", "/api/v1/tests/active").permitAll()
+                .requestMatchers("GET", "/api/v1/tests/{id}").permitAll()
+                .requestMatchers("GET", "/api/v1/tests/*/questions").permitAll()
+                .requestMatchers("GET", "/api/v1/tests/*/questions/*").permitAll()
+                // All other requests require authentication
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

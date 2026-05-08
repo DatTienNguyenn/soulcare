@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { Container, Stack } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Container, Stack, CircularProgress, Alert } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locale/use-locales';
+import { MentalHealthTest, TestResult } from 'src/_mock/_self-test';
+import { useMentalHealthAPI } from 'src/hooks/use-mental-health-api';
 import {
-  mentalHealthTests,
-  calculateTestScore,
-  MentalHealthTest,
-  TestResult,
-} from 'src/_mock/_self-test';
+  transformAPITestToFrontend,
+  getColorByLevel,
+  getDescriptionByLevel,
+} from './utils/test-transformer';
 import SelfTestIntro from './componants/SelfTestIntro';
 import SelfTestQuestionView from './componants/SelfTestQuestionView';
 import SelfTestResultView from './componants/SelfTestResultView';
@@ -15,19 +16,83 @@ import SelfTestResultView from './componants/SelfTestResultView';
 export default function SelfTestView() {
   const settings = useSettingsContext();
   const { t } = useLocales();
+  const { fetchActiveTests, fetchTestQuestions, submitTestResult, loading, error, setError } =
+    useMentalHealthAPI();
+
+  const [tests, setTests] = useState<MentalHealthTest[]>([]);
   const [selectedTest, setSelectedTest] = useState<MentalHealthTest | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [testHistory, setTestHistory] = useState<TestResult[]>([]);
   const [showResult, setShowResult] = useState(false);
+  const [loadingTests, setLoadingTests] = useState(true);
 
-  const handleStartTest = (test: MentalHealthTest) => {
-    setSelectedTest(test);
-    setCurrentQuestionIndex(0);
-    setAnswers({});
-    setTestResult(null);
-    setShowResult(false);
+  // Load tests on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoadingTests(true);
+        setError(null);
+
+        // STEP 1: Fetch active tests from API (required)
+        console.log('Fetching active tests...');
+        const activeTestsFromAPI = await fetchActiveTests();
+        console.log('Active tests received:', activeTestsFromAPI);
+
+        // Transform API response to frontend format
+        const transformedTests = activeTestsFromAPI.map((test) => {
+          try {
+            return transformAPITestToFrontend(test);
+          } catch (transformError) {
+            console.error('Error transforming test:', test, transformError);
+            throw transformError;
+          }
+        });
+        console.log('Transformed tests:', transformedTests);
+        setTests(transformedTests);
+      } catch (err) {
+        console.error('Failed to load tests:', err);
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to load tests. Please try again.';
+        setError(errorMessage);
+      } finally {
+        setLoadingTests(false);
+      }
+    };
+
+    loadData();
+  }, [fetchActiveTests, setError]);
+
+  const handleStartTest = async (test: MentalHealthTest) => {
+    try {
+      // Fetch questions for this test from API
+      console.log(`Fetching questions for test ${test.id}...`);
+      const questionsFromAPI = await fetchTestQuestions(test.id);
+      console.log('Questions received:', questionsFromAPI);
+
+      // Create a new test object with the fetched questions
+      const testWithQuestions: typeof test = {
+        ...test,
+        questions: questionsFromAPI.map((q) => ({
+          id: q.id,
+          question: q.questionText,
+          options: q.options.map((opt) => ({
+            label: opt.optionText,
+            value: opt.optionValue,
+          })),
+        })),
+      };
+
+      setSelectedTest(testWithQuestions);
+      setCurrentQuestionIndex(0);
+      setAnswers({});
+      setTestResult(null);
+      setShowResult(false);
+    } catch (err) {
+      console.error('Failed to start test:', err);
+      setError('Failed to load test questions. Please try again.');
+    }
   };
 
   const handleAnswerChange = (questionId: string, value: number) => {
@@ -49,25 +114,33 @@ export default function SelfTestView() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedTest) return;
 
-    const scoreData = calculateTestScore(selectedTest, answers);
-    const result: TestResult = {
-      testId: selectedTest.id,
-      testName: selectedTest.name,
-      score: scoreData.score,
-      maxScore: selectedTest.scoringGuide.maxScore,
-      level: scoreData.level,
-      color: scoreData.color,
-      description: scoreData.description,
-      timestamp: new Date(),
-      answers,
-    };
+    try {
+      // Submit test result to API
+      const apiResult = await submitTestResult(selectedTest.id, answers);
 
-    setTestResult(result);
-    setTestHistory([result, ...testHistory]);
-    setShowResult(true);
+      // Convert API response to TestResult format using backend data
+      const result: TestResult = {
+        testId: selectedTest.id,
+        testName: selectedTest.name,
+        score: apiResult.score,
+        maxScore: 100,
+        level: apiResult.level,
+        color: getColorByLevel(apiResult.level),
+        description: getDescriptionByLevel(apiResult.level),
+        timestamp: new Date(),
+        answers,
+      };
+
+      setTestResult(result);
+      setTestHistory([result, ...testHistory]);
+      setShowResult(true);
+    } catch (err) {
+      console.error('Failed to submit test:', err);
+      setError('Failed to submit test result. Please try again.');
+    }
   };
 
   const handleRetakeTest = () => {
@@ -81,16 +154,33 @@ export default function SelfTestView() {
     ? selectedTest.questions.every((q) => answers[q.id] !== undefined)
     : false;
 
+  if (loadingTests) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+        <Stack spacing={3} alignItems="center" justifyContent="center" sx={{ py: 5 }}>
+          <CircularProgress />
+        </Stack>
+      </Container>
+    );
+  }
+
+  if (error && !selectedTest) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+        <Stack spacing={3}>
+          <Alert severity="error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        </Stack>
+      </Container>
+    );
+  }
+
   if (!selectedTest) {
     return (
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <Stack spacing={3}>
-          <SelfTestIntro
-            t={t}
-            tests={mentalHealthTests}
-            history={testHistory}
-            onStartTest={handleStartTest}
-          />
+          <SelfTestIntro t={t} tests={tests} history={testHistory} onStartTest={handleStartTest} />
         </Stack>
       </Container>
     );
@@ -100,6 +190,11 @@ export default function SelfTestView() {
     return (
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <Stack spacing={3}>
+          {error && (
+            <Alert severity="error" onClose={() => setError(null)}>
+              {error}
+            </Alert>
+          )}
           <SelfTestQuestionView
             selectedTest={selectedTest}
             currentQuestionIndex={currentQuestionIndex}
