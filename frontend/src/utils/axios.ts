@@ -78,5 +78,14 @@ export const endpoints = {
     update: (id: string) => `/api/v1/diaries/${id}`,
     delete: (id: string) => `/api/v1/diaries/${id}`,
     range: '/api/v1/diaries/range',
+    frequency: '/api/v1/diaries/analytics/frequency',
+  },
+  testResults: {
+    list: '/api/v1/test-results',
+    create: '/api/v1/test-results',
+    details: (id: string) => `/api/v1/test-results/${id}`,
+    delete: (id: string) => `/api/v1/test-results/${id}`,
+    byTest: (testId: string) => `/api/v1/test-results/test/${testId}`,
+    history: '/api/v1/test-results/analytics/history',
   },
 };

@@ -3,6 +3,8 @@ import {
   MentalHealthTest,
   TestResultResponse,
   TestQuestion,
+  TestResultHistoryResponse,
+  DiaryFrequencyResponse,
   getActiveTests,
   getAllTests,
   getTestById,
@@ -12,6 +14,8 @@ import {
   getUserTestResultsByTest,
   getTestResult,
   deleteTestResult as deleteTestResultAPI,
+  getTestResultHistory,
+  getDiaryFrequency,
 } from 'src/utils/mental-health-api';
 
 export function useMentalHealthAPI() {
@@ -171,6 +175,38 @@ export function useMentalHealthAPI() {
     }
   }, []);
 
+  // Fetch test result history for analytics
+  const fetchTestResultHistory = useCallback(async (): Promise<TestResultHistoryResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getTestResultHistory();
+      return data;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch test result history';
+      setError(errorMsg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch diary frequency for analytics
+  const fetchDiaryFrequency = useCallback(async (): Promise<DiaryFrequencyResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getDiaryFrequency();
+      return data;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch diary frequency';
+      setError(errorMsg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     fetchActiveTests,
     fetchAllTests,
@@ -181,6 +217,8 @@ export function useMentalHealthAPI() {
     fetchUserTestResultsByTest,
     fetchTestResult,
     deleteTestResult,
+    fetchTestResultHistory,
+    fetchDiaryFrequency,
     loading,
     error,
     setError,

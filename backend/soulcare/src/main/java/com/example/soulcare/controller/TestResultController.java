@@ -2,6 +2,7 @@ package com.example.soulcare.controller;
 
 import com.example.soulcare.dto.TestResultRequest;
 import com.example.soulcare.dto.TestResultResponse;
+import com.example.soulcare.dto.TestResultHistoryResponse;
 import com.example.soulcare.model.User;
 import com.example.soulcare.repository.PatientRepository;
 import com.example.soulcare.repository.UserRepository;
@@ -80,6 +81,16 @@ public class TestResultController {
         UUID patientId = getPatientIdFromAuth(authentication);
         resultService.deleteTestResult(id, patientId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Get all test result history for analytics
+     */
+    @GetMapping("/analytics/history")
+    public ResponseEntity<TestResultHistoryResponse> getTestResultHistory(Authentication authentication) {
+        UUID patientId = getPatientIdFromAuth(authentication);
+        TestResultHistoryResponse response = resultService.getTestResultHistory(patientId);
+        return ResponseEntity.ok(response);
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {

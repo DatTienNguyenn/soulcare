@@ -2,6 +2,8 @@ package com.example.soulcare.service;
 
 import com.example.soulcare.dto.DiaryRequest;
 import com.example.soulcare.dto.DiaryResponse;
+import com.example.soulcare.dto.DiaryFrequencyResponse;
+import com.example.soulcare.dto.ActivityFrequencyResponse;
 import com.example.soulcare.model.Diary;
 import com.example.soulcare.model.DiaryStatus;
 import com.example.soulcare.repository.DiaryRepository;
@@ -9,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +79,36 @@ public class DiaryService {
         Diary diary = diaryRepository.findByIdAndPatientId(diaryId, patientId)
                 .orElseThrow(() -> new RuntimeException("Diary not found"));
         diaryRepository.delete(diary);
+    }
+
+    /**
+     * Get diary frequency by date for analytics
+     * Counts how many diary entries were written on each date
+     */
+    @Transactional(readOnly = true)
+    public DiaryFrequencyResponse getDiaryFrequency(UUID patientId) {
+        List<Diary> diaries = diaryRepository.findByPatientIdOrderByCreatedAtDesc(patientId);
+        
+        // Group diaries by created date and count them
+        Map<LocalDate, Long> frequencyMap = diaries.stream()
+                .collect(Collectors.groupingBy(
+                        diary -> diary.getCreatedAt().toLocalDate(),
+                        Collectors.counting()
+                ));
+        
+        // Convert to ActivityFrequencyResponse list
+        List<ActivityFrequencyResponse> frequencies = frequencyMap.entrySet().stream()
+                .map(entry -> ActivityFrequencyResponse.builder()
+                        .date(entry.getKey())
+                        .count(entry.getValue().intValue())
+                        .build())
+                .sorted(Comparator.comparing(ActivityFrequencyResponse::getDate))
+                .collect(Collectors.toList());
+        
+        return DiaryFrequencyResponse.builder()
+                .frequencies(frequencies)
+                .totalDiaries(diaries.size())
+                .build();
     }
 
     private DiaryResponse mapToResponse(Diary diary) {
