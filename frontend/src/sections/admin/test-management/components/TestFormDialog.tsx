@@ -150,7 +150,6 @@ export default function TestFormDialog({
           >
             <option value="ACTIVE">{t('testManagement.dialog.statusActive')}</option>
             <option value="INACTIVE">{t('testManagement.dialog.statusInactive')}</option>
-            <option value="ARCHIVED">{t('testManagement.dialog.statusArchived')}</option>
           </TextField>
         </Stack>
       </DialogContent>

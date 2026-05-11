@@ -17,7 +17,8 @@
     "close": "Đóng",
     "search": "Tìm kiếm",
     "filter": "Lọc",
-    "noData": "Không có dữ liệu"
+    "noData": "Không có dữ liệu",
+    "create": "Tạo mới"
   },
   "language": {
     "title": "Ngôn ngữ",
@@ -186,6 +187,10 @@
     "subtitle": "Quản lý người dùng hệ thống và vai trò",
     "loadingError": "Không thể tải người dùng. Vui lòng thử lại sau.",
     "noUsers": "Không tìm thấy người dùng",
+    "newUser": "Thêm Người Dùng",
+    "createNewUser": "Tạo Người Dùng Mới",
+    "role": "Vai Trò",
+    "reload": "Làm mới",
     "table": {
       "displayName": "Tên Hiển Thị",
       "email": "Email",
@@ -197,12 +202,19 @@
       "specialist": "Chuyên Gia",
       "patient": "Bệnh Nhân",
       "unknown": "Không Xác Định"
+    },
+    "error": {
+      "deleteFailed": "Xóa người dùng thất bại",
+      "updateFailed": "Cập nhật người dùng thất bại",
+      "validationFailed": "Xác thực dữ liệu thất bại",
+      "createFailed": "Tạo người dùng thất bại"
     }
   },
   "testManagement": {
     "title": "Quản lý Bài Kiểm tra",
     "subtitle": "Quản lý các bài kiểm tra đánh giá sức khỏe tâm thần",
     "newTest": "Bài Kiểm tra Mới",
+    "refresh": "Làm mới",
     "loadingError": "Không thể tải bài kiểm tra. Vui lòng thử lại sau.",
     "noTests": "Không tìm thấy bài kiểm tra. Tạo bài kiểm tra mới để bắt đầu.",
     "deleteConfirm": "Bạn có chắc không?",

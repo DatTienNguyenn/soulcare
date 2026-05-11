@@ -93,7 +93,6 @@ export default function TestManagementView() {
     fetchAllTests();
   }, [fetchAllTests]);
 
-
   const handleOpenDialog = (test?: IMentalHealthTest) => {
     if (test) {
       setEditingTest(test);
@@ -301,14 +300,24 @@ export default function TestManagementView() {
             <h1 style={{ margin: 0 }}>{t('testManagement.title')}</h1>
             <p style={{ margin: '8px 0 0 0', color: '#666' }}>{t('testManagement.subtitle')}</p>
           </div>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={() => handleOpenDialog()}
-            disabled={loading}
-          >
-            {t('testManagement.newTest')}
-          </Button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+              variant="outlined"
+              startIcon={<Iconify icon="mingcute:refresh-line" />}
+              onClick={() => fetchAllTests()}
+              disabled={loading}
+            >
+              {t('testManagement.refresh')}
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => handleOpenDialog()}
+              disabled={loading}
+            >
+              {t('testManagement.newTest')}
+            </Button>
+          </div>
         </Stack>
 
         {/* Error Alert */}
@@ -334,7 +343,9 @@ export default function TestManagementView() {
         onClose={handleCloseDialog}
         onSave={handleSaveTest}
         onFormChange={handleFormChange}
-        onAddDefaultLevels={() => setFormData({ ...formData, scoringGuide: getInitialScoringGuide() })}
+        onAddDefaultLevels={() =>
+          setFormData({ ...formData, scoringGuide: getInitialScoringGuide() })
+        }
         onScoringLevelChange={handleScoringGuideChange}
         t={t}
       />
