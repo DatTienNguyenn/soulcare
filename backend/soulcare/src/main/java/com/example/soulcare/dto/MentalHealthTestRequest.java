@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Data
 @Builder
@@ -19,15 +19,16 @@ public class MentalHealthTestRequest {
 
     private String description;
 
-    private String duration;
+    @PositiveOrZero(message = "Duration must be zero or positive")
+    private Integer duration; // Duration in minutes
 
-    @Positive(message = "Total questions must be positive")
+    @PositiveOrZero(message = "Total questions must be zero or positive")
     private Integer totalQuestions;
 
-    @Positive(message = "Min score must be positive")
+    @PositiveOrZero(message = "Min score must be zero or positive")
     private Integer minScore;
 
-    @Positive(message = "Max score must be positive")
+    @PositiveOrZero(message = "Max score must be zero or positive")
     private Integer maxScore;
 
     private String scoringGuide; // JSON string

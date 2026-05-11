@@ -17,7 +17,7 @@ public class TestResultRequest {
     private String testId;
 
     @NotNull(message = "Answers are required")
-    private Map<String, Integer> answers; // questionId -> answer value
+    private Map<String, Object> answers; // questionId -> answer value (can be String or Integer)
 
     private String notes;
 }

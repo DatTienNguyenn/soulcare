@@ -1,54 +1,69 @@
 import { useState, useEffect } from 'react';
-// import { useSetState } from 'src/hooks/use-boolean';
 import { useMentalHealthTest } from 'src/hooks/use-mental-health-test';
+import { useTestQuestion } from 'src/hooks/use-test-question';
 import { useLocales } from 'src/locale/use-locales';
-
-import {
-  Card,
-  Container,
-  Stack,
-  Button,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Box,
-  Chip,
-  Paper,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
-
+import { Container, Stack, Button, Box, Alert, CircularProgress } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
-import Scrollbar from 'src/components/scrollbar';
-import { IMentalHealthTest, IMentalHealthTestRequest } from 'src/utils/test-api';
+import {
+  IMentalHealthTest,
+  IMentalHealthTestRequest,
+  ITestQuestionRequest,
+} from 'src/utils/test-api';
+import { QuestionForm, QuestionsList } from '../question-management';
+import TestsTable from './components/TestsTable';
+import TestFormDialog from './components/TestFormDialog';
 
 interface FormDataState {
   name: string;
   shortName: string;
   totalQuestions: number;
-  duration: string;
+  duration: number;
   minScore: number;
   maxScore: number;
   description: string;
-  scoringGuide: string;
+  scoringGuide: {
+    Normal: { min: number; max: number; color: string };
+    Mild: { min: number; max: number; color: string };
+    Moderate: { min: number; max: number; color: string };
+    Severe: { min: number; max: number; color: string };
+    'Very Severe': { min: number; max: number; color: string };
+  } | null;
   status: 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
 }
+
+const LEVEL_COLORS = {
+  Normal: '#4CAF50',
+  Mild: '#8BC34A',
+  Moderate: '#FFC107',
+  Severe: '#FF9800',
+  'Very Severe': '#F44336',
+};
+
+const getInitialScoringGuide = () => ({
+  Normal: { min: 0, max: 10, color: LEVEL_COLORS.Normal },
+  Mild: { min: 11, max: 20, color: LEVEL_COLORS.Mild },
+  Moderate: { min: 21, max: 30, color: LEVEL_COLORS.Moderate },
+  Severe: { min: 31, max: 40, color: LEVEL_COLORS.Severe },
+  'Very Severe': { min: 41, max: 50, color: LEVEL_COLORS['Very Severe'] },
+});
+
+const INITIAL_SCORING_GUIDE = getInitialScoringGuide();
 
 export default function TestManagementView() {
   const settings = useSettingsContext();
   const { t } = useLocales();
   const { tests, loading, error, fetchAllTests, addTest, editTest, removeTest } =
     useMentalHealthTest();
+  const {
+    questions,
+    loading: questionsLoading,
+    error: questionsError,
+    fetchTestQuestions,
+    addQuestion,
+    editQuestion,
+    removeQuestion,
+  } = useTestQuestion();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editingTest, setEditingTest] = useState<IMentalHealthTest | null>(null);
@@ -56,47 +71,73 @@ export default function TestManagementView() {
     name: '',
     shortName: '',
     totalQuestions: 0,
-    duration: '',
+    duration: 0,
     minScore: 0,
     maxScore: 100,
     description: '',
-    scoringGuide: '{}',
+    scoringGuide: null,
     status: 'ACTIVE',
   });
   const [submitting, setSubmitting] = useState(false);
+
+  // Question Management State
+  const [showQuestionsDialog, setShowQuestionsDialog] = useState(false);
+  const [selectedTestForQuestions, setSelectedTestForQuestions] =
+    useState<IMentalHealthTest | null>(null);
+  const [openQuestionForm, setOpenQuestionForm] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<any>(null);
+  const [questionSubmitting, setQuestionSubmitting] = useState(false);
 
   // Load tests on component mount
   useEffect(() => {
     fetchAllTests();
   }, [fetchAllTests]);
 
+
   const handleOpenDialog = (test?: IMentalHealthTest) => {
     if (test) {
       setEditingTest(test);
-      setFormData({
-        name: test.name,
-        shortName: test.shortName,
-        totalQuestions: test.totalQuestions,
-        duration: test.duration,
-        minScore: test.minScore,
-        maxScore: test.maxScore,
-        description: test.description,
-        scoringGuide: test.scoringGuide,
-        status: test.status as any,
-      });
+
+      // Parse scoring guide with fallback to null
+      let parsedScoringGuide: typeof formData.scoringGuide = null;
+      if (test.scoringGuide) {
+        try {
+          const parsed = JSON.parse(test.scoringGuide);
+          if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+            parsedScoringGuide = parsed;
+          }
+        } catch (e) {
+          console.error('Failed to parse scoring guide, leaving as null:', e);
+        }
+      }
+
+      // Set form data with fallback values
+      const newFormData = {
+        name: test.name || '',
+        shortName: test.shortName || '',
+        totalQuestions: test.totalQuestions || 0,
+        duration: test.duration || 0,
+        minScore: test.minScore || 0,
+        maxScore: test.maxScore || 100,
+        description: test.description || '',
+        scoringGuide: parsedScoringGuide,
+        status: (test.status || 'ACTIVE') as 'ACTIVE' | 'INACTIVE' | 'ARCHIVED',
+      };
+      setFormData(newFormData);
     } else {
       setEditingTest(null);
-      setFormData({
+      const newFormData = {
         name: '',
         shortName: '',
         totalQuestions: 0,
-        duration: '',
+        duration: 0,
         minScore: 0,
         maxScore: 100,
         description: '',
-        scoringGuide: '{}',
-        status: 'ACTIVE',
-      });
+        scoringGuide: null,
+        status: 'ACTIVE' as const,
+      };
+      setFormData(newFormData);
     }
     setOpenDialog(true);
   };
@@ -104,11 +145,36 @@ export default function TestManagementView() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingTest(null);
+    // Reset form data to initial state
+    setFormData({
+      name: '',
+      shortName: '',
+      totalQuestions: 0,
+      duration: 0,
+      minScore: 0,
+      maxScore: 100,
+      description: '',
+      scoringGuide: null,
+      status: 'ACTIVE',
+    });
   };
 
   const handleSaveTest = async () => {
     try {
       setSubmitting(true);
+
+      // Validate form data before saving
+      if (!formData.name.trim() || !formData.shortName.trim()) {
+        console.error('Test name and short name are required');
+        return;
+      }
+
+      if (!formData.scoringGuide) {
+        console.error('Scoring guide is required - please set the scoring levels');
+        alert('Please set the scoring levels before saving.');
+        return;
+      }
+
       const testData: IMentalHealthTestRequest = {
         name: formData.name,
         shortName: formData.shortName,
@@ -117,7 +183,7 @@ export default function TestManagementView() {
         minScore: formData.minScore,
         maxScore: formData.maxScore,
         description: formData.description,
-        scoringGuide: formData.scoringGuide,
+        scoringGuide: JSON.stringify(formData.scoringGuide),
         status: formData.status,
       };
 
@@ -148,10 +214,82 @@ export default function TestManagementView() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: ['totalQuestions', 'minScore', 'maxScore'].includes(name)
+      [name]: ['totalQuestions', 'minScore', 'maxScore', 'duration'].includes(name)
         ? parseInt(value) || 0
         : value,
     });
+  };
+
+  const handleScoringGuideChange = (level: string, field: 'min' | 'max', value: number) => {
+    if (!formData.scoringGuide) return; // Can't modify if scoring guide is not set
+
+    setFormData({
+      ...formData,
+      scoringGuide: {
+        ...formData.scoringGuide,
+        [level]: {
+          ...(formData.scoringGuide[level as keyof typeof formData.scoringGuide] || {}),
+          [field]: value,
+        },
+      },
+    });
+  };
+
+  // Question Management Handlers
+  const handleOpenQuestionsDialog = async (test: IMentalHealthTest) => {
+    setSelectedTestForQuestions(test);
+    setShowQuestionsDialog(true);
+    await fetchTestQuestions(test.id);
+  };
+
+  const handleCloseQuestionsDialog = () => {
+    setShowQuestionsDialog(false);
+    setSelectedTestForQuestions(null);
+  };
+
+  const handleOpenQuestionForm = (question?: any) => {
+    setEditingQuestion(question && question.id ? question : null);
+    setOpenQuestionForm(true);
+  };
+
+  const handleCloseQuestionForm = () => {
+    setOpenQuestionForm(false);
+    setEditingQuestion(null);
+  };
+
+  const handleSaveQuestion = async (data: ITestQuestionRequest) => {
+    if (!selectedTestForQuestions) {
+      console.error('No test selected for question');
+      return;
+    }
+
+    try {
+      setQuestionSubmitting(true);
+      if (editingQuestion && editingQuestion.id) {
+        await editQuestion(selectedTestForQuestions.id, editingQuestion.id, data);
+      } else {
+        await addQuestion(selectedTestForQuestions.id, data);
+      }
+      handleCloseQuestionForm();
+      await fetchTestQuestions(selectedTestForQuestions.id);
+    } catch (err) {
+      console.error('Failed to save question:', err);
+    } finally {
+      setQuestionSubmitting(false);
+    }
+  };
+
+  const handleDeleteQuestion = async (questionId: string) => {
+    if (!selectedTestForQuestions) return;
+
+    if (window.confirm(t('questionManagement.deleteConfirm'))) {
+      try {
+        await removeQuestion(selectedTestForQuestions.id, questionId);
+        await fetchTestQuestions(selectedTestForQuestions.id);
+      } catch (err) {
+        console.error('Failed to delete question:', err);
+      }
+    }
   };
 
   return (
@@ -176,192 +314,51 @@ export default function TestManagementView() {
         {/* Error Alert */}
         {error && <Alert severity="error">{error}</Alert>}
 
-        {/* Loading State */}
-        {loading && !tests.length ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            {/* Tests Table */}
-            <Card>
-              <Scrollbar>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                        <TableCell>{t('testManagement.table.testName')}</TableCell>
-                        <TableCell align="center">{t('testManagement.table.shortName')}</TableCell>
-                        <TableCell align="center">{t('testManagement.table.questions')}</TableCell>
-                        <TableCell align="center">{t('testManagement.table.duration')}</TableCell>
-                        <TableCell align="center">{t('testManagement.table.status')}</TableCell>
-                        <TableCell align="center">{t('testManagement.table.created')}</TableCell>
-                        <TableCell align="right">{t('testManagement.table.actions')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {tests.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                            {t('testManagement.noTests')}
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        tests.map((test) => (
-                          <TableRow key={test.id} hover>
-                            <TableCell>
-                              <Box>
-                                <strong>{test.name}</strong>
-                              </Box>
-                            </TableCell>
-                            <TableCell align="center">
-                              <Chip label={test.shortName} size="small" />
-                            </TableCell>
-                            <TableCell align="center">{test.totalQuestions}</TableCell>
-                            <TableCell align="center">{test.duration}</TableCell>
-                            <TableCell align="center">
-                              <Chip
-                                label={test.status}
-                                size="small"
-                                color={test.status === 'ACTIVE' ? 'success' : 'default'}
-                                variant="outlined"
-                              />
-                            </TableCell>
-                            <TableCell align="center">
-                              {test.createdAt
-                                ? new Date(test.createdAt).toLocaleDateString()
-                                : t('testManagement.other.notAvailable')}
-                            </TableCell>
-                            <TableCell align="right">
-                              <IconButton
-                                size="small"
-                                onClick={() => handleOpenDialog(test)}
-                                title={t('testManagement.actions.edit')}
-                              >
-                                <Iconify icon="solar:pen-bold" width={20} />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleDeleteTest(test.id)}
-                                title={t('testManagement.actions.delete')}
-                              >
-                                <Iconify icon="solar:trash-bin-trash-bold" width={20} />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Scrollbar>
-            </Card>
-          </>
-        )}
+        {/* Tests Table */}
+        <TestsTable
+          tests={tests}
+          loading={loading}
+          onEdit={handleOpenDialog}
+          onDelete={handleDeleteTest}
+          onManageQuestions={handleOpenQuestionsDialog}
+          t={t}
+        />
       </Stack>
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {editingTest
-            ? t('testManagement.dialog.editTitle')
-            : t('testManagement.dialog.createTitle')}
-        </DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              label={t('testManagement.dialog.testName')}
-              name="name"
-              value={formData.name}
-              onChange={handleFormChange}
-              placeholder={t('testManagement.dialog.testNamePlaceholder')}
-              required
-            />
-            <TextField
-              fullWidth
-              label={t('testManagement.dialog.shortName')}
-              name="shortName"
-              value={formData.shortName}
-              onChange={handleFormChange}
-              placeholder={t('testManagement.dialog.shortNamePlaceholder')}
-              required
-            />
-            <TextField
-              fullWidth
-              label={t('testManagement.dialog.description')}
-              name="description"
-              value={formData.description}
-              onChange={handleFormChange}
-              multiline
-              rows={2}
-              placeholder={t('testManagement.dialog.descriptionPlaceholder')}
-            />
-            <TextField
-              fullWidth
-              type="number"
-              label={t('testManagement.dialog.totalQuestions')}
-              name="totalQuestions"
-              value={formData.totalQuestions}
-              onChange={handleFormChange}
-              required
-            />
-            <TextField
-              fullWidth
-              label={t('testManagement.dialog.duration')}
-              name="duration"
-              value={formData.duration}
-              onChange={handleFormChange}
-              placeholder={t('testManagement.dialog.durationPlaceholder')}
-            />
-            <Stack direction="row" spacing={2}>
-              <TextField
-                fullWidth
-                type="number"
-                label={t('testManagement.dialog.minScore')}
-                name="minScore"
-                value={formData.minScore}
-                onChange={handleFormChange}
-              />
-              <TextField
-                fullWidth
-                type="number"
-                label={t('testManagement.dialog.maxScore')}
-                name="maxScore"
-                value={formData.maxScore}
-                onChange={handleFormChange}
-              />
-            </Stack>
-            <TextField
-              fullWidth
-              select
-              label={t('testManagement.dialog.status')}
-              name="status"
-              value={formData.status}
-              onChange={handleFormChange}
-              SelectProps={{
-                native: true,
-              }}
-            >
-              <option value="ACTIVE">{t('testManagement.dialog.statusActive')}</option>
-              <option value="INACTIVE">{t('testManagement.dialog.statusInactive')}</option>
-              <option value="ARCHIVED">{t('testManagement.dialog.statusArchived')}</option>
-            </TextField>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>{t('testManagement.dialog.cancel')}</Button>
-          <Button variant="contained" onClick={handleSaveTest} disabled={submitting}>
-            {submitting ? (
-              <CircularProgress size={24} />
-            ) : editingTest ? (
-              t('testManagement.dialog.update')
-            ) : (
-              t('testManagement.dialog.create')
-            )}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Test Form Dialog */}
+      <TestFormDialog
+        open={openDialog}
+        editingTest={editingTest}
+        formData={formData}
+        submitting={submitting}
+        onClose={handleCloseDialog}
+        onSave={handleSaveTest}
+        onFormChange={handleFormChange}
+        onAddDefaultLevels={() => setFormData({ ...formData, scoringGuide: getInitialScoringGuide() })}
+        onScoringLevelChange={handleScoringGuideChange}
+        t={t}
+      />
+
+      {/* Questions List Dialog */}
+      <QuestionsList
+        open={showQuestionsDialog}
+        questions={questions}
+        loading={questionsLoading}
+        error={questionsError}
+        onClose={handleCloseQuestionsDialog}
+        onAdd={handleOpenQuestionForm}
+        onEdit={handleOpenQuestionForm}
+        onDelete={handleDeleteQuestion}
+      />
+
+      {/* Question Form Dialog */}
+      <QuestionForm
+        open={openQuestionForm}
+        question={editingQuestion}
+        onClose={handleCloseQuestionForm}
+        onSubmit={handleSaveQuestion}
+        submitting={questionSubmitting}
+      />
     </Container>
   );
 }

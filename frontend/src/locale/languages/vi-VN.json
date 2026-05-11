@@ -235,7 +235,10 @@
       "statusArchived": "Lưu Trữ",
       "cancel": "Hủy",
       "create": "Tạo",
-      "update": "Cập Nhật"
+      "update": "Cập Nhật",
+      "scoringLevels": "Cấp độ điểm",
+      "scoringGuide": "Bảng điểm (định dạng JSON)",
+      "scoringGuideHelper": "Ví dụ: {\"Bình thường\": {\"min\": 0, \"max\": 9}, \"Nhẹ\": {\"min\": 10, \"max\": 13}, \"Trung bình\": {\"min\": 14, \"max\": 20}, \"Nặng\": {\"min\": 21, \"max\": 27}, \"Rất nặng\": {\"min\": 28, \"max\": 42}}"
     },
     "actions": {
       "edit": "Chỉnh sửa",
@@ -243,6 +246,46 @@
     },
     "other": {
       "notAvailable": "N/A"
+    }
+  },
+  "questionManagement": {
+    "title": "Quản lý Câu Hỏi",
+    "subtitle": "Quản lý câu hỏi và tùy chọn cho bài kiểm tra này",
+    "newQuestion": "Câu Hỏi Mới",
+    "noQuestions": "Chưa có câu hỏi. Thêm câu hỏi để bắt đầu.",
+    "loadingError": "Không thể tải câu hỏi. Vui lòng thử lại sau.",
+    "deleteConfirm": "Bạn có chắc không?",
+    "table": {
+      "questionText": "Câu Hỏi",
+      "type": "Loại",
+      "options": "Tùy Chọn",
+      "weight": "Trọng Số",
+      "order": "Thứ Tự",
+      "actions": "Hành Động"
+    },
+    "dialog": {
+      "createTitle": "Tạo Câu Hỏi Mới",
+      "editTitle": "Chỉnh sửa Câu Hỏi",
+      "questionText": "Nội Dung Câu Hỏi",
+      "questionType": "Loại Câu Hỏi",
+      "questionOrder": "Thứ Tự Câu Hỏi",
+      "scoreWeight": "Trọng Số Điểm",
+      "multipleChoice": "Trắc Nghiệm",
+      "ratingScale": "Thang Đánh Giá",
+      "textQuestion": "Câu Hỏi Mở",
+      "addOption": "Thêm Tùy Chọn",
+      "optionText": "Nội Dung Tùy Chọn",
+      "optionValue": "Giá Trị Tùy Chọn (Điểm)",
+      "optionOrder": "Thứ Tự Tùy Chọn",
+      "removeOption": "Xóa",
+      "cancel": "Hủy",
+      "create": "Tạo",
+      "update": "Cập Nhật"
+    },
+    "actions": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "manageQuestions": "Quản Lý Câu Hỏi"
     }
   }
 }

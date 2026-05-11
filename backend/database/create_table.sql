@@ -70,7 +70,7 @@ CREATE TABLE mental_health_tests (
     test_name varchar(255) NOT NULL,
     short_name varchar(50),
     description text,
-    duration varchar(50), -- e.g., "3-5 minutes"
+    duration integer, -- Duration in minutes
     total_questions integer,
     min_score integer,
     max_score integer,
@@ -95,7 +95,7 @@ CREATE TABLE test_results (
     max_score integer,
     level varchar(50), -- e.g., 'Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'
     description text, -- Result interpretation/feedback
-    answers jsonb, -- JSON object: {"questionId": score, ...}
+    answers text, -- JSON string: {"questionId": score, ...}
     created_at timestamp DEFAULT now(),
     CONSTRAINT valid_test_score CHECK (score >= 0 AND max_score > 0)
 );
@@ -104,6 +104,33 @@ CREATE TABLE test_results (
 CREATE INDEX idx_test_results_patient_id ON test_results(patient_id);
 CREATE INDEX idx_test_results_test_id ON test_results(test_id);
 CREATE INDEX idx_test_results_created_at ON test_results(created_at);
+
+-- Test Questions Table
+CREATE TABLE test_questions (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    test_id uuid NOT NULL REFERENCES mental_health_tests(id) ON DELETE CASCADE,
+    question_text text NOT NULL,
+    question_type varchar(50) CHECK (question_type IN ('MULTIPLE_CHOICE', 'RATING_SCALE', 'TEXT')) DEFAULT 'MULTIPLE_CHOICE',
+    question_order integer NOT NULL,
+    score_weight integer DEFAULT 1,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
+);
+
+-- Question Options/Answers Table
+CREATE TABLE question_options (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    question_id uuid NOT NULL REFERENCES test_questions(id) ON DELETE CASCADE,
+    option_text text NOT NULL,
+    option_value integer NOT NULL,
+    option_order integer NOT NULL,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_test_questions_test_id ON test_questions(test_id);
+CREATE INDEX idx_question_options_question_id ON question_options(question_id);
 
 -- Keep backward compatibility with old psychological_tests structure
 CREATE TABLE psychological_tests (

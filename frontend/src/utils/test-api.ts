@@ -6,7 +6,7 @@ export interface IMentalHealthTest {
   name: string;
   shortName: string;
   description: string;
-  duration: string;
+  duration: number;
   totalQuestions: number;
   minScore: number;
   maxScore: number;
@@ -21,12 +21,45 @@ export interface IMentalHealthTestRequest {
   name: string;
   shortName: string;
   description: string;
-  duration: string;
+  duration: number;
   totalQuestions: number;
   minScore: number;
   maxScore: number;
   scoringGuide: string;
   status?: string;
+}
+
+// Question and Option Types
+export interface IQuestionOption {
+  id: string;
+  questionId: string;
+  optionText: string;
+  optionValue: number;
+  optionOrder: number;
+}
+
+export interface IQuestionOptionRequest {
+  optionText: string;
+  optionValue: number;
+  optionOrder: number;
+}
+
+export interface ITestQuestion {
+  id: string;
+  testId: string;
+  questionText: string;
+  questionType: 'MULTIPLE_CHOICE' | 'RATING_SCALE' | 'TEXT';
+  questionOrder: number;
+  scoreWeight: number;
+  options: IQuestionOption[];
+}
+
+export interface ITestQuestionRequest {
+  questionText: string;
+  questionType: 'MULTIPLE_CHOICE' | 'RATING_SCALE' | 'TEXT';
+  questionOrder: number;
+  scoreWeight?: number;
+  options: IQuestionOptionRequest[];
 }
 
 export interface ITestResult {
@@ -97,6 +130,57 @@ export const deleteTest = async (testId: string): Promise<void> => {
  */
 export const deactivateTest = async (testId: string): Promise<void> => {
   await axiosInstance.put(`/api/v1/tests/${testId}/deactivate`);
+};
+
+// ==================== QUESTION MANAGEMENT API ====================
+
+/**
+ * Create a new question for a test (admin only)
+ */
+export const createTestQuestion = async (
+  testId: string,
+  data: ITestQuestionRequest
+): Promise<ITestQuestion> => {
+  const response = await axiosInstance.post(`/api/v1/tests/${testId}/questions`, data);
+  return response.data;
+};
+
+/**
+ * Get all questions for a test
+ */
+export const getTestQuestions = async (testId: string): Promise<ITestQuestion[]> => {
+  const response = await axiosInstance.get(`/api/v1/tests/${testId}/questions`);
+  return response.data || [];
+};
+
+/**
+ * Get a specific question
+ */
+export const getTestQuestion = async (
+  testId: string,
+  questionId: string
+): Promise<ITestQuestion> => {
+  const response = await axiosInstance.get(`/api/v1/tests/${testId}/questions/${questionId}`);
+  return response.data;
+};
+
+/**
+ * Update a question (admin only)
+ */
+export const updateTestQuestion = async (
+  testId: string,
+  questionId: string,
+  data: ITestQuestionRequest
+): Promise<ITestQuestion> => {
+  const response = await axiosInstance.put(`/api/v1/tests/${testId}/questions/${questionId}`, data);
+  return response.data;
+};
+
+/**
+ * Delete a question (admin only)
+ */
+export const deleteTestQuestion = async (testId: string, questionId: string): Promise<void> => {
+  await axiosInstance.delete(`/api/v1/tests/${testId}/questions/${questionId}`);
 };
 
 // Test Results API - User endpoints

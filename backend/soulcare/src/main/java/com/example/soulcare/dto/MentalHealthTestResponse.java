@@ -16,7 +16,7 @@ public class MentalHealthTestResponse {
     private String name;
     private String shortName;
     private String description;
-    private String duration;
+    private Integer duration; // Duration in minutes
     private Integer totalQuestions;
     private Integer minScore;
     private Integer maxScore;

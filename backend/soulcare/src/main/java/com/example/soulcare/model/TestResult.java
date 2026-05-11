@@ -42,7 +42,7 @@ public class TestResult {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "answers", columnDefinition = "json")
+    @Column(name = "answers", columnDefinition = "text")
     private String answers; // JSON string of answer data
 
     @CreationTimestamp

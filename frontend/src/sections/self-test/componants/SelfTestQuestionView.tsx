@@ -6,6 +6,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -15,8 +16,8 @@ import { MentalHealthTest } from 'src/_mock/_self-test';
 type SelfTestQuestionViewProps = {
   selectedTest: MentalHealthTest;
   currentQuestionIndex: number;
-  answers: Record<string, number>;
-  onAnswerChange: (questionId: string, value: number) => void;
+  answers: Record<string, string | number>;
+  onAnswerChange: (questionId: string, value: string | number) => void;
   onNext: VoidFunction;
   onPrevious: VoidFunction;
   onSubmit: VoidFunction;
@@ -85,8 +86,18 @@ export default function SelfTestQuestionView({
             {question.question}
           </Typography>
 
+          {question.options.length === 0 && (
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              value={answers[question.id] ?? ''}
+              onChange={(e) => onAnswerChange(question.id, e.target.value)}
+            />
+          )}
+
           <RadioGroup
-            value={answers[question.id] ?? ''}
+            value={String(answers[question.id] ?? '')}
             onChange={(e) => onAnswerChange(question.id, parseInt(e.target.value, 10))}
           >
             <Stack spacing={1.5}>
@@ -98,11 +109,11 @@ export default function SelfTestQuestionView({
                     cursor: 'pointer',
                     border: '2px solid',
                     borderColor:
-                      answers[question.id] === option.value
+                      Number(answers[question.id]) === option.value
                         ? (theme) => theme.palette.primary.main
                         : 'transparent',
                     bgcolor:
-                      answers[question.id] === option.value
+                      Number(answers[question.id]) === option.value
                         ? (theme) => alpha(theme.palette.primary.main, 0.08)
                         : 'transparent',
                     transition: 'all 0.2s',

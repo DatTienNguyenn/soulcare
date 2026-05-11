@@ -29,7 +29,7 @@ public class MentalHealthTestService {
                 .minScore(request.getMinScore())
                 .maxScore(request.getMaxScore())
                 .scoringGuide(request.getScoringGuide())
-                .status(TestStatus.ACTIVE)
+                .status(TestStatus.valueOf(request.getStatus()))
                 .createdBy(adminEmail)
                 .build();
 
