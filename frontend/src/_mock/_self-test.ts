@@ -37,7 +37,7 @@ export interface TestResult {
   color: string;
   description: string;
   timestamp: Date;
-  answers: Record<string, number>;
+  answers: Record<string, string | number>;
 }
 
 // DASS-21 Test

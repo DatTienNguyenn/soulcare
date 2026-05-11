@@ -6,6 +6,7 @@ import com.example.soulcare.model.TestResult;
 import com.example.soulcare.repository.TestResultRepository;
 import com.example.soulcare.repository.MentalHealthTestRepository;
 import com.example.soulcare.model.MentalHealthTest;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,10 +49,59 @@ public class TestResultService {
             result.setScore(score);
             result.setMaxScore(test.getMaxScore());
 
+            // Determine level and description based on scoring guide
+            if (test.getScoringGuide() != null && !test.getScoringGuide().isEmpty()) {
+                ScoringLevelResult levelResult = determineLevelFromScoringGuide(score, test.getScoringGuide());
+                result.setLevel(levelResult.level);
+                result.setDescription(levelResult.description);
+            }
+
             TestResult savedResult = resultRepository.save(result);
             return mapToResponse(savedResult);
         } catch (Exception e) {
             throw new RuntimeException("Failed to save test result: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Determine the level (normal/mild/moderate/severe/very severe) based on score and scoring guide
+     */
+    private ScoringLevelResult determineLevelFromScoringGuide(Integer score, String scoringGuideJson) {
+        try {
+            JsonNode scoreGuide = objectMapper.readTree(scoringGuideJson);
+            
+            // Iterate through all levels in the scoring guide
+            for (java.util.Iterator<String> it = scoreGuide.fieldNames(); it.hasNext(); ) {
+                String levelName = it.next();
+                JsonNode levelNode = scoreGuide.get(levelName);
+                
+                int minScore = levelNode.get("min").asInt();
+                int maxScore = levelNode.get("max").asInt();
+                String description = levelNode.has("description") ? levelNode.get("description").asText() : "";
+                
+                // Check if score falls within this level's range
+                if (score >= minScore && score <= maxScore) {
+                    return new ScoringLevelResult(levelName, description);
+                }
+            }
+            
+            // If no level matches, return the highest level as default
+            return new ScoringLevelResult("Very Severe", "");
+        } catch (Exception e) {
+            return new ScoringLevelResult("Unknown", "");
+        }
+    }
+
+    /**
+     * Helper class to hold level and description
+     */
+    private static class ScoringLevelResult {
+        String level;
+        String description;
+        
+        ScoringLevelResult(String level, String description) {
+            this.level = level;
+            this.description = description;
         }
     }
 

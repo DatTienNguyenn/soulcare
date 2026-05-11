@@ -2,6 +2,7 @@ import { Box, Button, Card, Chip, Paper, Stack, Typography } from '@mui/material
 import { alpha } from '@mui/material/styles';
 import Iconify from 'src/components/iconify';
 import { MentalHealthTest, TestResult } from 'src/_mock/_self-test';
+import { getColorByLevel } from '../utils/test-transformer';
 
 type SelfTestResultViewProps = {
   selectedTest: MentalHealthTest;
@@ -18,6 +19,8 @@ export default function SelfTestResultView({
   onBack,
   t,
 }: SelfTestResultViewProps) {
+  const resultColor = testResult.color || getColorByLevel(testResult.level) || '#1976d2';
+
   return (
     <Stack spacing={3}>
       <Box sx={{ textAlign: 'center' }}>
@@ -25,7 +28,7 @@ export default function SelfTestResultView({
           {t('selfTest.testResults')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {selectedTest.name}
+          {testResult.testName || selectedTest.name}
         </Typography>
       </Box>
 
@@ -38,7 +41,7 @@ export default function SelfTestResultView({
             <Box
               sx={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 0.5 }}
             >
-              <Typography variant="h2" sx={{ color: testResult.color, fontWeight: 'bold' }}>
+              <Typography variant="h2" sx={{ color: resultColor, fontWeight: 'bold' }}>
                 {testResult.score}
               </Typography>
               <Typography variant="h5" sx={{ color: 'text.secondary', pt: 1 }}>
@@ -52,7 +55,7 @@ export default function SelfTestResultView({
               label={testResult.level}
               size="medium"
               sx={{
-                bgcolor: testResult.color,
+                bgcolor: resultColor,
                 color: '#fff',
                 fontSize: '1rem',
                 padding: '24px 16px',
@@ -60,44 +63,17 @@ export default function SelfTestResultView({
             />
           </Box>
 
-          <Paper
-            sx={{
-              p: 2,
-              bgcolor: (theme) => alpha(testResult.color, 0.08),
-              border: (theme) => `1px solid ${alpha(testResult.color, 0.24)}`,
-            }}
-          >
-            <Typography variant="body2">{testResult.description}</Typography>
-          </Paper>
-
-          <Box>
-            <Typography variant="subtitle2" sx={{ mb: 2 }}>
-              {t('selfTest.scoringGuide')}
-            </Typography>
-            <Stack spacing={1}>
-              {selectedTest.scoringGuide.categories.map((cat) => (
-                <Box
-                  key={`${cat.range[0]}-${cat.range[1]}`}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    p: 1.5,
-                    bgcolor: (theme) => alpha(cat.color, 0.08),
-                    borderRadius: 1,
-                    border:
-                      testResult.level === cat.level
-                        ? `2px solid ${cat.color}`
-                        : '1px solid transparent',
-                  }}
-                >
-                  <Typography variant="body2">
-                    {cat.level} ({cat.range[0]}-{cat.range[1]})
-                  </Typography>
-                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: cat.color }} />
-                </Box>
-              ))}
-            </Stack>
-          </Box>
+          {testResult.description && (
+            <Paper
+              sx={{
+                p: 2,
+                bgcolor: (theme) => alpha(resultColor, 0.08),
+                border: (theme) => `1px solid ${alpha(resultColor, 0.24)}`,
+              }}
+            >
+              <Typography variant="body2">{testResult.description}</Typography>
+            </Paper>
+          )}
         </Stack>
       </Card>
 

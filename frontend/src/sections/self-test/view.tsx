@@ -22,7 +22,7 @@ export default function SelfTestView() {
   const [tests, setTests] = useState<MentalHealthTest[]>([]);
   const [selectedTest, setSelectedTest] = useState<MentalHealthTest | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, string | number>>({});
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [testHistory, setTestHistory] = useState<TestResult[]>([]);
   const [showResult, setShowResult] = useState(false);
@@ -34,11 +34,7 @@ export default function SelfTestView() {
       try {
         setLoadingTests(true);
         setError(null);
-
-        // STEP 1: Fetch active tests from API (required)
-        console.log('Fetching active tests...');
         const activeTestsFromAPI = await fetchActiveTests();
-        console.log('Active tests received:', activeTestsFromAPI);
 
         // Transform API response to frontend format
         const transformedTests = activeTestsFromAPI.map((test) => {
@@ -49,7 +45,6 @@ export default function SelfTestView() {
             throw transformError;
           }
         });
-        console.log('Transformed tests:', transformedTests);
         setTests(transformedTests);
       } catch (err) {
         console.error('Failed to load tests:', err);
@@ -67,9 +62,7 @@ export default function SelfTestView() {
   const handleStartTest = async (test: MentalHealthTest) => {
     try {
       // Fetch questions for this test from API
-      console.log(`Fetching questions for test ${test.id}...`);
       const questionsFromAPI = await fetchTestQuestions(test.id);
-      console.log('Questions received:', questionsFromAPI);
 
       // Create a new test object with the fetched questions
       const testWithQuestions: typeof test = {
@@ -95,7 +88,7 @@ export default function SelfTestView() {
     }
   };
 
-  const handleAnswerChange = (questionId: string, value: number) => {
+  const handleAnswerChange = (questionId: string, value: string | number) => {
     setAnswers({
       ...answers,
       [questionId]: value,
@@ -118,18 +111,18 @@ export default function SelfTestView() {
     if (!selectedTest) return;
 
     try {
-      // Submit test result to API
+      // Submit test result to API - answers can contain mixed types (strings and numbers)
       const apiResult = await submitTestResult(selectedTest.id, answers);
 
       // Convert API response to TestResult format using backend data
       const result: TestResult = {
         testId: selectedTest.id,
-        testName: selectedTest.name,
+        testName: apiResult.testName || selectedTest.name,
         score: apiResult.score,
-        maxScore: 100,
+        maxScore: apiResult.maxScore,
         level: apiResult.level,
         color: getColorByLevel(apiResult.level),
-        description: getDescriptionByLevel(apiResult.level),
+        description: apiResult.description || getDescriptionByLevel(apiResult.level),
         timestamp: new Date(),
         answers,
       };

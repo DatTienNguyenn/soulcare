@@ -85,7 +85,10 @@ export function useMentalHealthAPI() {
 
   // Submit test result
   const submitTestResult = useCallback(
-    async (testId: string, answers: Record<string, number>): Promise<TestResultResponse> => {
+    async (
+      testId: string,
+      answers: Record<string, string | number>
+    ): Promise<TestResultResponse> => {
       try {
         setLoading(true);
         setError(null);

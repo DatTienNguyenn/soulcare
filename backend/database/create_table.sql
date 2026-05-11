@@ -74,7 +74,7 @@ CREATE TABLE mental_health_tests (
     total_questions integer,
     min_score integer,
     max_score integer,
-    -- scoring_guide jsonb, -- JSON object with scoring categories and ranges
+    scoring_guide jsonb, -- JSON object with scoring categories and ranges
     status varchar(20) CHECK (status IN ('ACTIVE', 'INACTIVE', 'ARCHIVED')) DEFAULT 'ACTIVE',
     created_at timestamp DEFAULT now(),
     updated_at timestamp DEFAULT now(),

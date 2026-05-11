@@ -55,9 +55,12 @@ export interface TestResultResponse {
   id: string;
   testId: string;
   patientId: string;
+  testName: string;
   score: number;
+  maxScore: number;
   level: string;
-  answers: Record<string, number>;
+  description?: string;
+  answers: Record<string, string | number>;
   createdAt: string;
   updatedAt: string;
 }
