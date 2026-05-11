@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from 'src/utils/axios';
 
 export interface QuestionOption {
   id?: string;
@@ -48,7 +48,7 @@ export interface MentalHealthTest {
 
 export interface TestResultRequest {
   testId: string;
-  answers: Record<string, number>;
+  answers: Record<string, number | string>;
 }
 
 export interface TestResultResponse {
@@ -62,25 +62,8 @@ export interface TestResultResponse {
   updatedAt: string;
 }
 
-const API_BASE_URL = '/api/v1';
-
-// Create axios instance with default config
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    Pragma: 'no-cache',
-    Expires: '0',
-  },
-});
-
-// Add request interceptor to add cache-busting timestamp
-// apiClient.interceptors.request.use((config) => {
-//   // Add timestamp to query params to bust cache
-//   const separator = config.url?.includes('?') ? '&' : '?';
-//   config.url = `${config.url}${separator}t=${Date.now()}`;
-//   return config;
-// });
+// Use the shared axios instance which has Authorization header set automatically
+const apiClient = axiosInstance;
 
 // Transform API response to include UI properties
 const transformTest = (test: MentalHealthTest): MentalHealthTest => {
@@ -95,7 +78,7 @@ const transformTest = (test: MentalHealthTest): MentalHealthTest => {
 // Fetch all active tests
 export const getActiveTests = async (): Promise<MentalHealthTest[]> => {
   try {
-    const response = await apiClient.get<MentalHealthTest[]>('/tests/active');
+    const response = await apiClient.get<MentalHealthTest[]>('/api/v1/tests/active');
     return response.data.map(transformTest);
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch active tests');
@@ -105,7 +88,7 @@ export const getActiveTests = async (): Promise<MentalHealthTest[]> => {
 // Fetch all tests
 export const getAllTests = async (): Promise<MentalHealthTest[]> => {
   try {
-    const response = await apiClient.get<MentalHealthTest[]>('/tests');
+    const response = await apiClient.get<MentalHealthTest[]>('/api/v1/tests');
     return response.data.map(transformTest);
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch tests');
@@ -115,7 +98,7 @@ export const getAllTests = async (): Promise<MentalHealthTest[]> => {
 // Fetch a specific test by ID
 export const getTestById = async (testId: string): Promise<MentalHealthTest> => {
   try {
-    const response = await apiClient.get<MentalHealthTest>(`/tests/${testId}`);
+    const response = await apiClient.get<MentalHealthTest>(`/api/v1/tests/${testId}`);
     return transformTest(response.data);
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch test');
@@ -125,7 +108,7 @@ export const getTestById = async (testId: string): Promise<MentalHealthTest> => 
 // Fetch questions for a specific test
 export const getTestQuestions = async (testId: string): Promise<TestQuestion[]> => {
   try {
-    const response = await apiClient.get<TestQuestion[]>(`/tests/${testId}/questions`);
+    const response = await apiClient.get<TestQuestion[]>(`/api/v1/tests/${testId}/questions`);
     return response.data;
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch test questions');
@@ -135,10 +118,10 @@ export const getTestQuestions = async (testId: string): Promise<TestQuestion[]> 
 // Submit test result
 export const submitTestResult = async (
   testId: string,
-  answers: Record<string, number>
+  answers: Record<string, number | string>
 ): Promise<TestResultResponse> => {
   try {
-    const response = await apiClient.post<TestResultResponse>('/test-results', {
+    const response = await apiClient.post<TestResultResponse>('/api/v1/test-results', {
       testId,
       answers,
     });
@@ -151,7 +134,7 @@ export const submitTestResult = async (
 // Fetch user's test results
 export const getUserTestResults = async (): Promise<TestResultResponse[]> => {
   try {
-    const response = await apiClient.get<TestResultResponse[]>('/test-results');
+    const response = await apiClient.get<TestResultResponse[]>('/api/v1/test-results');
     return response.data;
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch test results');
@@ -161,7 +144,9 @@ export const getUserTestResults = async (): Promise<TestResultResponse[]> => {
 // Fetch user's test results for a specific test
 export const getUserTestResultsByTest = async (testId: string): Promise<TestResultResponse[]> => {
   try {
-    const response = await apiClient.get<TestResultResponse[]>(`/test-results/test/${testId}`);
+    const response = await apiClient.get<TestResultResponse[]>(
+      `/api/v1/test-results/test/${testId}`
+    );
     return response.data;
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch test results');
@@ -171,7 +156,7 @@ export const getUserTestResultsByTest = async (testId: string): Promise<TestResu
 // Get a specific test result
 export const getTestResult = async (resultId: string): Promise<TestResultResponse> => {
   try {
-    const response = await apiClient.get<TestResultResponse>(`/test-results/${resultId}`);
+    const response = await apiClient.get<TestResultResponse>(`/api/v1/test-results/${resultId}`);
     return response.data;
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to fetch test result');
@@ -181,7 +166,7 @@ export const getTestResult = async (resultId: string): Promise<TestResultRespons
 // Delete test result
 export const deleteTestResult = async (resultId: string): Promise<void> => {
   try {
-    await apiClient.delete(`/test-results/${resultId}`);
+    await apiClient.delete(`/api/v1/test-results/${resultId}`);
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to delete test result');
   }

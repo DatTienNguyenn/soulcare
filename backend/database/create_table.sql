@@ -95,7 +95,7 @@ CREATE TABLE test_results (
     max_score integer,
     level varchar(50), -- e.g., 'Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'
     description text, -- Result interpretation/feedback
-    answers jsonb, -- JSON object: {"questionId": score, ...}
+    answers text, -- JSON string: {"questionId": score, ...}
     created_at timestamp DEFAULT now(),
     CONSTRAINT valid_test_score CHECK (score >= 0 AND max_score > 0)
 );

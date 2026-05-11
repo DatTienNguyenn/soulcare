@@ -39,9 +39,10 @@ public class TestResultService {
                     .answers(answersJson)
                     .build();
 
-            // Calculate score (this is a simple sum, you may need to customize based on test logic)
+            // Calculate score (sum only numeric values, ignore string answers)
             Integer score = request.getAnswers().values().stream()
-                    .mapToInt(Integer::intValue)
+                    .filter(v -> v instanceof Number)
+                    .mapToInt(v -> ((Number) v).intValue())
                     .sum();
             
             result.setScore(score);
