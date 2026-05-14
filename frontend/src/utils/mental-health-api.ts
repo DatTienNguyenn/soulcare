@@ -65,6 +65,31 @@ export interface TestResultResponse {
   updatedAt: string;
 }
 
+export interface TestScoreTrendResponse {
+  id: string;
+  testId: string;
+  testName: string;
+  score: number;
+  maxScore: number;
+  level: string;
+  date: string;
+}
+
+export interface ActivityFrequencyResponse {
+  date: string;
+  count: number;
+}
+
+export interface TestResultHistoryResponse {
+  results: TestScoreTrendResponse[];
+  totalResults: number;
+}
+
+export interface DiaryFrequencyResponse {
+  frequencies: ActivityFrequencyResponse[];
+  totalDiaries: number;
+}
+
 // Use the shared axios instance which has Authorization header set automatically
 const apiClient = axiosInstance;
 
@@ -172,5 +197,38 @@ export const deleteTestResult = async (resultId: string): Promise<void> => {
     await apiClient.delete(`/api/v1/test-results/${resultId}`);
   } catch (error) {
     throw error instanceof Error ? error : new Error('Failed to delete test result');
+  }
+};
+
+// ==================== ANALYTICS ENDPOINTS ====================
+
+// Get all test result history for analytics
+export const getTestResultHistory = async (): Promise<TestResultHistoryResponse> => {
+  try {
+    const response = await apiClient.get<TestResultHistoryResponse>(
+      '/api/v1/test-results/analytics/history'
+    );
+    // Transform dates from ISO strings to Date objects for the frontend
+    return {
+      ...response.data,
+      results: response.data.results.map((result) => ({
+        ...result,
+        date: result.date,
+      })),
+    };
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('Failed to fetch test result history');
+  }
+};
+
+// Get diary frequency data for analytics
+export const getDiaryFrequency = async (): Promise<DiaryFrequencyResponse> => {
+  try {
+    const response = await apiClient.get<DiaryFrequencyResponse>(
+      '/api/v1/diaries/analytics/frequency'
+    );
+    return response.data;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('Failed to fetch diary frequency');
   }
 };

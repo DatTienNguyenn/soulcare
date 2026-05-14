@@ -2,6 +2,7 @@ package com.example.soulcare.controller;
 
 import com.example.soulcare.dto.DiaryRequest;
 import com.example.soulcare.dto.DiaryResponse;
+import com.example.soulcare.dto.DiaryFrequencyResponse;
 import com.example.soulcare.model.User;
 import com.example.soulcare.repository.PatientRepository;
 import com.example.soulcare.repository.UserRepository;
@@ -77,6 +78,13 @@ public class DiaryController {
         UUID patientId = getPatientIdFromAuth(authentication);
         List<DiaryResponse> responses = diaryService.getDiariesByDateRange(patientId, startDate, endDate);
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/analytics/frequency")
+    public ResponseEntity<DiaryFrequencyResponse> getDiaryFrequency(Authentication authentication) {
+        UUID patientId = getPatientIdFromAuth(authentication);
+        DiaryFrequencyResponse response = diaryService.getDiaryFrequency(patientId);
+        return ResponseEntity.ok(response);
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {

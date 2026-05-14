@@ -15,9 +15,10 @@ type AnalyticsScoreChartCardProps = {
   testScores: any[];
   t: any;
   onTestChange: (testId: string) => void;
+  availableTests?: { testId: string; testName: string }[];
 };
 
-const getColorForLevel = (level: string) =>
+const getColorForLevel = (level: string | null) =>
   level === 'Very Severe'
     ? '#C0392B'
     : level === 'Severe'
@@ -33,6 +34,7 @@ export default function AnalyticsScoreChartCard({
   testScores,
   t,
   onTestChange,
+  availableTests = [],
 }: AnalyticsScoreChartCardProps) {
   if (testScores.length === 0) {
     return (
@@ -143,9 +145,19 @@ export default function AnalyticsScoreChartCard({
               label={t('analytics.test')}
               onChange={(e) => onTestChange(e.target.value as string)}
             >
-              <MenuItem value="dass-21">{t('analytics.tests.dass21')}</MenuItem>
-              <MenuItem value="phq-9">{t('analytics.tests.phq9')}</MenuItem>
-              <MenuItem value="gad-7">{t('analytics.tests.gad7')}</MenuItem>
+              {availableTests.length > 0 ? (
+                availableTests.map((test) => (
+                  <MenuItem key={test.testId} value={test.testId}>
+                    {test.testName}
+                  </MenuItem>
+                ))
+              ) : (
+                <>
+                  <MenuItem value="dass-21">{t('analytics.tests.dass21')}</MenuItem>
+                  <MenuItem value="phq-9">{t('analytics.tests.phq9')}</MenuItem>
+                  <MenuItem value="gad-7">{t('analytics.tests.gad7')}</MenuItem>
+                </>
+              )}
             </Select>
           </FormControl>
         </Box>

@@ -2,6 +2,8 @@ package com.example.soulcare.service;
 
 import com.example.soulcare.dto.TestResultRequest;
 import com.example.soulcare.dto.TestResultResponse;
+import com.example.soulcare.dto.TestScoreTrendResponse;
+import com.example.soulcare.dto.TestResultHistoryResponse;
 import com.example.soulcare.model.TestResult;
 import com.example.soulcare.repository.TestResultRepository;
 import com.example.soulcare.repository.MentalHealthTestRepository;
@@ -142,6 +144,36 @@ public class TestResultService {
         }
         
         resultRepository.delete(result);
+    }
+
+    /**
+     * Get all test result history for a patient with test metadata
+     */
+    @Transactional(readOnly = true)
+    public TestResultHistoryResponse getTestResultHistory(UUID patientId) {
+        List<TestResult> results = resultRepository.findByPatientId(patientId);
+        
+        List<TestScoreTrendResponse> trends = results.stream()
+                .sorted((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()))
+                .map(this::mapToScoreTrendResponse)
+                .collect(Collectors.toList());
+        
+        return TestResultHistoryResponse.builder()
+                .results(trends)
+                .totalResults(trends.size())
+                .build();
+    }
+
+    private TestScoreTrendResponse mapToScoreTrendResponse(TestResult result) {
+        return TestScoreTrendResponse.builder()
+                .id(result.getId())
+                .testId(result.getTestId())
+                .testName(result.getTestName())
+                .score(result.getScore())
+                .maxScore(result.getMaxScore())
+                .level(result.getLevel())
+                .date(result.getCreatedAt())
+                .build();
     }
 
     private TestResultResponse mapToResponse(TestResult result) {

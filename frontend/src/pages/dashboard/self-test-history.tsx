@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useLocales } from 'src/locale/use-locales';
 
-import SelfTestView from 'src/sections/self-test/view';
+import SelfTestHistoryView from 'src/sections/self-test/history/view';
 
 // ----------------------------------------------------------------------
 
@@ -10,10 +10,10 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title>{t('pages.selfTest.title')}</title>
+        <title>{t('pages.selfTestHistory.title')}</title>
       </Helmet>
 
-      <SelfTestView />
+      <SelfTestHistoryView />
     </>
   );
 }

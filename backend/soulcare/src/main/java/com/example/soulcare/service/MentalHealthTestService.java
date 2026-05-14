@@ -49,6 +49,7 @@ public class MentalHealthTestService {
         test.setMinScore(request.getMinScore());
         test.setMaxScore(request.getMaxScore());
         test.setScoringGuide(request.getScoringGuide());
+        test.setStatus(TestStatus.valueOf(request.getStatus()));
 
         MentalHealthTest updatedTest = testRepository.save(test);
         return mapToResponse(updatedTest);
