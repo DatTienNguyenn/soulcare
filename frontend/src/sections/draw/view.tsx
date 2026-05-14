@@ -7,11 +7,43 @@ import DrawHeader from './componants/DrawHeader';
 import DrawCanvasPanel from './componants/DrawCanvasPanel';
 import DrawToolPanel from './componants/DrawToolPanel';
 import DrawBrushPanel from './componants/DrawBrushPanel';
+import SaveDrawingDialog from './componants/SaveDrawingDialog';
+import LoadDrawingDialog from './componants/LoadDrawingDialog';
 
-// ----------------------------------------------------------------------
+import {
+  serializeCanvasToJSON,
+  restoreCanvasFromJSON,
+  restoreCanvasFromImage,
+  DrawingCommand,
+} from 'src/utils/drawing-serializer';
+import { getCanvasCoordinates } from 'src/utils/canvas-coordinates';
+import {
+  initializeDrawingMetadata,
+  recordToolUsage,
+  recordBrushColor,
+  recordBrushSize,
+  incrementStrokeCount,
+  incrementFillCount,
+  incrementUndoCount,
+  incrementRedoCount,
+  finalizeDrawingMetadata,
+  serializeMetadata,
+  DrawingMetadata,
+} from 'src/utils/drawing-metadata';
+import { usePictureSave } from 'src/hooks/use-picture-save';
+import { PictureListItem } from 'src/utils/picture-api';
+
+// Simple notification helper
+const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+  console.log(`[${type.toUpperCase()}] ${message}`);
+  // Show browser alert for important messages
+  if (type === 'error') {
+    alert(`Error: ${message}`);
+  }
+};
 
 interface DrawingState {
-  imageData: ImageData | null;
+  imageData: ImageData;
   timestamp: number;
 }
 
@@ -19,6 +51,9 @@ export default function DrawView() {
   const settings = useSettingsContext();
   const { t } = useLocales();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawingCommandsRef = useRef<DrawingCommand[]>([]);
+  const drawingMetadataRef = useRef<DrawingMetadata | null>(null);
+
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(3);
@@ -30,6 +65,21 @@ export default function DrawView() {
   >('draw');
   const [shapeStart, setShapeStart] = useState<{ x: number; y: number } | null>(null);
   const [lastPos, setLastPos] = useState<{ x: number; y: number } | null>(null);
+
+  // Dialog states
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [loadDialogOpen, setLoadDialogOpen] = useState(false);
+  const [pictures, setPictures] = useState<PictureListItem[]>([]);
+
+  // API hook
+  const {
+    loading: pictureLoading,
+    error: pictureError,
+    savePicture,
+    updatePicture,
+    loadPicture,
+    loadPictures,
+  } = usePictureSave();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -48,6 +98,10 @@ export default function DrawView() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       saveToHistory();
     }
+
+    // Initialize drawing metadata
+    drawingMetadataRef.current = initializeDrawingMetadata(canvas.width, canvas.height);
+    drawingCommandsRef.current = [];
   }, []);
 
   const getContext = () => canvasRef.current?.getContext('2d');
@@ -72,12 +126,20 @@ export default function DrawView() {
     const ctx = getContext();
     if (!canvas || !ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const { x, y } =
+      'touches' in e
+        ? getCanvasCoordinates(canvas, e.touches[0].clientX, e.touches[0].clientY)
+        : getCanvasCoordinates(canvas, e.clientX, e.clientY);
 
     floodFill(ctx, x, y, brushColor);
     saveToHistory();
+
+    // Track fill operation
+    if (drawingMetadataRef.current) {
+      incrementFillCount(drawingMetadataRef.current);
+      recordToolUsage(drawingMetadataRef.current, 'paint');
+      recordBrushColor(drawingMetadataRef.current, brushColor);
+    }
   };
 
   const undo = () => {
@@ -87,6 +149,9 @@ export default function DrawView() {
       if (ctx && history[newStep]?.imageData) {
         ctx.putImageData(history[newStep].imageData as ImageData, 0, 0);
         setHistoryStep(newStep);
+        if (drawingMetadataRef.current) {
+          incrementUndoCount(drawingMetadataRef.current);
+        }
       }
     }
   };
@@ -98,6 +163,9 @@ export default function DrawView() {
       if (ctx && history[newStep]?.imageData) {
         ctx.putImageData(history[newStep].imageData as ImageData, 0, 0);
         setHistoryStep(newStep);
+        if (drawingMetadataRef.current) {
+          incrementRedoCount(drawingMetadataRef.current);
+        }
       }
     }
   };
@@ -106,12 +174,20 @@ export default function DrawView() {
     e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
   ) => {
     const canvas = canvasRef.current;
+    // Track tool and brush usage
+    if (drawingMetadataRef.current) {
+      recordToolUsage(drawingMetadataRef.current, currentTool);
+      recordBrushColor(drawingMetadataRef.current, brushColor);
+      recordBrushSize(drawingMetadataRef.current, brushSize);
+    }
+
     const ctx = getContext();
     if (!canvas || !ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const { x, y } =
+      'touches' in e
+        ? getCanvasCoordinates(canvas, e.touches[0].clientX, e.touches[0].clientY)
+        : getCanvasCoordinates(canvas, e.clientX, e.clientY);
 
     if (currentTool === 'draw') {
       setIsDrawing(true);
@@ -133,9 +209,10 @@ export default function DrawView() {
     const ctx = getContext();
     if (!canvas || !ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const { x, y } =
+      'touches' in e
+        ? getCanvasCoordinates(canvas, e.touches[0].clientX, e.touches[0].clientY)
+        : getCanvasCoordinates(canvas, e.clientX, e.clientY);
 
     if ('touches' in e) {
       e.preventDefault();
@@ -168,12 +245,19 @@ export default function DrawView() {
     if (currentTool === 'draw') {
       ctx.globalAlpha = 1;
       ctx.closePath();
+      if (drawingMetadataRef.current) {
+        incrementStrokeCount(drawingMetadataRef.current);
+      }
     } else if (shapeStart && history[historyStep]?.imageData) {
       let x: number, y: number;
-      if (e) {
-        const rect = canvasRef.current!.getBoundingClientRect();
-        x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-        y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+      const canvas = canvasRef.current;
+      if (e && canvas) {
+        const coords =
+          'touches' in e
+            ? getCanvasCoordinates(canvas, e.touches[0].clientX, e.touches[0].clientY)
+            : getCanvasCoordinates(canvas, e.clientX, e.clientY);
+        x = coords.x;
+        y = coords.y;
       } else if (lastPos) {
         x = lastPos.x;
         y = lastPos.y;
@@ -188,6 +272,9 @@ export default function DrawView() {
       ctx.putImageData(history[historyStep].imageData!, 0, 0);
       // Draw final shape
       drawShape(ctx, shapeStart.x, shapeStart.y, x, y, currentTool, true);
+      if (drawingMetadataRef.current) {
+        incrementStrokeCount(drawingMetadataRef.current);
+      }
     }
 
     if (isDrawing) {
@@ -216,6 +303,94 @@ export default function DrawView() {
     link.href = canvas.toDataURL('image/png');
     link.download = `drawing-${new Date().getTime()}.png`;
     link.click();
+  };
+
+  const handleSaveClick = () => {
+    setSaveDialogOpen(true);
+  };
+
+  const handleLoadClick = () => {
+    setLoadDialogOpen(true);
+  };
+
+  const handleSaveDrawing = async (title: string, description: string) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !drawingMetadataRef.current) return;
+
+    try {
+      // Finalize metadata
+      finalizeDrawingMetadata(drawingMetadataRef.current);
+
+      // Serialize drawing data
+      const drawingData = serializeCanvasToJSON(canvas, drawingCommandsRef.current);
+      const metadata = serializeMetadata(drawingMetadataRef.current);
+
+      // Get canvas as Base64 image for restoration
+      const canvasImage = canvas.toDataURL('image/png');
+
+      // Save to backend
+      await savePicture({
+        drawingData: JSON.stringify(drawingData),
+        metadata,
+        description: title,
+        imageUrl: canvasImage, // Store canvas as image for restoration
+        status: 'PUBLISHED',
+      });
+
+      showNotification('Drawing saved successfully!', 'success');
+      setSaveDialogOpen(false);
+
+      // Reset metadata for next drawing
+      drawingMetadataRef.current = initializeDrawingMetadata(canvas.width, canvas.height);
+      drawingCommandsRef.current = [];
+    } catch (error) {
+      showNotification(error instanceof Error ? error.message : 'Failed to save drawing', 'error');
+    }
+  };
+
+  const handleLoadDrawing = async (pictureId: string) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    try {
+      // Fetch drawing data from backend
+      const picture = await loadPicture(pictureId);
+
+      // Try to restore from image first (most reliable)
+      if (picture.imageUrl) {
+        await restoreCanvasFromImage(canvas, picture.imageUrl);
+      } else {
+        // Fall back to command-based restoration
+        const drawingData = JSON.parse(picture.drawingData);
+        restoreCanvasFromJSON(canvas, drawingData);
+      }
+
+      // Reset history
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        setHistory([{ imageData, timestamp: Date.now() }]);
+        setHistoryStep(0);
+      }
+
+      showNotification('Drawing loaded successfully!', 'success');
+      setLoadDialogOpen(false);
+
+      // Reset metadata for continued drawing
+      drawingMetadataRef.current = initializeDrawingMetadata(canvas.width, canvas.height);
+      drawingCommandsRef.current = [];
+    } catch (error) {
+      showNotification(error instanceof Error ? error.message : 'Failed to load drawing', 'error');
+    }
+  };
+
+  const handleLoadPictures = async () => {
+    try {
+      const result = await loadPictures();
+      setPictures(result);
+    } catch (error) {
+      showNotification('Failed to load pictures list', 'error');
+    }
   };
 
   const handleBrushColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -365,6 +540,8 @@ export default function DrawView() {
           onRedo={redo}
           onClear={clearCanvas}
           onDownload={downloadDrawing}
+          onSave={handleSaveClick}
+          onLoad={handleLoadClick}
           disableUndo={historyStep <= 0}
           disableRedo={historyStep >= history.length - 1}
           t={t}
@@ -398,6 +575,26 @@ export default function DrawView() {
           </Grid>
         </Grid>
       </Stack>
+
+      {/* Save Drawing Dialog */}
+      <SaveDrawingDialog
+        open={saveDialogOpen}
+        loading={pictureLoading}
+        onSave={handleSaveDrawing}
+        onClose={() => setSaveDialogOpen(false)}
+        error={pictureError || undefined}
+      />
+
+      {/* Load Drawing Dialog */}
+      <LoadDrawingDialog
+        open={loadDialogOpen}
+        loading={pictureLoading}
+        pictures={pictures}
+        onLoad={handleLoadDrawing}
+        onClose={() => setLoadDialogOpen(false)}
+        onLoadPictures={handleLoadPictures}
+        error={pictureError || undefined}
+      />
     </Container>
   );
 }

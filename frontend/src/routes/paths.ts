@@ -24,6 +24,7 @@ export const paths = {
     canvas: `${ROOTS.DASHBOARD}/canvas`,
     'self-test': `${ROOTS.DASHBOARD}/self-test`,
     'self-test-history': `${ROOTS.DASHBOARD}/self-test/history`,
+    'drawing-history': `${ROOTS.DASHBOARD}/drawing-history`,
     analytics: {
       root: `${ROOTS.DASHBOARD}/analytics`,
     },

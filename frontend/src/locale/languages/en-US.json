@@ -155,7 +155,9 @@
     "colorPlaceholder": "#000000",
     "brushSize": "Brush Size: {{size}}px",
     "shapeSize": "Shape Size: {{size}}px",
-    "opacity": "Opacity: {{value}}%"
+    "opacity": "Opacity: {{value}}%",
+    "save": "Save Drawing",
+    "load": "Restore Drawing"
   },
   "selfTestHistory": {
     "header": "My Test History",

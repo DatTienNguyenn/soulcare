@@ -155,7 +155,9 @@
     "colorPlaceholder": "#000000",
     "brushSize": "Kích thước bàn chải: {{size}}px",
     "shapeSize": "Kích thước hình: {{size}}px",
-    "opacity": "Độ mờ: {{value}}%"
+    "opacity": "Độ mờ: {{value}}%",
+    "save": "Lưu bản vẽ",
+    "load": "Khôi phục bản vẽ"
   },
   "selfTestHistory": {
     "header": "Lịch sử kiểm tra của tôi",

@@ -8,6 +8,8 @@ type DrawHeaderProps = {
   onRedo: VoidFunction;
   onClear: VoidFunction;
   onDownload: VoidFunction;
+  onSave: VoidFunction;
+  onLoad: VoidFunction;
   disableUndo: boolean;
   disableRedo: boolean;
   t: any;
@@ -20,6 +22,8 @@ export default function DrawHeader({
   onRedo,
   onClear,
   onDownload,
+  onSave,
+  onLoad,
   disableUndo,
   disableRedo,
   t,
@@ -61,6 +65,22 @@ export default function DrawHeader({
           size="medium"
         >
           {t('draw.clear')}
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<Iconify icon="solar:upload-bold" />}
+          onClick={onSave}
+          size="medium"
+        >
+          {t('draw.save') || 'Save'}
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<Iconify icon="solar:download-bold" />}
+          onClick={onLoad}
+          size="medium"
+        >
+          {t('draw.load') || 'Load'}
         </Button>
         <Button
           variant="contained"
