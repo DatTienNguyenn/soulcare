@@ -51,12 +51,18 @@ export function useNavData() {
       {
         subheader: 'features',
         items: [
-          { title: 'Diary', path: paths.dashboard.diary, icon: ICONS.dashboard },
-          { title: 'Canvas', path: paths.dashboard.canvas, icon: ICONS.ecommerce },
+          { title: 'Diary', path: paths.dashboard.diary, icon: ICONS.calendar },
+          { title: 'Canvas', path: paths.dashboard.canvas, icon: ICONS.chat },
           {
             title: 'Self-test',
             path: paths.dashboard['self-test'],
             icon: ICONS.user,
+            children: [
+              {
+                title: 'Test History',
+                path: paths.dashboard['self-test-history'],
+              },
+            ],
           },
         ],
       },

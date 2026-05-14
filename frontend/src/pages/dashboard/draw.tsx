@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> My Canvas</title>
+        <title>My Canvas</title>
       </Helmet>
 
       <DrawView />

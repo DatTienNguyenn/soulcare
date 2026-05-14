@@ -23,6 +23,7 @@ export const paths = {
     diary: `${ROOTS.DASHBOARD}/diary`,
     canvas: `${ROOTS.DASHBOARD}/canvas`,
     'self-test': `${ROOTS.DASHBOARD}/self-test`,
+    'self-test-history': `${ROOTS.DASHBOARD}/self-test/history`,
     analytics: {
       root: `${ROOTS.DASHBOARD}/analytics`,
     },

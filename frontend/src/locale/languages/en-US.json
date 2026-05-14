@@ -37,6 +37,9 @@
     },
     "selfTest": {
       "title": "Self Test"
+    },
+    "selfTestHistory": {
+      "title": "Test History"
     }
   },
   "selfTest": {
@@ -153,6 +156,23 @@
     "brushSize": "Brush Size: {{size}}px",
     "shapeSize": "Shape Size: {{size}}px",
     "opacity": "Opacity: {{value}}%"
+  },
+  "selfTestHistory": {
+    "header": "My Test History",
+    "description": "Review your past mental health assessments and track your progress over time",
+    "noResults": "No test results found",
+    "loadingError": "Failed to load test history. Please try again later.",
+    "viewDetails": "View Details",
+    "title": "Test History",
+    "testName": "Test Name",
+    "score": "Score",
+    "date": "Date",
+    "level": "Level",
+    "interpretation": "Description",
+    "detailsTitle": "Test Result Details",
+    "dateTaken": "Date Taken",
+    "actions": "Actions",
+    "loading": "Loading test history..."
   },
   "login": {
     "header": "Hi, Welcome Back!",

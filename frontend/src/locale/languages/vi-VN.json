@@ -37,6 +37,9 @@
     },
     "selfTest": {
       "title": "Tự kiểm tra"
+    },
+    "selfTestHistory": {
+      "title": "Lịch sử kiểm tra"
     }
   },
   "selfTest": {
@@ -133,7 +136,7 @@
     "saveFailed": "Lưu mục nhật ký thất bại"
   },
   "draw": {
-    "header": "Canvas của tôi",
+    "header": "Bảng vẽ của tôi",
     "subtitle": "Vẽ, phác thảo và thể hiện sáng tạo của bạn",
     "undo": "Hoàn tác",
     "undoTooltip": "Hoàn tác (Ctrl+Z)",
@@ -153,6 +156,23 @@
     "brushSize": "Kích thước bàn chải: {{size}}px",
     "shapeSize": "Kích thước hình: {{size}}px",
     "opacity": "Độ mờ: {{value}}%"
+  },
+  "selfTestHistory": {
+    "header": "Lịch sử kiểm tra của tôi",
+    "description": "Xem lại các đánh giá sức khỏe tâm thần trước đây của bạn và theo dõi tiến trình của bạn theo thời gian",
+    "noResults": "Không tìm thấy kết quả kiểm tra nào",
+    "loadingError": "Không thể tải lịch sử kiểm tra. Vui lòng thử lại sau.",
+    "viewDetails": "Xem chi tiết",
+    "title": "Lịch sử kiểm tra",
+    "testName": "Tên bài kiểm tra",
+    "score": "Điểm",
+    "date": "Ngày",
+    "level": "Cấp độ",
+    "interpretation": "Mô tả",
+    "detailsTitle": "Chi tiết kết quả kiểm tra",
+    "dateTaken": "Ngày thực hiện",
+    "actions": "Hành động",
+    "loading": "Đang tải lịch sử kiểm tra..."
   },
   "login": {
     "header": "Chào mừng bạn quay trở lại",
