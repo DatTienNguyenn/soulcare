@@ -232,3 +232,15 @@ export const getDiaryFrequency = async (): Promise<DiaryFrequencyResponse> => {
     throw error instanceof Error ? error : new Error('Failed to fetch diary frequency');
   }
 };
+
+// Get drawing frequency data for analytics
+export const getDrawingFrequency = async (): Promise<DiaryFrequencyResponse> => {
+  try {
+    const response = await apiClient.get<DiaryFrequencyResponse>(
+      '/api/v1/pictures/analytics/frequency'
+    );
+    return response.data;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('Failed to fetch drawing frequency');
+  }
+};

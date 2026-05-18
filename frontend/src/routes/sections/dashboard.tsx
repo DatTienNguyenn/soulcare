@@ -13,6 +13,7 @@ const DiaryPage = lazy(() => import('src/pages/dashboard/diary'));
 const DrawPage = lazy(() => import('src/pages/dashboard/draw'));
 const SelfTestPage = lazy(() => import('src/pages/dashboard/self-test'));
 const SelfTestHistoryPage = lazy(() => import('src/pages/dashboard/self-test-history'));
+const DrawingHistoryPage = lazy(() => import('src/pages/dashboard/drawing-history'));
 const AnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 
 // ----------------------------------------------------------------------
@@ -33,6 +34,7 @@ export const dashboardRoutes = [
       { element: <DiaryPage />, index: true },
       { path: 'diary', element: <DiaryPage /> },
       { path: 'canvas', element: <DrawPage /> },
+      { path: 'drawing-history', element: <DrawingHistoryPage /> },
       {
         path: 'self-test',
         children: [

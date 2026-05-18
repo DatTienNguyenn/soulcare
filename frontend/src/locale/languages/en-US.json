@@ -27,7 +27,7 @@
   },
   "pages": {
     "analytics": {
-      "title": "Dashboard: Analytics"
+      "title": "Analytics"
     },
     "diary": {
       "title": "My Diary"
@@ -40,6 +40,9 @@
     },
     "selfTestHistory": {
       "title": "Test History"
+    },
+    "drawHistory": {
+      "title": "Drawing History"
     }
   },
   "selfTest": {
@@ -155,7 +158,9 @@
     "colorPlaceholder": "#000000",
     "brushSize": "Brush Size: {{size}}px",
     "shapeSize": "Shape Size: {{size}}px",
-    "opacity": "Opacity: {{value}}%"
+    "opacity": "Opacity: {{value}}%",
+    "save": "Save Drawing",
+    "load": "Restore Drawing"
   },
   "selfTestHistory": {
     "header": "My Test History",

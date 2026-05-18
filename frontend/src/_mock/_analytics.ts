@@ -1,4 +1,4 @@
-import { sub, startOfMonth, endOfMonth, eachDayOfInterval, format, getDate } from 'date-fns';
+import { sub, endOfMonth, eachDayOfInterval } from 'date-fns';
 
 export interface TestScoreTrend {
   date: Date;

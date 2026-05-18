@@ -16,6 +16,7 @@ import {
   deleteTestResult as deleteTestResultAPI,
   getTestResultHistory,
   getDiaryFrequency,
+  getDrawingFrequency,
 } from 'src/utils/mental-health-api';
 
 export function useMentalHealthAPI() {
@@ -207,6 +208,22 @@ export function useMentalHealthAPI() {
     }
   }, []);
 
+  // Fetch drawing frequency for analytics
+  const fetchDrawingFrequency = useCallback(async (): Promise<DiaryFrequencyResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getDrawingFrequency();
+      return data;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch drawing frequency';
+      setError(errorMsg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     fetchActiveTests,
     fetchAllTests,
@@ -219,6 +236,7 @@ export function useMentalHealthAPI() {
     deleteTestResult,
     fetchTestResultHistory,
     fetchDiaryFrequency,
+    fetchDrawingFrequency,
     loading,
     error,
     setError,

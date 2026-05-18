@@ -27,7 +27,7 @@
     "@iconify/react": "^4.1.1",
     "@mui/lab": "^5.0.0-alpha.155",
     "@mui/material": "^5.14.20",
-    "@mui/x-date-pickers": "^8.27.2",
+    "@mui/x-date-pickers": "^7.18.0",
     "apexcharts": "^5.10.4",
     "autosuggest-highlight": "^3.3.4",
     "axios": "^1.6.2",

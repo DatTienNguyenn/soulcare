@@ -1,0 +1,36 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# Build directories
+dist/
+build/
+.next/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Java/Maven
+target/
+.classpath
+.project
+.settings/
+*.class
+*.jar
+*.war
+
+# OS
+Thumbs.db

@@ -4,6 +4,8 @@ import { paths } from 'src/routes/paths';
 
 import SvgColor from 'src/components/svg-color';
 
+import { useLocales } from 'src/locale';
+
 // ----------------------------------------------------------------------
 
 const icon = (name: string) => (
@@ -44,6 +46,7 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useNavData() {
+  const { t } = useLocales();
   const data = useMemo(
     () => [
       // OVERVIEW
@@ -52,14 +55,32 @@ export function useNavData() {
         subheader: 'features',
         items: [
           { title: 'Diary', path: paths.dashboard.diary, icon: ICONS.calendar },
-          { title: 'Canvas', path: paths.dashboard.canvas, icon: ICONS.chat },
+          {
+            title: 'Canvas',
+            path: paths.dashboard.canvas,
+            icon: ICONS.chat,
+            children: [
+              {
+                title: t('pages.draw.title'),
+                path: paths.dashboard['canvas'],
+              },
+              {
+                title: t('pages.drawHistory.title'),
+                path: paths.dashboard['drawing-history'],
+              },
+            ],
+          },
           {
             title: 'Self-test',
             path: paths.dashboard['self-test'],
             icon: ICONS.user,
             children: [
               {
-                title: 'Test History',
+                title: t('pages.selfTest.title'),
+                path: paths.dashboard['self-test'],
+              },
+              {
+                title: t('pages.selfTestHistory.title'),
                 path: paths.dashboard['self-test-history'],
               },
             ],
@@ -73,7 +94,7 @@ export function useNavData() {
         subheader: 'management',
         items: [
           {
-            title: 'Analytics',
+            title: t('pages.analytics.title'),
             path: paths.dashboard.analytics.root,
             icon: ICONS.analytics,
           },

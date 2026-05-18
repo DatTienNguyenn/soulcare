@@ -27,7 +27,7 @@
   },
   "pages": {
     "analytics": {
-      "title": "Bảng điều khiển: Phân tích"
+      "title": "Phân tích"
     },
     "diary": {
       "title": "Nhật ký của tôi"
@@ -40,6 +40,9 @@
     },
     "selfTestHistory": {
       "title": "Lịch sử kiểm tra"
+    },
+    "drawingHistory": {
+      "title": "Lịch sử vẽ"
     }
   },
   "selfTest": {
@@ -155,7 +158,9 @@
     "colorPlaceholder": "#000000",
     "brushSize": "Kích thước bàn chải: {{size}}px",
     "shapeSize": "Kích thước hình: {{size}}px",
-    "opacity": "Độ mờ: {{value}}%"
+    "opacity": "Độ mờ: {{value}}%",
+    "save": "Lưu bản vẽ",
+    "load": "Khôi phục bản vẽ"
   },
   "selfTestHistory": {
     "header": "Lịch sử kiểm tra của tôi",
