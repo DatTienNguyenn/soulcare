@@ -27,7 +27,7 @@
   },
   "pages": {
     "analytics": {
-      "title": "Dashboard: Analytics"
+      "title": "Analytics"
     },
     "diary": {
       "title": "My Diary"
@@ -40,6 +40,9 @@
     },
     "selfTestHistory": {
       "title": "Test History"
+    },
+    "drawHistory": {
+      "title": "Drawing History"
     }
   },
   "selfTest": {

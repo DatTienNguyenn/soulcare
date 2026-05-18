@@ -1,5 +1,6 @@
 package com.example.soulcare.controller;
 
+import com.example.soulcare.dto.DiaryFrequencyResponse;
 import com.example.soulcare.dto.PictureSaveRequest;
 import com.example.soulcare.dto.PictureResponse;
 import com.example.soulcare.model.User;
@@ -66,6 +67,13 @@ public class PictureController {
         UUID patientId = getPatientIdFromAuth(authentication);
         pictureService.deletePicture(patientId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/analytics/frequency")
+    public ResponseEntity<DiaryFrequencyResponse> getDrawingFrequency(Authentication authentication) {
+        UUID patientId = getPatientIdFromAuth(authentication);
+        DiaryFrequencyResponse response = pictureService.getDrawingFrequency(patientId);
+        return ResponseEntity.ok(response);
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {

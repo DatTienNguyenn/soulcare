@@ -1,5 +1,7 @@
 package com.example.soulcare.service;
 
+import com.example.soulcare.dto.ActivityFrequencyResponse;
+import com.example.soulcare.dto.DiaryFrequencyResponse;
 import com.example.soulcare.dto.PictureSaveRequest;
 import com.example.soulcare.dto.PictureResponse;
 import com.example.soulcare.model.Picture;
@@ -8,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,6 +64,32 @@ public class PictureService {
         return pictures.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public DiaryFrequencyResponse getDrawingFrequency(UUID patientId) {
+        List<Picture> pictures = pictureRepository.findByPatientIdOrderByCreatedAtDesc(patientId);
+        
+        // Group pictures by created date and count them (each picture = 1 drawing session)
+        Map<LocalDate, Long> frequencyMap = pictures.stream()
+                .collect(Collectors.groupingBy(
+                        picture -> picture.getCreatedAt().toLocalDate(),
+                        Collectors.counting()
+                ));
+        
+        // Convert to ActivityFrequencyResponse list
+        List<ActivityFrequencyResponse> frequencies = frequencyMap.entrySet().stream()
+                .map(entry -> ActivityFrequencyResponse.builder()
+                        .date(entry.getKey())
+                        .count(entry.getValue().intValue())
+                        .build())
+                .sorted(Comparator.comparing(ActivityFrequencyResponse::getDate))
+                .collect(Collectors.toList());
+        
+        return DiaryFrequencyResponse.builder()
+                .frequencies(frequencies)
+                .totalDiaries(pictures.size()) // Using totalDiaries field for total sessions
+                .build();
     }
 
     public void deletePicture(UUID patientId, UUID pictureId) {

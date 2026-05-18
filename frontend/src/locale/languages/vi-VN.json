@@ -27,7 +27,7 @@
   },
   "pages": {
     "analytics": {
-      "title": "Bảng điều khiển: Phân tích"
+      "title": "Phân tích"
     },
     "diary": {
       "title": "Nhật ký của tôi"
@@ -40,6 +40,9 @@
     },
     "selfTestHistory": {
       "title": "Lịch sử kiểm tra"
+    },
+    "drawingHistory": {
+      "title": "Lịch sử vẽ"
     }
   },
   "selfTest": {

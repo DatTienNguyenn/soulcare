@@ -5,7 +5,6 @@ import { useLocales } from 'src/locale/use-locales';
 import { useMentalHealthAPI } from 'src/hooks/use-mental-health-api';
 import {
   _testScoreTrends,
-  _drawingFrequency,
   getCalendarHeatmapData,
   ActivityFrequency,
   TestScoreTrend,
@@ -19,7 +18,8 @@ import AnalyticsScoreChartCard from './componants/AnalyticsScoreChartCard';
 export default function AnalyticsView() {
   const settings = useSettingsContext();
   const { t } = useLocales();
-  const { fetchTestResultHistory, fetchDiaryFrequency, loading, error } = useMentalHealthAPI();
+  const { fetchTestResultHistory, fetchDiaryFrequency, fetchDrawingFrequency, loading, error } =
+    useMentalHealthAPI();
 
   const weekdays = t('analytics.weekdays', { returnObjects: true }) as string[];
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -29,6 +29,7 @@ export default function AnalyticsView() {
   // State for real data
   const [testScoreTrends, setTestScoreTrends] = useState<TestScoreTrend[]>(_testScoreTrends);
   const [diaryFrequency, setDiaryFrequency] = useState<ActivityFrequency[]>([]);
+  const [drawingFrequency, setDrawingFrequency] = useState<ActivityFrequency[]>([]);
   const [availableTests, setAvailableTests] = useState<{ testId: string; testName: string }[]>([]);
   const [apiLoading, setApiLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -77,6 +78,15 @@ export default function AnalyticsView() {
           })
         );
         setDiaryFrequency(transformedDiaryFrequency);
+
+        // Fetch drawing frequency
+        const drawingFrequencyResponse = await fetchDrawingFrequency();
+        const transformedDrawingFrequency: ActivityFrequency[] =
+          drawingFrequencyResponse.frequencies.map((freq) => ({
+            date: new Date(freq.date),
+            count: freq.count,
+          }));
+        setDrawingFrequency(transformedDrawingFrequency);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load analytics data';
         setApiError(errorMessage);
@@ -88,18 +98,19 @@ export default function AnalyticsView() {
     };
 
     fetchAnalyticsData();
-  }, [fetchTestResultHistory, fetchDiaryFrequency]);
+  }, [fetchTestResultHistory, fetchDiaryFrequency, fetchDrawingFrequency]);
 
   const testScores = testScoreTrends
     .filter((item) => item.testId === selectedTest)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const diaryHeatmap = getCalendarHeatmapData(diaryFrequency, selectedYear, selectedMonth);
-  const drawingHeatmap = getCalendarHeatmapData(_drawingFrequency, selectedYear, selectedMonth);
+  const drawingHeatmap = getCalendarHeatmapData(drawingFrequency, selectedYear, selectedMonth);
 
   const diaryMaxCount =
     diaryFrequency.length > 0 ? Math.max(...diaryFrequency.map((f) => f.count)) : 1;
-  const drawingMaxCount = Math.max(..._drawingFrequency.map((f) => f.count));
+  const drawingMaxCount =
+    drawingFrequency.length > 0 ? Math.max(...drawingFrequency.map((f) => f.count)) : 1;
 
   if (apiLoading) {
     return (
