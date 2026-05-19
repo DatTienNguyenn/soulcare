@@ -43,6 +43,12 @@
     },
     "drawingHistory": {
       "title": "Lịch sử vẽ"
+    },
+    "treatmentBooking": {
+      "title": "Đặt lịch trị liệu"
+    },
+    "treatmentHistory": {
+      "title": "Lịch sử trị liệu"
     }
   },
   "selfTest": {
@@ -161,6 +167,49 @@
     "opacity": "Độ mờ: {{value}}%",
     "save": "Lưu bản vẽ",
     "load": "Khôi phục bản vẽ"
+  },
+  "treatment": {
+    "booking": {
+      "header": "Đặt lịch trị liệu",
+      "description": "Tìm kiếm và đặt lịch với các chuyên gia trị liệu phù hợp với nhu cầu của bạn",
+      "searchPlaceholder": "Tìm kiếm theo tên, chuyên môn hoặc loại trị liệu",
+      "filterBySpecialization": "Lọc theo chuyên môn",
+      "noTherapists": "Không tìm thấy chuyên gia nào. Thử điều chỉnh bộ lọc của bạn.",
+      "availableSlots": "{{count}} khung giờ có sẵn",
+      "bookAppointment": "Đặt lịch hẹn",
+      "bookingSuccess": "Đặt lịch thành công! Bạn sẽ nhận được email xác nhận.",
+      "bookingFailed": "Đặt lịch thất bại. Vui lòng thử lại sau.",
+      "available": "Thời gian rảnh"
+    },
+    "history": {
+      "header": "Lịch sử trị liệu",
+      "description": "Xem lại các buổi trị liệu trước đây của bạn và theo dõi tiến trình của bạn theo thời gian",
+      "noResults": "Không tìm thấy kết quả trị liệu nào",
+      "loadingError": "Không thể tải lịch sử trị liệu. Vui lòng thử lại sau.",
+      "viewDetails": "Xem chi tiết",
+      "title": "Lịch sử trị liệu",
+      "therapistName": "Tên chuyên gia",
+      "treatmentType": "Loại trị liệu",
+      "date": "Ngày",
+      "notes": "Ghi chú buổi trị liệu"
+    },
+    "bookingDetails": {
+      "title": "Chi tiết Buổi trị liệu",
+      "therapistName": "Tên chuyên gia",
+      "treatmentType": "Loại trị liệu",
+      "date": "Ngày",
+      "notes": "Ghi chú buổi trị liệu",
+      "backToHistory": "Quay lại Lịch sử"
+    },
+    "filter": {
+      "all": "Tất cả",
+      "psychology": "Tâm lý",
+      "counseling": "Tư vấn",
+      "meditation": "Thiền định",
+      "behavioral": "Hành vi",
+      "cognitive": "Nhận thức",
+      "family": "Gia đình"
+    }
   },
   "selfTestHistory": {
     "header": "Lịch sử kiểm tra của tôi",

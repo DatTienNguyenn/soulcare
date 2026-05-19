@@ -1,0 +1,266 @@
+import { _mock } from './_mock';
+import { Therapist, TimeSlot, TherapyBooking } from 'src/type/therapist';
+
+// -------------------------------------------------------
+
+export const THERAPY_TYPE_OPTIONS = [
+  { value: 'psychology', label: 'Psychology' },
+  { value: 'counseling', label: 'Counseling' },
+  { value: 'meditation', label: 'Meditation' },
+  { value: 'behavioral', label: 'Behavioral' },
+  { value: 'cognitive', label: 'Cognitive' },
+  { value: 'family', label: 'Family Therapy' },
+];
+
+export const BOOKING_STATUS_OPTIONS = [
+  { value: 'available', label: 'Available' },
+  { value: 'booked', label: 'Booked' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+
+// -------------------------------------------------------
+
+const SPECIALIZATIONS = [
+  'psychology',
+  'counseling',
+  'meditation',
+  'behavioral',
+  'cognitive',
+  'family',
+] as const;
+
+export const _therapists: Therapist[] = [...Array(12)].map((_, index) => ({
+  id: _mock.id(index),
+  name: _mock.fullName(index),
+  specialization: SPECIALIZATIONS[index % SPECIALIZATIONS.length],
+  bio: _mock.sentence(index),
+  rating: 4 + Math.random(),
+  reviewCount: 50 + index * 10,
+  hourlyRate: 50 + index * 5,
+  avatarUrl: _mock.image.avatar(index),
+  experience: 3 + index,
+  certifications: [
+    'Licensed Mental Health Counselor',
+    'Certified Clinical Therapist',
+    'Board Certified Behavioral Analyst',
+  ],
+  languages: ['English', index % 2 === 0 ? 'Spanish' : 'Vietnamese'],
+  availableHours: '9:00 AM - 6:00 PM, Mon-Fri',
+  responseTime:
+    index % 2 === 0 ? 'Typically responds in 1 hour' : 'Typically responds in 30 minutes',
+}));
+
+// -------------------------------------------------------
+
+export const _timeSlots: TimeSlot[] = [
+  // Slots for therapist 0
+  {
+    id: _mock.id(0),
+    therapistId: _therapists[0].id,
+    date: new Date(2026, 4, 20),
+    startTime: '09:00',
+    endTime: '10:00',
+    status: 'available',
+    price: _therapists[0].hourlyRate,
+  },
+  {
+    id: _mock.id(1),
+    therapistId: _therapists[0].id,
+    date: new Date(2026, 4, 20),
+    startTime: '10:30',
+    endTime: '11:30',
+    status: 'available',
+    price: _therapists[0].hourlyRate,
+  },
+  {
+    id: _mock.id(2),
+    therapistId: _therapists[0].id,
+    date: new Date(2026, 4, 20),
+    startTime: '14:00',
+    endTime: '15:00',
+    status: 'booked',
+    price: _therapists[0].hourlyRate,
+  },
+  {
+    id: _mock.id(3),
+    therapistId: _therapists[0].id,
+    date: new Date(2026, 4, 21),
+    startTime: '09:00',
+    endTime: '10:00',
+    status: 'available',
+    price: _therapists[0].hourlyRate,
+  },
+  {
+    id: _mock.id(4),
+    therapistId: _therapists[0].id,
+    date: new Date(2026, 4, 21),
+    startTime: '11:00',
+    endTime: '12:00',
+    status: 'available',
+    price: _therapists[0].hourlyRate,
+  },
+  // Slots for therapist 1
+  {
+    id: _mock.id(5),
+    therapistId: _therapists[1].id,
+    date: new Date(2026, 4, 20),
+    startTime: '10:00',
+    endTime: '11:00',
+    status: 'available',
+    price: _therapists[1].hourlyRate,
+  },
+  {
+    id: _mock.id(6),
+    therapistId: _therapists[1].id,
+    date: new Date(2026, 4, 20),
+    startTime: '13:00',
+    endTime: '14:00',
+    status: 'available',
+    price: _therapists[1].hourlyRate,
+  },
+  {
+    id: _mock.id(7),
+    therapistId: _therapists[1].id,
+    date: new Date(2026, 4, 20),
+    startTime: '15:30',
+    endTime: '16:30',
+    status: 'booked',
+    price: _therapists[1].hourlyRate,
+  },
+  {
+    id: _mock.id(8),
+    therapistId: _therapists[1].id,
+    date: new Date(2026, 4, 21),
+    startTime: '10:00',
+    endTime: '11:00',
+    status: 'available',
+    price: _therapists[1].hourlyRate,
+  },
+  {
+    id: _mock.id(9),
+    therapistId: _therapists[1].id,
+    date: new Date(2026, 4, 21),
+    startTime: '14:00',
+    endTime: '15:00',
+    status: 'available',
+    price: _therapists[1].hourlyRate,
+  },
+  // Slots for therapist 2
+  {
+    id: _mock.id(10),
+    therapistId: _therapists[2].id,
+    date: new Date(2026, 4, 20),
+    startTime: '09:30',
+    endTime: '10:30',
+    status: 'available',
+    price: _therapists[2].hourlyRate,
+  },
+  {
+    id: _mock.id(11),
+    therapistId: _therapists[2].id,
+    date: new Date(2026, 4, 20),
+    startTime: '11:00',
+    endTime: '12:00',
+    status: 'available',
+    price: _therapists[2].hourlyRate,
+  },
+  {
+    id: _mock.id(12),
+    therapistId: _therapists[2].id,
+    date: new Date(2026, 4, 20),
+    startTime: '14:30',
+    endTime: '15:30',
+    status: 'available',
+    price: _therapists[2].hourlyRate,
+  },
+  {
+    id: _mock.id(13),
+    therapistId: _therapists[2].id,
+    date: new Date(2026, 4, 21),
+    startTime: '09:00',
+    endTime: '10:00',
+    status: 'booked',
+    price: _therapists[2].hourlyRate,
+  },
+  {
+    id: _mock.id(14),
+    therapistId: _therapists[2].id,
+    date: new Date(2026, 4, 21),
+    startTime: '13:00',
+    endTime: '14:00',
+    status: 'available',
+    price: _therapists[2].hourlyRate,
+  },
+];
+
+// -------------------------------------------------------
+
+export const _therapyBookings: TherapyBooking[] = [
+  {
+    id: _mock.id(0),
+    therapistId: _therapists[0].id,
+    therapistName: _therapists[0].name,
+    userId: _mock.id(0),
+    userName: _mock.fullName(0),
+    userEmail: _mock.email(0),
+    type: 'psychology',
+    date: new Date(2026, 4, 18),
+    startTime: '10:00',
+    endTime: '11:00',
+    duration: 60,
+    status: 'completed',
+    notes: 'Great session, very helpful.',
+    totalPrice: _therapists[0].hourlyRate,
+    createdAt: new Date(2026, 4, 15),
+    completedAt: new Date(2026, 4, 18),
+  },
+  {
+    id: _mock.id(1),
+    therapistId: _therapists[1].id,
+    therapistName: _therapists[1].name,
+    userId: _mock.id(1),
+    userName: _mock.fullName(1),
+    userEmail: _mock.email(1),
+    type: 'counseling',
+    date: new Date(2026, 4, 20),
+    startTime: '14:00',
+    endTime: '15:00',
+    duration: 60,
+    status: 'booked',
+    totalPrice: _therapists[1].hourlyRate,
+    createdAt: new Date(2026, 4, 19),
+  },
+  {
+    id: _mock.id(2),
+    therapistId: _therapists[2].id,
+    therapistName: _therapists[2].name,
+    userId: _mock.id(2),
+    userName: _mock.fullName(2),
+    userEmail: _mock.email(2),
+    type: 'meditation',
+    date: new Date(2026, 4, 22),
+    startTime: '09:00',
+    endTime: '10:00',
+    duration: 60,
+    status: 'booked',
+    totalPrice: _therapists[2].hourlyRate,
+    createdAt: new Date(2026, 4, 19),
+  },
+  {
+    id: _mock.id(3),
+    therapistId: _therapists[0].id,
+    therapistName: _therapists[0].name,
+    userId: _mock.id(3),
+    userName: _mock.fullName(3),
+    userEmail: _mock.email(3),
+    type: 'behavioral',
+    date: new Date(2026, 4, 25),
+    startTime: '11:00',
+    endTime: '12:00',
+    duration: 60,
+    status: 'booked',
+    totalPrice: _therapists[0].hourlyRate,
+    createdAt: new Date(2026, 4, 19),
+  },
+];

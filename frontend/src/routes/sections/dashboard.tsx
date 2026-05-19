@@ -5,7 +5,6 @@ import { Outlet } from 'react-router-dom';
 import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
-import path from 'path';
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +14,8 @@ const SelfTestPage = lazy(() => import('src/pages/dashboard/self-test'));
 const SelfTestHistoryPage = lazy(() => import('src/pages/dashboard/self-test-history'));
 const DrawingHistoryPage = lazy(() => import('src/pages/dashboard/drawing-history'));
 const AnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
+const TherapyBookingPage = lazy(() => import('src/pages/dashboard/treatment-booking'));
+const TreatmentHistoryPage = lazy(() => import('src/pages/dashboard/treatment-history'));
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +46,13 @@ export const dashboardRoutes = [
       {
         path: 'analytics',
         children: [{ element: <AnalyticsPage />, index: true }],
+      },
+      {
+        path: 'treatment',
+        children: [
+          { path: 'booking', element: <TherapyBookingPage /> },
+          { path: 'history', element: <TreatmentHistoryPage /> },
+        ],
       },
     ],
   },

@@ -85,6 +85,21 @@ export function useNavData() {
               },
             ],
           },
+          {
+            title: 'Treatment',
+            path: paths.dashboard['treatment'],
+            icon: ICONS.job,
+            children: [
+              {
+                title: t('pages.treatmentBooking.title'),
+                path: paths.dashboard['treatment-booking'],
+              },
+              {
+                title: t('pages.treatmentHistory.title'),
+                path: paths.dashboard['treatment-history'],
+              },
+            ],
+          },
         ],
       },
 

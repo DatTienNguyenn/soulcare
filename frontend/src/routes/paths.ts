@@ -28,6 +28,9 @@ export const paths = {
     analytics: {
       root: `${ROOTS.DASHBOARD}/analytics`,
     },
+    treatment: `${ROOTS.DASHBOARD}/treatment`,
+    'treatment-booking': `${ROOTS.DASHBOARD}/treatment/booking`,
+    'treatment-history': `${ROOTS.DASHBOARD}/treatment/history`,
   },
   // ADMIN
   admin: {

@@ -36,26 +36,41 @@ export default function AnalyticsHeatmapCard({
   onYearChange,
   onMonthChange,
 }: AnalyticsHeatmapCardProps) {
-  const weeks: any[] = [];
-  const currentWeek: any[] = [];
+  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1);
+  const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
+  // Assuming weekdays array is [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+  // firstDayWeekday: 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+  const emptySlots = firstDayWeekday === 0 ? 6 : firstDayWeekday;
+
+  const weeks: any[] = [];
+  let currentWeek: any[] = [];
+
+  for (let i = 0; i < emptySlots; i++) {
+    currentWeek.push(null);
+  }
+
+  // Add all data points with actual dates
   data.forEach((day, idx) => {
-    currentWeek.push(day);
-    if ((idx + 1) % 7 === 0) {
+    const dateObj = new Date(selectedYear, selectedMonth, idx + 1);
+    currentWeek.push({
+      ...day,
+      date: dateObj,
+      dayOfMonth: idx + 1,
+    });
+
+    if (currentWeek.length === 7) {
       weeks.push([...currentWeek]);
-      currentWeek.length = 0;
+      currentWeek = [];
     }
   });
-
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
-  }
 
   const seriesData = weeks.map((week, weekIdx) => ({
     name: t('analytics.week', { number: weekIdx + 1 }),
     data: week.map((day: any, dayIdx: number) => ({
       x: weekdays[dayIdx],
-      y: day.count,
+      y: day?.count ?? 0,
+      date: day?.date ? format(day.date, 'yyyy-MM-dd') : '',
     })),
   }));
 
@@ -92,9 +107,23 @@ export default function AnalyticsHeatmapCard({
     tooltip: {
       enabled: true,
       theme: 'light',
-      y: {
-        formatter: (value: number) =>
-          t('analytics.activityTooltip', { count: value, title: activityLabel }),
+      custom: ({
+        series,
+        seriesIndex,
+        dataPointIndex,
+      }: {
+        series: any;
+        seriesIndex: number;
+        dataPointIndex: number;
+      }) => {
+        const dataPoint = seriesData[seriesIndex]?.data?.[dataPointIndex];
+        if (!dataPoint || dataPoint.y === 0) {
+          return '';
+        }
+        return `<div class="apexcharts-tooltip-custom" style="padding: 8px; background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+          <span style="font-weight: 600;">${dataPoint.date || ''}</span><br />
+          <span>${activityLabel}: ${dataPoint.y}</span>
+        </div>`;
       },
     },
     stroke: {
