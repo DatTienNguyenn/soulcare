@@ -30,6 +30,9 @@ const getRedirectPath = (role: string): string => {
   if (role === 'ADMIN' || role === 'admin') {
     return paths.admin.root; // '/admin'
   }
+  if (role === 'SPECIALIST' || role === 'specialist') {
+    return paths.specialist.root; // '/specialist'
+  }
   return paths.dashboard.root; // '/dashboard'
 };
 

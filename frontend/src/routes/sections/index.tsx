@@ -6,6 +6,7 @@ import { mainRoutes } from './main';
 import { authRoutes } from './auth';
 import { dashboardRoutes } from './dashboard';
 import { adminRoutes } from './admin';
+import { specialistRoutes } from './specialist';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,9 @@ export default function Router() {
 
     // Dashboard routes
     ...dashboardRoutes,
+
+    // Specialist routes
+    ...specialistRoutes,
 
     // Admin routes
     ...adminRoutes,
