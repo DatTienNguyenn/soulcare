@@ -40,6 +40,7 @@ export default function TherapyBookingView() {
   const { t } = useLocales();
   const specializations: { label: string; value: TherapyType | 'all' }[] = [
     { label: t('treatment.filter.all'), value: 'all' },
+    { label: t('treatment.filter.psychology'), value: 'psychology' },
     { label: t('treatment.filter.counseling'), value: 'counseling' },
     { label: t('treatment.filter.meditation'), value: 'meditation' },
     { label: t('treatment.filter.behavioral'), value: 'behavioral' },
