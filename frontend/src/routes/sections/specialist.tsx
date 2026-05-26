@@ -9,6 +9,7 @@ import RoleBasedGuard from 'src/auth/guard/role-based-guard';
 
 const SpecialistDashboardPage = lazy(() => import('src/pages/specialist/specialist-dashboard'));
 const SpecialistAnalyticsPage = lazy(() => import('src/pages/specialist/specialist-analytics'));
+const SpecialistSettingsPage = lazy(() => import('src/pages/specialist/specialist-settings'));
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ export const specialistRoutes = [
     children: [
       { element: <SpecialistDashboardPage />, index: true },
       { path: 'analytics', element: <SpecialistAnalyticsPage /> },
+      { path: 'settings', element: <SpecialistSettingsPage /> },
     ],
   },
 ];

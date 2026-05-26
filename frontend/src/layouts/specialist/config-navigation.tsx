@@ -18,6 +18,7 @@ const ICONS = {
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
   booking: icon('ic_booking'),
+  settings: icon('ic_settings'),
 };
 
 // ----------------------------------------------------------------------
@@ -30,6 +31,11 @@ export function useSpecialistNavData() {
       {
         subheader: 'management',
         items: [
+          {
+            title: 'Settings',
+            path: paths.specialist.settings,
+            icon: ICONS.user,
+          },
           {
             title: 'Bookings',
             path: paths.specialist.root,

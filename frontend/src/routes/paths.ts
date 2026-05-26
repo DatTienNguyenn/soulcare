@@ -38,6 +38,7 @@ export const paths = {
     root: ROOTS.SPECIALIST,
     dashboard: `${ROOTS.SPECIALIST}`,
     analytics: `${ROOTS.SPECIALIST}/analytics`,
+    settings: `${ROOTS.SPECIALIST}/settings`,
   },
   // ADMIN
   admin: {
