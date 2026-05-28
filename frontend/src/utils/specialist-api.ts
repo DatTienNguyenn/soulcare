@@ -176,3 +176,102 @@ export const updateSpecialistProfile = async (
   const response = await axiosInstance.put<SpecialistProfile>(`${API_BASE}`, request);
   return response.data;
 };
+
+// ========== PUBLIC THERAPIST BROWSING API CALLS ==========
+
+export interface PublicSpecialistDTO {
+  id: string;
+  name: string;
+  bio: string;
+  specialization: string;
+  specializations: string[];
+  rating: number;
+  reviewCount: number;
+  hourlyRate: number;
+  avatarUrl?: string;
+  experience: number;
+  certifications: string[];
+  languages: string[];
+  availableHours: string;
+  responseTime: string;
+}
+
+export interface AvailableSlotDTO {
+  id: string;
+  specialistId: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:MM
+  endTime: string; // HH:MM
+  status: 'available' | 'booked';
+  price: number;
+  sessionType?: string;
+}
+
+const PUBLIC_API_BASE = '/api/v1/specialists';
+
+/**
+ * Get all therapists/specialists for browsing
+ */
+export const getAllSpecialists = async (
+  specialization?: string
+): Promise<PublicSpecialistDTO[]> => {
+  const params = new URLSearchParams();
+  if (specialization) {
+    params.append('specialization', specialization);
+  }
+  const response = await axiosInstance.get<PublicSpecialistDTO[]>(
+    `${PUBLIC_API_BASE}/public${params.toString() ? '?' + params.toString() : ''}`
+  );
+  return response.data;
+};
+
+/**
+ * Get a specific therapist's public profile details
+ */
+export const getSpecialistPublicProfile = async (
+  specialistId: string
+): Promise<PublicSpecialistDTO> => {
+  const response = await axiosInstance.get<PublicSpecialistDTO>(
+    `${PUBLIC_API_BASE}/${specialistId}/public`
+  );
+  return response.data;
+};
+
+/**
+ * Get available time slots for a therapist
+ */
+export const getAvailableSlots = async (
+  specialistId: string,
+  startDate?: string, // YYYY-MM-DD format
+  endDate?: string, // YYYY-MM-DD format
+  sessionType?: string
+): Promise<AvailableSlotDTO[]> => {
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  if (sessionType) params.append('sessionType', sessionType);
+
+  const response = await axiosInstance.get<AvailableSlotDTO[]>(
+    `${PUBLIC_API_BASE}/${specialistId}/available-slots${params.toString() ? '?' + params.toString() : ''}`
+  );
+  return response.data;
+};
+
+/**
+ * Search therapists by criteria
+ */
+export const searchSpecialists = async (params: {
+  specialization?: string;
+  minRating?: string;
+  maxPrice?: string;
+}): Promise<PublicSpecialistDTO[]> => {
+  const queryParams = new URLSearchParams();
+  if (params.specialization) queryParams.append('specialization', params.specialization);
+  if (params.minRating) queryParams.append('minRating', params.minRating);
+  if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice);
+
+  const response = await axiosInstance.get<PublicSpecialistDTO[]>(
+    `${PUBLIC_API_BASE}/search${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+  );
+  return response.data;
+};
