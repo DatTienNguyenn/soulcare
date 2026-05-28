@@ -160,7 +160,7 @@ export default function DiaryEntryDialog({
         <Button
           variant="contained"
           onClick={onSave}
-          disabled={!editTitle.trim() || !editContent.trim() || loading}
+          disabled={!editTitle?.trim() || !editContent?.trim() || loading}
         >
           {loading ? <CircularProgress size={20} color="inherit" /> : t('common.save')}
         </Button>

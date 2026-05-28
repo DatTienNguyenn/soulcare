@@ -16,3 +16,4 @@ export * from './_overview';
 export * from './_calendar';
 export * from './_self-test';
 export * from './_analytics';
+export * from './_therapist';

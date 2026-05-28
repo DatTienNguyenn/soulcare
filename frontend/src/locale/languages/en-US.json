@@ -43,6 +43,12 @@
     },
     "drawHistory": {
       "title": "Drawing History"
+    },
+    "treatmentBooking": {
+      "title": "Therapy Booking"
+    },
+    "treatmentHistory": {
+      "title": "Therapy History"
     }
   },
   "selfTest": {
@@ -161,6 +167,50 @@
     "opacity": "Opacity: {{value}}%",
     "save": "Save Drawing",
     "load": "Restore Drawing"
+  },
+  "treatment": {
+    "booking": {
+      "header": "Find & Book a Therapist",
+      "description": "Book a session with a mental health specialist",
+      "searchPlaceholder": "Search by name, specialty, or therapy type",
+      "filterBySpecialization": "Filter by Specialization",
+      "noTherapists": "No therapists found. Please adjust your filters.",
+      "availableSlots": "{{count}} available time slots",
+      "bookAppointment": "Book Appointment",
+      "browseTherapists": "Browse Therapists",
+      "bookingSuccess": "Your therapy session has been booked successfully!",
+      "bookingFailed": "Failed to book therapy session. Please try again later.",
+      "available": "Available"
+    },
+    "history": {
+      "header": "Therapy History",
+      "description": "Review your past therapy sessions and track your progress over time",
+      "noResults": "No therapy results found",
+      "loadingError": "Failed to load therapy history. Please try again later.",
+      "viewDetails": "View Details",
+      "title": "Therapy History",
+      "therapistName": "Therapist Name",
+      "treatmentType": "Treatment Type",
+      "date": "Date",
+      "notes": "Session Notes"
+    },
+    "bookingDetails": {
+      "title": "Therapy Session Details",
+      "therapistName": "Therapist Name",
+      "treatmentType": "Treatment Type",
+      "date": "Date",
+      "notes": "Session Notes",
+      "backToHistory": "Back to History"
+    },
+    "filter": {
+      "all": "All",
+      "psychology": "Psychology",
+      "counseling": "Counseling",
+      "meditation": "Meditation",
+      "behavioral": "Behavioral",
+      "cognitive": "Cognitive",
+      "family": "Family"
+    }
   },
   "selfTestHistory": {
     "header": "My Test History",

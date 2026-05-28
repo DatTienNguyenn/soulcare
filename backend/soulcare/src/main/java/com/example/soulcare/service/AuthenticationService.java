@@ -8,8 +8,10 @@ import com.example.soulcare.dto.LoginRequest;
 import com.example.soulcare.dto.RegisterRequest;
 import com.example.soulcare.model.Patient;
 import com.example.soulcare.model.Role;
+import com.example.soulcare.model.Specialist;
 import com.example.soulcare.model.User;
 import com.example.soulcare.repository.PatientRepository;
+import com.example.soulcare.repository.SpecialistRepository;
 import com.example.soulcare.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final PatientRepository patientRepository; // Cần tạo thêm profile patient
+    private final PatientRepository patientRepository;
+    private final SpecialistRepository specialistRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -55,6 +58,11 @@ public class AuthenticationService {
             patient.setUserId(user.getId());
             patient.setFullName(fullName); 
             patientRepository.save(patient);
+        } else if (user.getRole() == Role.SPECIALIST) {
+            var specialist = new Specialist();
+            specialist.setUserId(user.getId());
+            specialist.setFullName(fullName);
+            specialistRepository.save(specialist);
         }
 
         return jwtService.generateToken(user);

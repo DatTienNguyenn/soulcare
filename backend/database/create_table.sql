@@ -148,7 +148,17 @@ CREATE TABLE appointments (
     patient_id uuid NOT NULL REFERENCES patients(id),
     specialist_id uuid NOT NULL REFERENCES specialists(id),
     scheduled_at timestamp NOT NULL,
-    status varchar(20) DEFAULT 'PENDING' -- PENDING, CONFIRMED, COMPLETED, CANCELLED
+    booking_type VARCHAR(50) In CHECK (booking_type IN ('ONLINE', 'IN_PERSON')) DEFAULT 'ONLINE',
+    start_time VARCHAR(5),
+    end_time VARCHAR(5),
+    duration INTEGER,
+    total_price DECIMAL(10,2),
+    currency VARCHAR(10) DEFAULT 'USD',
+    session_notes text,
+    completed_at timestamp,
+    created_at timestamp DEFAULT now(),
+    cancelled_reason text,
+    status varchar(20) IN ('PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW') DEFAULT 'PENDING'
 );
 
 CREATE TABLE video_sessions (
@@ -185,6 +195,50 @@ CREATE TABLE clinical_summaries (
     updated_at timestamp DEFAULT now()
 );
 
+-- Create specialist pricing table for future use
+CREATE TABLE IF NOT EXISTS specialist_session_pricing (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    specialist_id uuid NOT NULL REFERENCES specialists(id) ON DELETE CASCADE,
+    session_type VARCHAR(50) NOT NULL,
+    price_per_session DECIMAL(10,2) NOT NULL,
+    duration_minutes INTEGER DEFAULT 60,
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now(),
+    UNIQUE(specialist_id, session_type)
+);
+
+-- Create specialist availability table for booking system
+CREATE TABLE IF NOT EXISTS specialist_availability (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    specialist_id uuid NOT NULL REFERENCES specialists(id) ON DELETE CASCADE,
+    day_of_week INTEGER CHECK (day_of_week BETWEEN 0 AND 6), -- 0=Sunday, 6=Saturday
+    start_time VARCHAR(5) NOT NULL,  -- HH:MM format
+    end_time VARCHAR(5) NOT NULL,    -- HH:MM format
+    break_time_start VARCHAR(5),     -- Optional break
+    break_time_end VARCHAR(5),       -- Optional break
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now()
+);
+
+-- Create specialist analytics cache table
+CREATE TABLE IF NOT EXISTS specialist_booking_stats (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    specialist_id uuid NOT NULL REFERENCES specialists(id) ON DELETE CASCADE,
+    stats_date DATE NOT NULL,
+    total_bookings INTEGER DEFAULT 0,
+    completed_bookings INTEGER DEFAULT 0,
+    cancelled_bookings INTEGER DEFAULT 0,
+    no_show_count INTEGER DEFAULT 0,
+    total_revenue DECIMAL(10,2) DEFAULT 0,
+    average_rating DECIMAL(3,2) DEFAULT 0,
+    unique_patients INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now(),
+    UNIQUE(specialist_id, stats_date)
+);
+
 -- --- HÀM & TRIGGER TỰ ĐỘNG CẬP NHẬT LAST_UPDATE ---
 
 CREATE OR REPLACE FUNCTION update_last_update_column()
@@ -209,3 +263,19 @@ END;
 $$ language 'plpgsql';
 
 CREATE TRIGGER update_mental_health_tests_modtime BEFORE UPDATE ON mental_health_tests FOR EACH ROW EXECUTE PROCEDURE update_mental_health_tests_modtime();
+
+-- Auto update specialist rating based on reviews
+CREATE OR REPLACE FUNCTION update_specialist_rating()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE specialists 
+  SET rating_avg = (
+    SELECT AVG(r.rating)::DECIMAL(3,2)
+    FROM reviews r
+    JOIN appointments a ON a.id = r.appointment_id
+    WHERE a.specialist_id = NEW.id
+  )
+  WHERE id = NEW.id;
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
