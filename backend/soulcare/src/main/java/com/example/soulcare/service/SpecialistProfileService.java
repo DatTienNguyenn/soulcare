@@ -224,7 +224,7 @@ public class SpecialistProfileService {
     // ========== SPECIALIST PROFILE MANAGEMENT ==========
 
     /**
-     * Update specialist profile (fullName and specialtyTags)
+     * Update specialist profile (fullName, specialtyTags, bio, and years_exp)
      */
     public Map<String, Object> updateSpecialistProfile(UUID specialistId, com.example.soulcare.dto.UpdateSpecialistProfileRequest request) {
         Specialist specialist = specialistRepository.findById(specialistId)
@@ -232,6 +232,12 @@ public class SpecialistProfileService {
 
         specialist.setFullName(request.getFullName());
         specialist.setSpecialtyTags(request.getSpecialtyTags());
+        if (request.getBio() != null) {
+            specialist.setBio(request.getBio());
+        }
+        if (request.getYears_exp() != null) {
+            specialist.setYearsExp(request.getYears_exp());
+        }
         
         Specialist updated = specialistRepository.save(specialist);
 
@@ -244,6 +250,8 @@ public class SpecialistProfileService {
         profile.put("userId", updated.getUserId());
         profile.put("fullName", updated.getFullName());
         profile.put("specialtyTags", updated.getSpecialtyTags());
+        profile.put("bio", updated.getBio());
+        profile.put("years_exp", updated.getYearsExp());
         profile.put("ratingAverage", updated.getRatingAverage());
         profile.put("pricing", pricings);
         profile.put("availability", availabilities);
@@ -267,6 +275,8 @@ public class SpecialistProfileService {
         profile.put("userId", specialist.getUserId());
         profile.put("fullName", specialist.getFullName());
         profile.put("specialtyTags", specialist.getSpecialtyTags());
+        profile.put("bio", specialist.getBio());
+        profile.put("years_exp", specialist.getYearsExp());
         profile.put("ratingAverage", specialist.getRatingAverage());
         profile.put("pricing", pricings);
         profile.put("availability", availabilities);

@@ -24,7 +24,9 @@ CREATE TABLE specialists (
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     full_name varchar(255),
     specialty_tags text[], -- Lưu mảng: {'trầm cảm', 'lo âu'}
-    rating_avg decimal(3,2) DEFAULT 0
+    rating_avg decimal(3,2) DEFAULT 0,
+    bio text,
+    years_exp int
 );
 
 -- --- PHÂN HỆ SỨC KHỎE & AI ---

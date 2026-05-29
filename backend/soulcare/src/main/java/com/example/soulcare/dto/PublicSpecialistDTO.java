@@ -20,6 +20,7 @@ public class PublicSpecialistDTO {
     private String name;
     private String bio;
     private String specialization; // primary specialization (first tag)
+    private Integer yearsOfExperience;
     private List<String> specializations; // all specialty tags
     private BigDecimal rating;
     private Integer reviewCount;

@@ -51,11 +51,15 @@ export interface SpecialistProfile {
   ratingAverage: number;
   pricing: SessionPricingResponse[];
   availability: AvailabilityResponse[];
+  bio?: string;
+  years_exp?: number;
 }
 
 export interface UpdateSpecialistProfileRequest {
   fullName: string;
   specialtyTags: string[];
+  bio?: string;
+  years_exp?: number;
 }
 
 const API_BASE = '/api/v1/specialist/profile';

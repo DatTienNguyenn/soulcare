@@ -38,6 +38,7 @@ export default function SpecialistSettingsView() {
     fullName: '',
     specialty: [] as string[],
     bio: '',
+    years_exp: 0,
     avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
   });
 
@@ -58,13 +59,15 @@ export default function SpecialistSettingsView() {
       setProfileData({
         fullName: profile.fullName || '',
         specialty: Array.isArray(profile.specialtyTags) ? profile.specialtyTags : [],
-        bio: '', // Backend doesn't have bio field in current model
+        bio: profile.bio || '',
+        years_exp: profile.years_exp || 0,
         avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
       setEditData({
         fullName: profile.fullName || '',
         specialty: Array.isArray(profile.specialtyTags) ? profile.specialtyTags : [],
-        bio: '',
+        bio: profile.bio || '',
+        years_exp: profile.years_exp || 0,
         avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
     } catch (err) {
@@ -84,13 +87,16 @@ export default function SpecialistSettingsView() {
       const result = await updateProfile({
         fullName: editData.fullName,
         specialtyTags: editData.specialty,
+        bio: editData.bio,
+        years_exp: editData.years_exp,
       });
 
       // Update local state with successful response
       setProfileData({
         fullName: result.fullName || '',
         specialty: Array.isArray(result.specialtyTags) ? result.specialtyTags : [],
-        bio: '',
+        bio: result.bio || '',
+        years_exp: result.years_exp || 0,
         avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
 
@@ -175,6 +181,16 @@ export default function SpecialistSettingsView() {
                             value={editData.fullName}
                             onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
                           />
+                          <TextField
+                            label="Years of Experience"
+                            fullWidth
+                            type="number"
+                            value={editData.years_exp}
+                            onChange={(e) =>
+                              setEditData({ ...editData, years_exp: parseInt(e.target.value) || 0 })
+                            }
+                            inputProps={{ min: 0 }}
+                          />
                           <Box>
                             <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 500 }}>
                               Specialties
@@ -243,6 +259,14 @@ export default function SpecialistSettingsView() {
                           </Box>
                           <Box>
                             <Typography variant="subtitle2" color="textSecondary">
+                              Years of Experience
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                              {profileData.years_exp} years
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="subtitle2" color="textSecondary">
                               Specialty
                             </Typography>
                             <Stack
@@ -265,7 +289,9 @@ export default function SpecialistSettingsView() {
                             <Typography variant="subtitle2" color="textSecondary">
                               Bio
                             </Typography>
-                            <Typography variant="body2">{profileData.bio}</Typography>
+                            <Typography variant="body2">
+                              {profileData.bio || 'No bio added yet'}
+                            </Typography>
                           </Box>
                         </>
                       )}

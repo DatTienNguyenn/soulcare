@@ -34,6 +34,12 @@ public class Specialist {
     @Column(name = "rating_avg", precision = 3, scale = 2)
     private BigDecimal ratingAverage; // Average rating from reviews
 
+    @Column(name = "bio", columnDefinition = "text")
+    private String bio;
+
+    @Column(name = "years_exp")
+    private Integer yearsExp;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

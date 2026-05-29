@@ -188,12 +188,12 @@ public class SpecialistPublicService {
         return PublicSpecialistDTO.builder()
                 .id(specialist.getId())
                 .name(specialist.getFullName() != null ? specialist.getFullName() : (user != null ? user.getEmail() : "Unknown"))
-                .bio("Experienced specialist in mental health support") // TODO: add bio field to Specialist model
+                .bio(specialist.getBio() != null ? specialist.getBio() : "Experienced specialist in mental health support")
                 .rating(averageRating)
                 .reviewCount(reviewCount)
                 .hourlyRate(hourlyRate)
                 .avatarUrl(null) // TODO: add profilePicture field to User model
-                // .experience(specialist.getYearsOfExperience() != null ? specialist.getYearsOfExperience() : 0)
+                .experience(specialist.getYearsExp() != null ? specialist.getYearsExp() : 0)
                 // .certifications(specializations.isEmpty() ? Arrays.asList("Certified Mental Health Professional") : specializations)
                 // .languages(Arrays.asList("English")) // TODO: add to model
                 .availableHours(availableHours)
