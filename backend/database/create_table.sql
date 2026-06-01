@@ -150,7 +150,7 @@ CREATE TABLE appointments (
     patient_id uuid NOT NULL REFERENCES patients(id),
     specialist_id uuid NOT NULL REFERENCES specialists(id),
     scheduled_at timestamp NOT NULL,
-    booking_type VARCHAR(50) In CHECK (booking_type IN ('ONLINE', 'IN_PERSON')) DEFAULT 'ONLINE',
+    booking_type VARCHAR(50) CHECK (booking_type IN ('PSYCHOLOGY', 'COUNSELING', 'BEHAVIORAL', 'MEDITATION', 'GENERAL')) DEFAULT 'COUNSELING',
     start_time VARCHAR(5),
     end_time VARCHAR(5),
     duration INTEGER,
@@ -160,7 +160,7 @@ CREATE TABLE appointments (
     completed_at timestamp,
     created_at timestamp DEFAULT now(),
     cancelled_reason text,
-    status varchar(20) IN ('PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW') DEFAULT 'PENDING'
+    status varchar(20) CHECK (status IN ('PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW')) DEFAULT 'PENDING'
 );
 
 CREATE TABLE video_sessions (

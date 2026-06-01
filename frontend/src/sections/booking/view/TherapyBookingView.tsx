@@ -5,7 +5,14 @@ import { format, parse } from 'date-fns';
 import { TherapyType } from 'src/type/therapist';
 import { useLocales } from 'src/locale/use-locales';
 import { useTherapyBooking } from 'src/hooks/use-therapy-booking';
-import { PublicSpecialistDTO, AvailableSlotDTO } from 'src/utils/specialist-api';
+import {
+  PublicSpecialistDTO,
+  AvailableSlotDTO,
+  createAppointment,
+  BookingType,
+  getSpecialistPricing,
+  SessionPricingResponse,
+} from 'src/utils/specialist-api';
 import { BrowseTherapistsTab } from './BrowseTherapistsTab';
 import { SelectSlotsTab } from './SelectSlotsTab';
 import { BookingConfirmDialog } from './BookingConfirmDialog';
@@ -20,6 +27,10 @@ export default function TherapyBookingView() {
   const [bookingNotes, setBookingNotes] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [filterType, setFilterType] = useState<TherapyType | 'all'>('all');
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [sessionTypes, setSessionTypes] = useState<SessionPricingResponse[]>([]);
+  const [selectedSessionType, setSelectedSessionType] = useState('');
   const { t } = useLocales();
 
   const {
@@ -50,10 +61,18 @@ export default function TherapyBookingView() {
 
   const handleSelectTherapist = async (therapist: PublicSpecialistDTO) => {
     setSelectedTherapist(therapist);
+    setSelectedSessionType(''); // Reset session type when therapist changes
     try {
       await fetchAvailableSlots(therapist.id);
+      // Fetch pricing for this specialist
+      const pricing = await getSpecialistPricing(therapist.id);
+      setSessionTypes(pricing);
+      // Set default session type if available
+      if (pricing.length > 0) {
+        setSelectedSessionType(pricing[0].sessionType);
+      }
     } catch (err) {
-      console.error('Error fetching slots:', err);
+      console.error('Error fetching therapist data:', err);
     }
     setTabValue(1);
   };
@@ -65,16 +84,73 @@ export default function TherapyBookingView() {
     }
   };
 
-  const handleConfirmBooking = () => {
-    if (selectedSlot && selectedTherapist) {
+  const handleConfirmBooking = async () => {
+    if (!selectedSlot || !selectedTherapist) return;
+
+    try {
+      setBookingLoading(true);
+      setBookingError(null);
+
+      // Get the selected session type pricing
+      const selectedPricing = sessionTypes.find((type) => type.sessionType === selectedSessionType);
+      const totalPrice = selectedPricing ? selectedPricing.pricePerSession : selectedSlot.price;
+      const bookingType = selectedSessionType as BookingType;
+
+      // Parse the date to create a proper ISO datetime
       const slotDate = parse(selectedSlot.date, 'yyyy-MM-dd', new Date());
+      const [hours, minutes] = selectedSlot.startTime.split(':');
+      slotDate.setHours(parseInt(hours), parseInt(minutes), 0);
+
+      // Create ISO string without timezone offset (backend uses LocalDateTime)
+      // This sends the local time as-is to the backend
+      const year = slotDate.getFullYear();
+      const month = String(slotDate.getMonth() + 1).padStart(2, '0');
+      const day = String(slotDate.getDate()).padStart(2, '0');
+      const hoursStr = String(parseInt(hours)).padStart(2, '0');
+      const minutesStr = String(minutes).padStart(2, '0');
+
+      // Construct ISO string without timezone: YYYY-MM-DDTHH:MM:SS
+      const scheduledAtWithoutTz = `${year}-${month}-${day}T${hoursStr}:${minutesStr}:00`;
+
+      // Create appointment request
+      const appointmentRequest = {
+        specialistId: selectedTherapist.id,
+        scheduledAt: scheduledAtWithoutTz,
+        bookingType,
+        startTime: selectedSlot.startTime,
+        endTime: selectedSlot.endTime,
+        duration: selectedPricing?.durationMinutes || 60,
+        totalPrice,
+        currency: 'USD',
+        sessionNotes: bookingNotes,
+      };
+
+      // Call API to create appointment
+      const response = await createAppointment(appointmentRequest);
+
+      // Show success message
+      const bookingDate = format(slotDate, 'MMM dd, yyyy');
       setSuccessMessage(
-        `Booking confirmed with ${selectedTherapist.name} on ${format(slotDate, 'MMM dd, yyyy')} at ${selectedSlot.startTime}`
+        `Booking confirmed! Your appointment with ${selectedTherapist.name} is scheduled for ${bookingDate} at ${selectedSlot.startTime}`
       );
+
+      // Clear form
       setOpenDialog(false);
       setBookingNotes('');
       setSelectedSlot(null);
+      setSelectedSessionType('');
+      setTabValue(0);
+
+      // Auto-hide success message
       setTimeout(() => setSuccessMessage(''), 5000);
+
+      console.log('Booking created:', response);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create booking';
+      setBookingError(errorMsg);
+      console.error('Error creating booking:', err);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
@@ -146,6 +222,11 @@ export default function TherapyBookingView() {
         onNotesChange={setBookingNotes}
         onConfirm={handleConfirmBooking}
         onClose={() => setOpenDialog(false)}
+        loading={bookingLoading}
+        error={bookingError}
+        sessionTypes={sessionTypes}
+        selectedSessionType={selectedSessionType}
+        onSessionTypeChange={setSelectedSessionType}
       />
     </>
   );

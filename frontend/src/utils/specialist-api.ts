@@ -242,6 +242,18 @@ export const getSpecialistPublicProfile = async (
 };
 
 /**
+ * Get pricing options for a specialist
+ */
+export const getSpecialistPricing = async (
+  specialistId: string
+): Promise<SessionPricingResponse[]> => {
+  const response = await axiosInstance.get<SessionPricingResponse[]>(
+    `${PUBLIC_API_BASE}/${specialistId}/pricing`
+  );
+  return response.data;
+};
+
+/**
  * Get available time slots for a therapist
  */
 export const getAvailableSlots = async (
@@ -276,6 +288,139 @@ export const searchSpecialists = async (params: {
 
   const response = await axiosInstance.get<PublicSpecialistDTO[]>(
     `${PUBLIC_API_BASE}/search${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+  );
+  return response.data;
+};
+
+// ========== APPOINTMENT/BOOKING API CALLS ==========
+
+export type BookingType = 'PSYCHOLOGY' | 'COUNSELING' | 'BEHAVIORAL' | 'MEDITATION' | 'GENERAL';
+export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
+
+export interface AppointmentRequest {
+  specialistId: string;
+  scheduledAt: string; // ISO datetime string
+  bookingType: BookingType;
+  startTime: string; // HH:MM format
+  endTime: string; // HH:MM format
+  duration: number; // Duration in minutes
+  totalPrice: number;
+  currency: string;
+  sessionNotes?: string;
+}
+
+export interface AppointmentResponse {
+  id: string;
+  patientId: string;
+  specialistId: string;
+  scheduledAt: string;
+  bookingType: BookingType;
+  startTime: string;
+  endTime: string;
+  duration: number;
+  status: AppointmentStatus;
+  totalPrice: number;
+  currency: string;
+  sessionNotes: string;
+  completedAt?: string;
+  cancelledReason?: string;
+  createdAt: string;
+  patientName?: string;
+  patientEmail?: string;
+  patientAvatar?: string;
+  specialistName?: string;
+  specialistEmail?: string;
+  specialistRating?: number;
+  reviewRating?: number;
+  reviewComment?: string;
+}
+
+const APPOINTMENT_API_BASE = '/api/v1/appointments';
+
+/**
+ * Create a new appointment (patient books a specialist)
+ */
+export const createAppointment = async (
+  request: AppointmentRequest
+): Promise<AppointmentResponse> => {
+  const response = await axiosInstance.post<AppointmentResponse>(
+    `${APPOINTMENT_API_BASE}`,
+    request
+  );
+  return response.data;
+};
+
+/**
+ * Get all appointments for the authenticated patient
+ */
+export const getPatientAppointments = async (): Promise<AppointmentResponse[]> => {
+  const response = await axiosInstance.get<AppointmentResponse[]>(
+    `${APPOINTMENT_API_BASE}/patient`
+  );
+  return response.data;
+};
+
+/**
+ * Get specific appointment details for patient
+ */
+export const getAppointmentDetails = async (
+  appointmentId: string
+): Promise<AppointmentResponse> => {
+  const response = await axiosInstance.get<AppointmentResponse>(
+    `${APPOINTMENT_API_BASE}/patient/${appointmentId}`
+  );
+  return response.data;
+};
+
+/**
+ * Update appointment (add notes, etc.)
+ */
+export const updateAppointment = async (
+  appointmentId: string,
+  request: Partial<AppointmentRequest>
+): Promise<AppointmentResponse> => {
+  const response = await axiosInstance.put<AppointmentResponse>(
+    `${APPOINTMENT_API_BASE}/${appointmentId}`,
+    request
+  );
+  return response.data;
+};
+
+/**
+ * Cancel an appointment
+ */
+export const cancelAppointment = async (
+  appointmentId: string,
+  cancelledReason?: string
+): Promise<AppointmentResponse> => {
+  const response = await axiosInstance.put<AppointmentResponse>(
+    `${APPOINTMENT_API_BASE}/${appointmentId}`,
+    {
+      status: 'CANCELLED',
+      cancelledReason,
+    }
+  );
+  return response.data;
+};
+
+/**
+ * Get all appointments for the authenticated specialist
+ */
+export const getSpecialistAppointments = async (): Promise<AppointmentResponse[]> => {
+  const response = await axiosInstance.get<AppointmentResponse[]>(
+    `${APPOINTMENT_API_BASE}/specialist`
+  );
+  return response.data;
+};
+
+/**
+ * Get specialist appointments filtered by status
+ */
+export const getSpecialistAppointmentsByStatus = async (
+  status: AppointmentStatus
+): Promise<AppointmentResponse[]> => {
+  const response = await axiosInstance.get<AppointmentResponse[]>(
+    `${APPOINTMENT_API_BASE}/specialist/status/${status}`
   );
   return response.data;
 };

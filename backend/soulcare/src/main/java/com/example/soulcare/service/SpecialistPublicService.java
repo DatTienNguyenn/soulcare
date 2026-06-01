@@ -2,6 +2,7 @@ package com.example.soulcare.service;
 
 import com.example.soulcare.dto.AvailableSlotDTO;
 import com.example.soulcare.dto.PublicSpecialistDTO;
+import com.example.soulcare.dto.SessionPricingDTO;
 import com.example.soulcare.model.*;
 import com.example.soulcare.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +134,25 @@ public class SpecialistPublicService {
         }
         
         return specialists;
+    }
+
+    /**
+     * Get pricing options for a specific specialist
+     */
+    public List<SessionPricingDTO> getSpecialistPricing(UUID specialistId) {
+        List<SpecialistSessionPricing> pricings = pricingRepository
+                .findBySpecialistIdAndActiveTrue(specialistId);
+        
+        return pricings.stream()
+                .map(pricing -> SessionPricingDTO.builder()
+                        .id(pricing.getId())
+                        .specialistId(pricing.getSpecialistId())
+                        .sessionType(pricing.getSessionType())
+                        .pricePerSession(pricing.getPricePerSession())
+                        .durationMinutes(pricing.getDurationMinutes())
+                        .active(pricing.getActive())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     /**

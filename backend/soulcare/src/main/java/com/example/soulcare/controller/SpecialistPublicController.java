@@ -2,6 +2,7 @@ package com.example.soulcare.controller;
 
 import com.example.soulcare.dto.AvailableSlotDTO;
 import com.example.soulcare.dto.PublicSpecialistDTO;
+import com.example.soulcare.dto.SessionPricingDTO;
 import com.example.soulcare.service.SpecialistPublicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,6 +38,16 @@ public class SpecialistPublicController {
             @PathVariable UUID specialistId) {
         PublicSpecialistDTO specialist = specialistPublicService.getSpecialistDetails(specialistId);
         return ResponseEntity.ok(specialist);
+    }
+
+    /**
+     * Get pricing options for a specialist
+     */
+    @GetMapping("/{specialistId}/pricing")
+    public ResponseEntity<List<SessionPricingDTO>> getSpecialistPricing(
+            @PathVariable UUID specialistId) {
+        List<SessionPricingDTO> pricing = specialistPublicService.getSpecialistPricing(specialistId);
+        return ResponseEntity.ok(pricing);
     }
 
     /**
