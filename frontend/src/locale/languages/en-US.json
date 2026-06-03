@@ -49,6 +49,9 @@
     },
     "treatmentHistory": {
       "title": "Therapy History"
+    },
+    "calling": {
+      "title": "Calling Session"
     }
   },
   "selfTest": {

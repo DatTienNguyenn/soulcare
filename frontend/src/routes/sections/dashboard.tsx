@@ -16,6 +16,7 @@ const DrawingHistoryPage = lazy(() => import('src/pages/dashboard/drawing-histor
 const AnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const TherapyBookingPage = lazy(() => import('src/pages/dashboard/treatment-booking'));
 const TreatmentHistoryPage = lazy(() => import('src/pages/dashboard/treatment-history'));
+const CallingPage = lazy(() => import('src/pages/dashboard/callingPage'));
 
 // ----------------------------------------------------------------------
 
@@ -52,6 +53,7 @@ export const dashboardRoutes = [
         children: [
           { path: 'booking', element: <TherapyBookingPage /> },
           { path: 'history', element: <TreatmentHistoryPage /> },
+          { path: 'calling', element: <CallingPage /> },
         ],
       },
     ],

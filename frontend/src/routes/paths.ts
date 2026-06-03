@@ -32,6 +32,7 @@ export const paths = {
     treatment: `${ROOTS.DASHBOARD}/treatment`,
     'treatment-booking': `${ROOTS.DASHBOARD}/treatment/booking`,
     'treatment-history': `${ROOTS.DASHBOARD}/treatment/history`,
+    calling: `${ROOTS.DASHBOARD}/treatment/calling`,
   },
   // SPECIALIST
   specialist: {
@@ -39,6 +40,7 @@ export const paths = {
     dashboard: `${ROOTS.SPECIALIST}`,
     analytics: `${ROOTS.SPECIALIST}/analytics`,
     settings: `${ROOTS.SPECIALIST}/settings`,
+    calling: `${ROOTS.SPECIALIST}/calling`,
   },
   // ADMIN
   admin: {

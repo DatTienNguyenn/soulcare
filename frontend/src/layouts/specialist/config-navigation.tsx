@@ -46,6 +46,11 @@ export function useSpecialistNavData() {
             path: paths.specialist.analytics,
             icon: ICONS.analytics,
           },
+          {
+            title: 'Calling',
+            path: paths.specialist.calling,
+            icon: ICONS.settings,
+          },
         ],
       },
     ],
