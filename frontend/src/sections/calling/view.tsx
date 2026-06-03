@@ -1,21 +1,38 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
+import { format } from 'date-fns';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
+import Paper from '@mui/material/Paper';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import Iconify from 'src/components/iconify';
+import { useAuthContext } from 'src/auth/hooks';
+import {
+  getPatientAppointments,
+  getSpecialistAppointments,
+  AppointmentResponse,
+} from 'src/utils/specialist-api';
 
 // ----------------------------------------------------------------------
 
 export default function CallingView() {
+  const { user } = useAuthContext();
+  const isSpecialist = user?.role === 'SPECIALIST' || user?.role === 'specialist';
+
+  const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedBooking, setSelectedBooking] = useState<AppointmentResponse | null>(null);
+
   const [peerId, setPeerId] = useState<string>('');
   const [remotePeerIdValue, setRemotePeerIdValue] = useState<string>('');
   const [incomingCall, setIncomingCall] = useState<MediaConnection | null>(null);
@@ -24,6 +41,10 @@ export default function CallingView() {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isVideoOff, setIsVideoOff] = useState<boolean>(false);
   const [mediaError, setMediaError] = useState<string | null>(null);
+  const [callStatusMessage, setCallStatusMessage] = useState<string>('');
+
+  const isCallingRef = useRef<boolean>(false);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -31,9 +52,99 @@ export default function CallingView() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const currentCallRef = useRef<MediaConnection | null>(null);
 
+  const stopLocalStream = useCallback(() => {
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+      localStreamRef.current = null;
+    }
+  }, []);
+
+  const handleEndCall = useCallback(() => {
+    isCallingRef.current = false;
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+    if (currentCallRef.current) {
+      currentCallRef.current.close();
+      currentCallRef.current = null;
+    }
+    stopLocalStream();
+    setCallActive(false);
+    setIsCalling(false);
+    setCallStatusMessage('');
+    setIncomingCall(null);
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+  }, [stopLocalStream]);
+
+  const setupCallListeners = useCallback(
+    (call: MediaConnection) => {
+      currentCallRef.current = call;
+
+      call.on('stream', (remoteStream) => {
+        setCallActive(true);
+        setIsCalling(false);
+        isCallingRef.current = false;
+        setCallStatusMessage('');
+        if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+        }
+      });
+
+      call.on('close', () => {
+        handleEndCall();
+      });
+
+      call.on('error', (err) => {
+        console.error('Call error:', err);
+        handleEndCall();
+      });
+    },
+    [handleEndCall]
+  );
+
   useEffect(() => {
-    // Initialize PeerJS
-    const peer = new Peer();
+    const fetchAppointments = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        let data: AppointmentResponse[] = [];
+        if (isSpecialist) {
+          data = await getSpecialistAppointments();
+        } else {
+          data = await getPatientAppointments();
+        }
+        setAppointments(data);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch appointments');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchAppointments();
+    }
+  }, [user, isSpecialist]);
+
+  useEffect(() => {
+    if (!selectedBooking) return;
+
+    // Deterministic Peer IDs based on appointment ID and User IDs
+    // Ensures strictly binding the session, the correct patient, and the correct specialist.
+    const specialistPart = `specialist-${selectedBooking.specialistId}`;
+    const patientPart = `patient-${selectedBooking.patientId}`;
+
+    const myId = `session-${selectedBooking.id}-${isSpecialist ? specialistPart : patientPart}`;
+    const targetId = `session-${selectedBooking.id}-${isSpecialist ? patientPart : specialistPart}`;
+
+    setPeerId(myId);
+    setRemotePeerIdValue(targetId);
+
+    // Initialize PeerJS with the deterministic ID
+    const peer = new Peer(myId);
 
     peer.on('open', (id) => {
       setPeerId(id);
@@ -43,13 +154,32 @@ export default function CallingView() {
       setIncomingCall(call);
     });
 
+    peer.on('error', (err: any) => {
+      console.error('PeerJS error:', err);
+      if (err.type === 'peer-unavailable') {
+        if (isCallingRef.current) {
+          setCallStatusMessage('Waiting for the other user to join the session...');
+          if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+
+          // Auto-retry connection every 3 seconds
+          retryTimeoutRef.current = setTimeout(() => {
+            if (isCallingRef.current && localStreamRef.current) {
+              const call = peer.call(targetId, localStreamRef.current);
+              setupCallListeners(call);
+            }
+          }, 3000);
+        }
+      }
+    });
+
     peerInstance.current = peer;
 
     return () => {
       peer.destroy();
       stopLocalStream();
+      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
     };
-  }, []);
+  }, [selectedBooking, isSpecialist, setupCallListeners, stopLocalStream]);
 
   const getMediaStream = async () => {
     try {
@@ -67,7 +197,10 @@ export default function CallingView() {
         // Fallback to audio-only if the camera is locked by another browser/app
         try {
           console.warn('Camera in use, attempting audio-only fallback...');
-          const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+          const audioStream = await navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: true,
+          });
           setMediaError('Camera is in use by another tab/app. Falling back to audio-only mode.');
           localStreamRef.current = audioStream;
           if (localVideoRef.current) {
@@ -76,11 +209,15 @@ export default function CallingView() {
           setIsVideoOff(true); // Visually indicate video is off
           return audioStream;
         } catch (audioError) {
-          setMediaError('Could not start video or audio source. Both might be in use by another application.');
+          setMediaError(
+            'Could not start video or audio source. Both might be in use by another application.'
+          );
           return null;
         }
       } else if (error.name === 'NotAllowedError') {
-        setMediaError('Permission to access camera/microphone was denied. Please allow access in your browser settings.');
+        setMediaError(
+          'Permission to access camera/microphone was denied. Please allow access in your browser settings.'
+        );
       } else {
         setMediaError(`Failed to access media devices: ${error.message || 'Unknown error'}`);
       }
@@ -88,43 +225,24 @@ export default function CallingView() {
     }
   };
 
-  const stopLocalStream = () => {
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => track.stop());
-      localStreamRef.current = null;
-    }
-  };
-
   const handleCall = async () => {
     if (!remotePeerIdValue.trim()) return;
 
     setIsCalling(true);
-    const stream = await getMediaStream();
+    isCallingRef.current = true;
+    setCallStatusMessage('Dialing...');
+
+    const stream = localStreamRef.current || (await getMediaStream());
     if (!stream) {
       setIsCalling(false);
+      isCallingRef.current = false;
+      setCallStatusMessage('');
       return;
     }
 
     if (peerInstance.current) {
       const call = peerInstance.current.call(remotePeerIdValue, stream);
-      currentCallRef.current = call;
-
-      call.on('stream', (remoteStream) => {
-        setCallActive(true);
-        setIsCalling(false);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = remoteStream;
-        }
-      });
-
-      call.on('close', () => {
-        handleEndCall();
-      });
-
-      call.on('error', (err) => {
-        console.error('Call error:', err);
-        handleEndCall();
-      });
+      setupCallListeners(call);
     }
   };
 
@@ -134,24 +252,8 @@ export default function CallingView() {
       if (!stream) return;
 
       incomingCall.answer(stream);
-      currentCallRef.current = incomingCall;
-
-      incomingCall.on('stream', (remoteStream) => {
-        setCallActive(true);
-        setIncomingCall(null);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = remoteStream;
-        }
-      });
-
-      incomingCall.on('close', () => {
-        handleEndCall();
-      });
-
-      incomingCall.on('error', (err) => {
-        console.error('Incoming call error:', err);
-        handleEndCall();
-      });
+      setupCallListeners(incomingCall);
+      setIncomingCall(null);
     }
   };
 
@@ -161,19 +263,6 @@ export default function CallingView() {
       setIncomingCall(null);
     }
   };
-
-  const handleEndCall = useCallback(() => {
-    if (currentCallRef.current) {
-      currentCallRef.current.close();
-      currentCallRef.current = null;
-    }
-    stopLocalStream();
-    setCallActive(false);
-    setIsCalling(false);
-    setIncomingCall(null);
-    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-    if (localVideoRef.current) localVideoRef.current.srcObject = null;
-  }, []);
 
   const toggleMute = () => {
     if (localStreamRef.current) {
@@ -195,10 +284,88 @@ export default function CallingView() {
     }
   };
 
+  const handleBackToList = () => {
+    handleEndCall();
+    setSelectedBooking(null);
+    setPeerId('');
+    setRemotePeerIdValue('');
+  };
+
+  const upcomingBookings = appointments.filter(
+    (b) => b.status === 'PENDING' || b.status === 'CONFIRMED'
+  );
+
+  if (!selectedBooking) {
+    return (
+      <Container maxWidth="lg">
+        <Stack spacing={3}>
+          <Typography variant="h4">Select a Session to Call</Typography>
+          {error && <Alert severity="error">{error}</Alert>}
+          {loading && (
+            <Box display="flex" justifyContent="center" my={5}>
+              <CircularProgress />
+            </Box>
+          )}
+          {!loading && upcomingBookings.length === 0 && (
+            <Alert severity="info">No upcoming sessions available.</Alert>
+          )}
+          {!loading &&
+            upcomingBookings.map((booking) => {
+              const targetName = isSpecialist ? booking.patientName : booking.specialistName;
+
+              return (
+                <Paper
+                  key={booking.id}
+                  sx={{
+                    p: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6">{targetName || 'Unknown User'}</Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'text.secondary', textTransform: 'capitalize' }}
+                    >
+                      {booking.bookingType.toLowerCase()} Session
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                      <Typography variant="body2">
+                        📅 {format(new Date(booking.scheduledAt), 'MMM dd, yyyy')}
+                      </Typography>
+                      <Typography variant="body2">
+                        🕐 {booking.startTime} - {booking.endTime}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setSelectedBooking(booking)}
+                  >
+                    Enter Call Room
+                  </Button>
+                </Paper>
+              );
+            })}
+        </Stack>
+      </Container>
+    );
+  }
+
+  const targetName = isSpecialist ? selectedBooking.patientName : selectedBooking.specialistName;
+
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
-        <Typography variant="h4">Video Call</Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Video Call with {targetName || 'User'}</Typography>
+          <Button startIcon={<Iconify icon="eva:arrow-ios-back-fill" />} onClick={handleBackToList}>
+            Back to Sessions
+          </Button>
+        </Stack>
 
         {mediaError && (
           <Alert severity="warning" onClose={() => setMediaError(null)}>
@@ -211,63 +378,59 @@ export default function CallingView() {
             {/* Status & Connection Panel */}
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  Your Peer ID
+                <Typography variant="subtitle2" sx={{ mb: 2 }}>
+                  Session Information
                 </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={peerId || 'Generating...'}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                  <Button
-                    variant="outlined"
-                    onClick={() => navigator.clipboard.writeText(peerId)}
-                    disabled={!peerId}
-                  >
-                    Copy
-                  </Button>
-                </Stack>
+                <Card variant="outlined" sx={{ p: 2 }}>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    <strong>{isSpecialist ? 'Patient' : 'Specialist'}:</strong>{' '}
+                    {targetName || 'Unknown User'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                    <strong>Target Peer ID:</strong> {remotePeerIdValue}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    <strong>Your Peer ID:</strong> {peerId}
+                  </Typography>
+                </Card>
                 <Typography
                   variant="caption"
-                  sx={{ color: 'text.secondary', mt: 1, display: 'block' }}
+                  sx={{ color: 'text.secondary', mt: 2, display: 'block' }}
                 >
-                  Share this ID with the person you want to connect with.
+                  Connection IDs are strictly bound to this session and its assigned users.
                 </Typography>
               </Box>
 
               {!callActive && (
                 <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    Call someone
-                  </Typography>
-                  <Stack direction="row" spacing={1}>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      placeholder="Enter Peer ID to call"
-                      value={remotePeerIdValue}
-                      onChange={(e) => setRemotePeerIdValue(e.target.value)}
-                      disabled={isCalling || !!incomingCall}
-                    />
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleCall}
-                      disabled={!remotePeerIdValue || isCalling || !!incomingCall}
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={handleCall}
+                    disabled={!remotePeerIdValue || isCalling || !!incomingCall}
+                  >
+                    {isCalling ? 'Calling...' : `Start Call with ${targetName || 'User'}`}
+                  </Button>
+
+                  {isCalling && callStatusMessage && (
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 2, color: 'text.secondary', display: 'flex', alignItems: 'center' }}
                     >
-                      {isCalling ? 'Calling...' : 'Call'}
-                    </Button>
-                  </Stack>
+                      <CircularProgress size={16} sx={{ mr: 1 }} />
+                      {callStatusMessage}
+                    </Typography>
+                  )}
                 </Box>
               )}
 
               {incomingCall && !callActive && (
                 <Alert severity="info" sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2">Incoming Call...</Typography>
+                  <Typography variant="subtitle2">
+                    Incoming Call from {targetName || 'User'}...
+                  </Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                     <Button
                       variant="contained"
