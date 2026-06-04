@@ -40,16 +40,25 @@ export function useSpecialistNavData() {
             title: 'Bookings',
             path: paths.specialist.root,
             icon: ICONS.booking,
+            children: [
+              {
+                title: 'View Bookings',
+                path: paths.specialist.root,
+              },
+              {
+                title: 'Calling',
+                path: paths.specialist.calling,
+              },
+              {
+                title: 'Electronic Records',
+                path: paths.specialist.electronicRecords,
+              },
+            ],
           },
           {
             title: 'Analytics',
             path: paths.specialist.analytics,
             icon: ICONS.analytics,
-          },
-          {
-            title: 'Calling',
-            path: paths.specialist.calling,
-            icon: ICONS.settings,
           },
         ],
       },

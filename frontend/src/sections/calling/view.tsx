@@ -1,25 +1,21 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
-import { format } from 'date-fns';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Alert from '@mui/material/Alert';
-import Paper from '@mui/material/Paper';
-import CircularProgress from '@mui/material/CircularProgress';
-
-import Iconify from 'src/components/iconify';
 import { useAuthContext } from 'src/auth/hooks';
+import axios from 'src/utils/axios';
 import {
   getPatientAppointments,
   getSpecialistAppointments,
   AppointmentResponse,
+  submitReview,
+  submitElectronicHealthRecord,
 } from 'src/utils/specialist-api';
+
+import SessionList from './session-list';
+import CallRoom from './call-room';
+import { ReviewDialog } from './ReviewDialog';
+import { RecordDialog } from './RecordDialog';
+import { ReasonDialog } from './ReasonDialog';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +28,50 @@ export default function CallingView() {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedBooking, setSelectedBooking] = useState<AppointmentResponse | null>(null);
+
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedBookingForReview, setSelectedBookingForReview] =
+    useState<AppointmentResponse | null>(null);
+
+  const [recordDialogOpen, setRecordDialogOpen] = useState(false);
+  const [selectedBookingForRecord, setSelectedBookingForRecord] =
+    useState<AppointmentResponse | null>(null);
+  const [diagnosis, setDiagnosis] = useState('');
+  const [treatmentPlan, setTreatmentPlan] = useState('');
+
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
+  const [reasonDialogType, setReasonDialogType] = useState<'CANCEL' | 'REPORT' | null>(null);
+  const [selectedBookingForReason, setSelectedBookingForReason] =
+    useState<AppointmentResponse | null>(null);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    // Update current time every minute to check schedule
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getCallStatus = useCallback(
+    (booking: AppointmentResponse) => {
+      const appointmentDate = new Date(booking.scheduledAt);
+      const [startHour, startMinute] = booking.startTime.split(':').map(Number);
+      const [endHour, endMinute] = booking.endTime.split(':').map(Number);
+
+      const startTime = new Date(appointmentDate);
+      startTime.setHours(startHour, startMinute, 0, 0);
+
+      const endTime = new Date(appointmentDate);
+      endTime.setHours(endHour, endMinute, 0, 0);
+
+      const bufferStartTime = new Date(startTime.getTime() - 5 * 60000); // 5 minutes before
+
+      if (currentTime > endTime) return 'ENDED';
+      if (currentTime < bufferStartTime) return 'NOT_STARTED';
+      return 'AVAILABLE';
+    },
+    [currentTime]
+  );
 
   const [peerId, setPeerId] = useState<string>('');
   const [remotePeerIdValue, setRemotePeerIdValue] = useState<string>('');
@@ -291,282 +331,171 @@ export default function CallingView() {
     setRemotePeerIdValue('');
   };
 
-  const upcomingBookings = appointments.filter(
-    (b) => b.status === 'PENDING' || b.status === 'CONFIRMED'
-  );
+  const handleOpenReviewDialog = (booking: AppointmentResponse) => {
+    setSelectedBookingForReview(booking);
+    setReviewDialogOpen(true);
+  };
+
+  const handleCloseReviewDialog = () => {
+    setReviewDialogOpen(false);
+    setSelectedBookingForReview(null);
+  };
+
+  const handleSubmitReview = async (rating: number, comment: string) => {
+    if (!selectedBookingForReview) return;
+    try {
+      await submitReview(
+        selectedBookingForReview.id,
+        selectedBookingForReview.patientId,
+        rating,
+        comment
+      );
+      // Show success message (e.g. snackbar)
+    } catch (err) {
+      console.error(err);
+      // Show error message
+    } finally {
+      handleCloseReviewDialog();
+    }
+  };
+
+  const handleOpenRecordDialog = (booking: AppointmentResponse) => {
+    setSelectedBookingForRecord(booking);
+    setRecordDialogOpen(true);
+    setDiagnosis('');
+    setTreatmentPlan('');
+  };
+
+  const handleCloseRecordDialog = () => {
+    setRecordDialogOpen(false);
+    setSelectedBookingForRecord(null);
+  };
+
+  const handleSubmitRecord = async (diag: string, plan: string) => {
+    if (!selectedBookingForRecord) return;
+    try {
+      await submitElectronicHealthRecord(
+        selectedBookingForRecord.id,
+        selectedBookingForRecord.specialistId,
+        diag,
+        plan
+      );
+      // Show success message (e.g. snackbar)
+    } catch (err) {
+      console.error(err);
+      // Show error message
+    } finally {
+      handleCloseRecordDialog();
+    }
+  };
+
+  const handleCancelSession = async (booking: AppointmentResponse) => {
+    setSelectedBookingForReason(booking);
+    setReasonDialogType('CANCEL');
+    setReasonDialogOpen(true);
+  };
+
+  const handleReportSession = async (booking: AppointmentResponse) => {
+    setSelectedBookingForReason(booking);
+    setReasonDialogType('REPORT');
+    setReasonDialogOpen(true);
+  };
+
+  const handleSubmitReason = async (reason: string) => {
+    if (!selectedBookingForReason || !reasonDialogType) return;
+    try {
+      const endpoint = reasonDialogType === 'CANCEL' ? 'cancel' : 'no-show';
+      const response = await axios.post(
+        `/api/v1/appointments/${selectedBookingForReason.id}/${endpoint}`,
+        {
+          reason,
+        }
+      );
+      const updatedAppointment = response.data;
+      setAppointments((prev) =>
+        prev.map((apt) => (apt.id === updatedAppointment.id ? updatedAppointment : apt))
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setReasonDialogOpen(false);
+      setSelectedBookingForReason(null);
+      setReasonDialogType(null);
+    }
+  };
 
   if (!selectedBooking) {
     return (
-      <Container maxWidth="lg">
-        <Stack spacing={3}>
-          <Typography variant="h4">Select a Session to Call</Typography>
-          {error && <Alert severity="error">{error}</Alert>}
-          {loading && (
-            <Box display="flex" justifyContent="center" my={5}>
-              <CircularProgress />
-            </Box>
-          )}
-          {!loading && upcomingBookings.length === 0 && (
-            <Alert severity="info">No upcoming sessions available.</Alert>
-          )}
-          {!loading &&
-            upcomingBookings.map((booking) => {
-              const targetName = isSpecialist ? booking.patientName : booking.specialistName;
+      <>
+        <SessionList
+          appointments={appointments}
+          loading={loading}
+          error={error}
+          isSpecialist={isSpecialist}
+          onSelectBooking={setSelectedBooking}
+          getCallStatus={getCallStatus}
+          onRateSpecialist={handleOpenReviewDialog}
+          onWriteRecord={handleOpenRecordDialog}
+          onCancelSession={handleCancelSession}
+          onReportSession={handleReportSession}
+        />
 
-              return (
-                <Paper
-                  key={booking.id}
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Box>
-                    <Typography variant="h6">{targetName || 'Unknown User'}</Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'text.secondary', textTransform: 'capitalize' }}
-                    >
-                      {booking.bookingType.toLowerCase()} Session
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                      <Typography variant="body2">
-                        📅 {format(new Date(booking.scheduledAt), 'MMM dd, yyyy')}
-                      </Typography>
-                      <Typography variant="body2">
-                        🕐 {booking.startTime} - {booking.endTime}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setSelectedBooking(booking)}
-                  >
-                    Enter Call Room
-                  </Button>
-                </Paper>
-              );
-            })}
-        </Stack>
-      </Container>
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onClose={handleCloseReviewDialog}
+          onSubmit={handleSubmitReview}
+        />
+
+        <RecordDialog
+          open={recordDialogOpen}
+          onClose={handleCloseRecordDialog}
+          onSubmit={handleSubmitRecord}
+          diagnosis={diagnosis}
+          onDiagnosisChange={setDiagnosis}
+          treatmentPlan={treatmentPlan}
+          onTreatmentPlanChange={setTreatmentPlan}
+        />
+
+        <ReasonDialog
+          open={reasonDialogOpen}
+          title={reasonDialogType === 'CANCEL' ? 'Cancel Session' : 'Report Session'}
+          description={
+            reasonDialogType === 'CANCEL'
+              ? 'Please provide a reason for cancelling this session.'
+              : 'Please describe the issue to report this session.'
+          }
+          onClose={() => setReasonDialogOpen(false)}
+          onSubmit={handleSubmitReason}
+        />
+      </>
     );
   }
 
   const targetName = isSpecialist ? selectedBooking.patientName : selectedBooking.specialistName;
 
   return (
-    <Container maxWidth="lg">
-      <Stack spacing={3}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Video Call with {targetName || 'User'}</Typography>
-          <Button startIcon={<Iconify icon="eva:arrow-ios-back-fill" />} onClick={handleBackToList}>
-            Back to Sessions
-          </Button>
-        </Stack>
-
-        {mediaError && (
-          <Alert severity="warning" onClose={() => setMediaError(null)}>
-            {mediaError}
-          </Alert>
-        )}
-
-        <Card sx={{ p: 3 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-            {/* Status & Connection Panel */}
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                  Session Information
-                </Typography>
-                <Card variant="outlined" sx={{ p: 2 }}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>{isSpecialist ? 'Patient' : 'Specialist'}:</strong>{' '}
-                    {targetName || 'Unknown User'}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-                    <strong>Target Peer ID:</strong> {remotePeerIdValue}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    <strong>Your Peer ID:</strong> {peerId}
-                  </Typography>
-                </Card>
-                <Typography
-                  variant="caption"
-                  sx={{ color: 'text.secondary', mt: 2, display: 'block' }}
-                >
-                  Connection IDs are strictly bound to this session and its assigned users.
-                </Typography>
-              </Box>
-
-              {!callActive && (
-                <Box>
-                  <Button
-                    fullWidth
-                    size="large"
-                    variant="contained"
-                    color="primary"
-                    onClick={handleCall}
-                    disabled={!remotePeerIdValue || isCalling || !!incomingCall}
-                  >
-                    {isCalling ? 'Calling...' : `Start Call with ${targetName || 'User'}`}
-                  </Button>
-
-                  {isCalling && callStatusMessage && (
-                    <Typography
-                      variant="body2"
-                      sx={{ mt: 2, color: 'text.secondary', display: 'flex', alignItems: 'center' }}
-                    >
-                      <CircularProgress size={16} sx={{ mr: 1 }} />
-                      {callStatusMessage}
-                    </Typography>
-                  )}
-                </Box>
-              )}
-
-              {incomingCall && !callActive && (
-                <Alert severity="info" sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2">
-                    Incoming Call from {targetName || 'User'}...
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={handleAnswerCall}
-                      size="small"
-                    >
-                      Answer
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={handleRejectCall}
-                      size="small"
-                    >
-                      Reject
-                    </Button>
-                  </Stack>
-                </Alert>
-              )}
-            </Stack>
-
-            {/* Video Streams Panel */}
-            <Box
-              sx={{
-                flex: 2,
-                position: 'relative',
-                bgcolor: 'text.primary',
-                borderRadius: 2,
-                overflow: 'hidden',
-                aspectRatio: '16/9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {!callActive && !isCalling && !incomingCall && (
-                <Typography sx={{ color: 'background.paper' }}>
-                  Ready to make or receive a call
-                </Typography>
-              )}
-
-              {/* Remote Video (Main) */}
-              <Box
-                component="video"
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: callActive ? 'block' : 'none',
-                }}
-              />
-
-              {/* Local Video (PiP) */}
-              <Box
-                component="video"
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                sx={{
-                  width: { xs: 100, md: 160 },
-                  height: { xs: 75, md: 120 },
-                  position: 'absolute',
-                  bottom: 16,
-                  right: 16,
-                  objectFit: 'cover',
-                  borderRadius: 1,
-                  border: (theme) => `2px solid ${theme.palette.background.paper}`,
-                  display: callActive || isCalling ? 'block' : 'none',
-                  zIndex: 9,
-                }}
-              />
-
-              {/* Call Controls Overlay */}
-              {callActive && (
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{
-                    position: 'absolute',
-                    bottom: 16,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 10,
-                  }}
-                >
-                  <IconButton
-                    onClick={toggleMute}
-                    sx={{
-                      bgcolor: isMuted ? 'error.main' : 'background.paper',
-                      color: isMuted ? 'common.white' : 'text.primary',
-                      '&:hover': {
-                        bgcolor: isMuted ? 'error.dark' : 'grey.300',
-                      },
-                    }}
-                  >
-                    <Iconify icon={isMuted ? 'mingcute:mic-off-fill' : 'mingcute:mic-fill'} />
-                  </IconButton>
-
-                  <IconButton
-                    onClick={toggleVideo}
-                    sx={{
-                      bgcolor: isVideoOff ? 'error.main' : 'background.paper',
-                      color: isVideoOff ? 'common.white' : 'text.primary',
-                      '&:hover': {
-                        bgcolor: isVideoOff ? 'error.dark' : 'grey.300',
-                      },
-                    }}
-                  >
-                    <Iconify
-                      icon={isVideoOff ? 'mingcute:video-off-fill' : 'mingcute:video-fill'}
-                    />
-                  </IconButton>
-
-                  <IconButton
-                    onClick={handleEndCall}
-                    sx={{
-                      bgcolor: 'error.main',
-                      color: 'common.white',
-                      '&:hover': {
-                        bgcolor: 'error.dark',
-                      },
-                    }}
-                  >
-                    <Iconify icon="mingcute:phone-off-fill" />
-                  </IconButton>
-                </Stack>
-              )}
-            </Box>
-          </Stack>
-        </Card>
-      </Stack>
-    </Container>
+    <CallRoom
+      targetName={targetName || 'User'}
+      isSpecialist={isSpecialist}
+      remotePeerIdValue={remotePeerIdValue}
+      peerId={peerId}
+      callActive={callActive}
+      isCalling={isCalling}
+      incomingCall={incomingCall}
+      callStatusMessage={callStatusMessage}
+      mediaError={mediaError}
+      isMuted={isMuted}
+      isVideoOff={isVideoOff}
+      onCall={handleCall}
+      onAnswerCall={handleAnswerCall}
+      onRejectCall={handleRejectCall}
+      onToggleMute={toggleMute}
+      onToggleVideo={toggleVideo}
+      onEndCall={handleEndCall}
+      onBackToList={handleBackToList}
+      onClearMediaError={() => setMediaError(null)}
+      remoteVideoRef={remoteVideoRef}
+      localVideoRef={localVideoRef}
+    />
   );
 }

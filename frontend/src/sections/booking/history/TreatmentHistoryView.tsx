@@ -39,7 +39,7 @@ function convertAppointmentToTherapyBooking(appointment: AppointmentResponse): T
     endTime: appointment.endTime,
     duration: appointment.duration,
     status:
-      appointment.status === 'COMPLETED'
+      appointment.status === 'COMPLETED' || appointment.status === 'CONFIRMED'
         ? 'completed'
         : appointment.status === 'CANCELLED'
           ? 'cancelled'

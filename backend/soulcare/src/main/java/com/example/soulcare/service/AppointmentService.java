@@ -21,6 +21,7 @@ public class AppointmentService {
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final ReviewRepository reviewRepository;
+    private final ElectronicHealthRecordRepository ehrRepository;
 
     /**
      * Create a new appointment (booking)
@@ -203,6 +204,7 @@ public class AppointmentService {
 
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointment.setCancelledReason(reason);
+        appointment.setSessionNotes(reason); // Store in sessionNotes as well
 
         Appointment updated = appointmentRepository.save(appointment);
         Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);
@@ -214,11 +216,12 @@ public class AppointmentService {
     /**
      * Mark appointment as NO_SHOW
      */
-    public AppointmentResponse markNoShow(UUID appointmentId) {
+    public AppointmentResponse markNoShow(UUID appointmentId, String reason) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
         appointment.setStatus(AppointmentStatus.NO_SHOW);
+        appointment.setSessionNotes(reason); // Store in sessionNotes
 
         Appointment updated = appointmentRepository.save(appointment);
         Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);
@@ -234,8 +237,8 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findByIdAndPatientId(appointmentId, patientId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
-            throw new RuntimeException("Can only review completed appointments");
+        if (appointment.getStatus() != AppointmentStatus.PENDING) {
+            throw new RuntimeException("Can only review pending appointments");
         }
 
         // Create or update review
@@ -246,10 +249,43 @@ public class AppointmentService {
         review.setComment(comment);
         reviewRepository.save(review);
 
+        // Update appointment status to CONFIRMED
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        appointment = appointmentRepository.save(appointment);
+
         Patient patient = patientRepository.findById(patientId).orElse(null);
         Specialist specialist = specialistRepository.findById(appointment.getSpecialistId()).orElse(null);
 
         return mapToResponse(appointment, patient, specialist);
+    }
+
+    /**
+     * Add or update Electronic Health Record (EHR) for an appointment
+     */
+    public ElectronicHealthRecord addElectronicHealthRecord(UUID specialistId, UUID appointmentId, String diagnosis, String treatmentPlan) {
+        Appointment appointment = appointmentRepository.findByIdAndSpecialistId(appointmentId, specialistId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        // Create or update EHR
+        ElectronicHealthRecord ehr = ehrRepository.findByAppointmentId(appointmentId)
+                .orElse(ElectronicHealthRecord.builder()
+                        .appointmentId(appointmentId)
+                        .patientId(appointment.getPatientId())
+                        .specialistId(specialistId)
+                        .build());
+
+        ehr.setDiagnosis(diagnosis);
+        ehr.setTreatmentPlan(treatmentPlan);
+        ehrRepository.save(ehr);
+
+        
+        // Update appointment status to COMPLETED
+        if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment = appointmentRepository.save(appointment);
+        }
+
+        return ehr;
     }
 
     /**

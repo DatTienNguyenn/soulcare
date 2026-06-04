@@ -11,6 +11,7 @@ const SpecialistDashboardPage = lazy(() => import('src/pages/specialist/speciali
 const SpecialistAnalyticsPage = lazy(() => import('src/pages/specialist/specialist-analytics'));
 const SpecialistSettingsPage = lazy(() => import('src/pages/specialist/specialist-settings'));
 const CallingPage = lazy(() => import('src/pages/dashboard/callingPage'));
+const SpecialistRecordsPage = lazy(() => import('src/pages/specialist/specialist-records'));
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export const specialistRoutes = [
       { path: 'analytics', element: <SpecialistAnalyticsPage /> },
       { path: 'settings', element: <SpecialistSettingsPage /> },
       { path: 'calling', element: <CallingPage /> },
+      { path: 'electronic-records', element: <SpecialistRecordsPage /> },
     ],
   },
 ];

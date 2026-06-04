@@ -41,6 +41,7 @@ export const paths = {
     analytics: `${ROOTS.SPECIALIST}/analytics`,
     settings: `${ROOTS.SPECIALIST}/settings`,
     calling: `${ROOTS.SPECIALIST}/calling`,
+    electronicRecords: `${ROOTS.SPECIALIST}/electronic-records`,
   },
   // ADMIN
   admin: {
