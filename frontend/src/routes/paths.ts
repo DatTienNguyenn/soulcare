@@ -49,5 +49,6 @@ export const paths = {
     testManagement: `${ROOTS.ADMIN}/test-management`,
     userManagement: `${ROOTS.ADMIN}/user-management`,
     analytics: `${ROOTS.ADMIN}/analytics`,
+    sessionReporting: `${ROOTS.ADMIN}/session-reporting`,
   },
 };

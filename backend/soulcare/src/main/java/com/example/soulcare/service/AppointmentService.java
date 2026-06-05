@@ -221,7 +221,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
         appointment.setStatus(AppointmentStatus.NO_SHOW);
-        appointment.setSessionNotes(reason); // Store in sessionNotes
+        appointment.setCancelledReason(reason); // Store in cancelledReason
 
         Appointment updated = appointmentRepository.save(appointment);
         Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);

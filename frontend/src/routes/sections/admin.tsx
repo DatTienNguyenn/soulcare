@@ -11,6 +11,7 @@ import RoleBasedGuard from 'src/auth/guard/role-based-guard';
 const TestManagementPage = lazy(() => import('src/pages/admin/test-management'));
 const UserManagementPage = lazy(() => import('src/pages/admin/user-management'));
 const AnalyticsPage = lazy(() => import('src/pages/admin/analytics'));
+const PatientReportingPage = lazy(() => import('src/pages/admin/patient-reportment'));
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export const adminRoutes = [
       { path: 'test-management', element: <TestManagementPage /> },
       { path: 'user-management', element: <UserManagementPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
+      { path: 'session-reporting', element: <PatientReportingPage /> },
     ],
   },
 ];
