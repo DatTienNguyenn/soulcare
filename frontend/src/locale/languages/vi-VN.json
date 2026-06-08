@@ -373,5 +373,81 @@
       "delete": "Xóa",
       "manageQuestions": "Quản Lý Câu Hỏi"
     }
+  },
+  "admin": {
+    "patientReporting": {
+      "title": "Báo cáo Bệnh nhân",
+      "description": "Xem và quản lý các báo cáo được gửi bởi bệnh nhân về các vấn đề sức khỏe tâm thần hoặc trải nghiệm trị liệu của họ",
+      "noReports": "Không tìm thấy báo cáo bệnh nhân",
+      "loadingError": "Không thể tải báo cáo bệnh nhân. Vui lòng thử lại sau.",
+      "reportDetails": "Chi tiết Báo cáo",
+      "patientName": "Tên Bệnh nhân",
+      "specialistName": "Tên Chuyên gia",
+      "type": "Loại Báo cáo",
+      "status": "Trạng Thái",
+      "sessionNotes": "Ghi Chú Phiên Trị Liệu",
+      "date": "Ngày",
+      "reason": "Lý Do",
+      "appointmentDate": "Ngày Hẹn",
+      "reportedAt": "Ngày Báo cáo",
+      "loading": "Đang tải báo cáo bệnh nhân...",
+      "actions": {
+        "action": "Hành Động",
+        "approve": "Duyệt",
+        "reject": "Từ chối"
+      }
+    }
+  },
+  "specialist": {
+    "noSessionNeedRecord": "Không có phiên nào cần ghi chép lại",
+    "recordSession": "Ghi chép phiên trị liệu",
+    "sessionRecording": "Đang ghi chép phiên trị liệu...",
+    "recordTitle": "Ghi chép hồ sơ phiên trị liệu",
+    "patientName": "Tên bệnh nhân",
+    "writeRecord": "Ghi chép hồ sơ",
+    "setting": {
+      "title": "Cài đặt hồ sơ Chuyên gia",
+      "management": "Quản lý thông tin chuyên môn, giá cả và thời gian rảnh",
+      "subtitle": "Cài đặt & Quản lý Hồ sơ",
+      "profile": {
+        "edit": "Chỉnh sửa Hồ sơ",
+        "name": "Tên đầy đủ",
+        "email": "Email",
+        "Specialties": "Chuyên môn",
+        "bio": "Giới thiệu bản thân",
+        "noBioAdded": "Chưa có giới thiệu bản thân",
+        "changeAvatar": "Thay đổi Hình đại diện",
+        "yearsOfExperience": "Số năm kinh nghiệm",
+        "year": "Năm"
+      },
+      "availability": {
+        "title": "Thời gian rảnh",
+        "description": "Đặt các khung thời gian có sẵn để đặt lịch cho bệnh nhân",
+        "addAvailability": "Thêm Thời gian Rảnh",
+        "hours": "Giờ Có Sẵn",
+        "breakTime": "Thời gian Nghỉ",
+        "dayOfWeek": "Ngày trong Tuần",
+        "startTime": "Giờ Bắt Đầu",
+        "endTime": "Giờ Kết Thúc",
+        "breakTimeStart": "Thời gian Bắt Đầu Nghỉ",
+        "breakTimeEnd": "Thời gian Kết Thúc Nghỉ",
+        "breaktime": "Thời gian Nghỉ (tùy chọn)"
+      },
+      "actions": {
+        "saveProfile": "Lưu Hồ sơ",
+        "cancel": "Hủy",
+        "updateAvailability": "Cập Nhật Thời gian Rảnh",
+        "update": "Cập Nhật",
+        "add": "Thêm"
+      },
+      "notify": {
+        "profileUpdateSuccess": "Hồ sơ của bạn đã được cập nhật thành công!",
+        "profileUpdateFailed": "Cập nhật hồ sơ thất bại. Vui lòng thử lại sau.",
+        "availabilityUpdateSuccess": "Thời gian rảnh đã được cập nhật thành công!",
+        "availabilityUpdateFailed": "Cập nhật thời gian rảnh thất bại. Vui lòng thử lại sau.",
+        "noSpecialtiesSelected": "Chưa chọn chuyên môn nào",
+        "noAvailability": "Chưa đặt thời gian rảnh. Vui lòng thêm giờ có sẵn để nhận lịch hẹn."
+      }
+    }
   }
 }

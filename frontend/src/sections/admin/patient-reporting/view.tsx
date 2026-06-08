@@ -20,6 +20,7 @@ import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import Scrollbar from 'src/components/scrollbar';
 import axios from 'src/utils/axios';
+import { useLocales } from 'src/locale/use-locales';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +43,7 @@ export default function NoShowsView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const { t } = useLocales();
 
   useEffect(() => {
     const fetchNoShows = async () => {
@@ -78,7 +80,7 @@ export default function NoShowsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">No-Show Appointments</Typography>
+        <Typography variant="h4">{t('admin.patientReporting.title')}</Typography>
       </Stack>
 
       {error && (
@@ -93,13 +95,13 @@ export default function NoShowsView() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Patient Name</TableCell>
-                  <TableCell>Specialist Name</TableCell>
-                  <TableCell>Scheduled At</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Session Notes</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t('admin.patientReporting.patientName')}</TableCell>
+                  <TableCell>{t('admin.patientReporting.specialistName')}</TableCell>
+                  <TableCell>{t('admin.patientReporting.appointmentDate')}</TableCell>
+                  <TableCell>{t('admin.patientReporting.type')}</TableCell>
+                  <TableCell>{t('admin.patientReporting.status')}</TableCell>
+                  <TableCell>{t('admin.patientReporting.sessionNotes')}</TableCell>
+                  <TableCell align="right">{t('admin.patientReporting.actions.action')}</TableCell>
                 </TableRow>
               </TableHead>
 
@@ -107,13 +109,13 @@ export default function NoShowsView() {
                 {loading ? (
                   <TableRow>
                     <TableCell colSpan={7} align="center">
-                      Loading...
+                      {t('admin.patientReporting.loading')}
                     </TableCell>
                   </TableRow>
                 ) : appointments.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} align="center">
-                      No NO_SHOW appointments found.
+                      {t('admin.patientReporting.noReports')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -140,11 +142,11 @@ export default function NoShowsView() {
                       <TableCell align="right">
                         {row.sessionNotes?.includes('[ADMIN APPROVED]') ? (
                           <Typography variant="subtitle2" color="success.main">
-                            APPROVED
+                            {t('admin.patientReporting.actions.approve')}
                           </Typography>
                         ) : row.sessionNotes?.includes('[ADMIN DECLINED]') ? (
                           <Typography variant="subtitle2" color="error.main">
-                            DECLINED
+                            {t('admin.patientReporting.actions.reject')}
                           </Typography>
                         ) : actionLoading === row.id ? (
                           <CircularProgress size={24} />

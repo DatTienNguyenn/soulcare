@@ -16,11 +16,13 @@ import {
   submitElectronicHealthRecord,
 } from 'src/utils/specialist-api';
 import { RecordDialog } from 'src/sections/calling/RecordDialog';
+import { useLocales } from 'src/locale/use-locales';
 
 export default function SpecialistEHRView() {
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLocales();
 
   const [recordDialogOpen, setRecordDialogOpen] = useState(false);
   const [selectedBookingForRecord, setSelectedBookingForRecord] =
@@ -79,7 +81,7 @@ export default function SpecialistEHRView() {
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
-        <Typography variant="h4">Electronic Health Records</Typography>
+        <Typography variant="h4">{t('specialist.recordTitle')}</Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>
@@ -87,7 +89,7 @@ export default function SpecialistEHRView() {
           </Box>
         )}
         {!loading && confirmedBookings.length === 0 && (
-          <Alert severity="info">No confirmed sessions available for recording.</Alert>
+          <Alert severity="info">{t('specialist.noSessionNeedRecord')}</Alert>
         )}
         {!loading &&
           confirmedBookings.map((booking) => {
@@ -107,7 +109,7 @@ export default function SpecialistEHRView() {
                     variant="body2"
                     sx={{ color: 'text.secondary', textTransform: 'capitalize' }}
                   >
-                    {booking.bookingType.toLowerCase()} Session
+                    {booking.bookingType.toLowerCase()}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                     <Typography variant="body2">
@@ -124,7 +126,7 @@ export default function SpecialistEHRView() {
                     color="info"
                     onClick={() => handleOpenRecordDialog(booking)}
                   >
-                    Write Record
+                    {t('specialist.writeRecord')}
                   </Button>
                 </Box>
               </Paper>

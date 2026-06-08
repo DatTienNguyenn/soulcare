@@ -23,6 +23,7 @@ import { Save as SaveIcon } from 'lucide-react';
 import { useSpecialistProfile } from 'src/hooks/use-specialist-profile';
 import PricingManagement from '../components/PricingManagement';
 import AvailabilityManagement from '../components/AvailabilityManagement';
+import { useLocales } from 'src/locale/use-locales';
 
 const SPECIALTY_OPTIONS = ['PSYCHOLOGY', 'COUNSELING', 'BEHAVIORAL', 'MEDITATION', 'GENERAL'];
 
@@ -46,6 +47,7 @@ export default function SpecialistSettingsView() {
   const [editData, setEditData] = useState(profileData);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const { t } = useLocales();
 
   // Load profile data on component mount
   useEffect(() => {
@@ -117,7 +119,7 @@ export default function SpecialistSettingsView() {
   return (
     <>
       <Helmet>
-        <title>Settings | Specialist</title>
+        <title>{t('specialist.setting.title')}</title>
       </Helmet>
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -125,10 +127,10 @@ export default function SpecialistSettingsView() {
           {/* Page Title */}
           <Box>
             <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
-              Settings & Profile Management
+              {t('specialist.setting.subtitle')}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Manage your professional information, pricing, and availability
+              {t('specialist.setting.management')}
             </Typography>
           </Box>
 
@@ -136,7 +138,7 @@ export default function SpecialistSettingsView() {
           {loadError && <Alert severity="error">{loadError}</Alert>}
           {apiError && <Alert severity="error">{apiError}</Alert>}
           {saveSuccess && (
-            <Alert severity="success">Your profile has been updated successfully!</Alert>
+            <Alert severity="success">{t('specialist.setting.notify.profileUpdateSuccess')}</Alert>
           )}
 
           {/* Loading State */}
@@ -151,7 +153,7 @@ export default function SpecialistSettingsView() {
                 action={
                   !isEditing && (
                     <Button variant="outlined" onClick={handleEditClick}>
-                      Edit Profile
+                      {t('specialist.setting.profile.edit')}
                     </Button>
                   )
                 }
@@ -164,7 +166,7 @@ export default function SpecialistSettingsView() {
                       <Avatar src={profileData.avatar} sx={{ width: 120, height: 120 }} />
                       {isEditing && (
                         <Button variant="outlined" size="small">
-                          Change Avatar
+                          {t('specialist.setting.profile.changeAvatar')}
                         </Button>
                       )}
                     </Stack>
@@ -176,13 +178,13 @@ export default function SpecialistSettingsView() {
                       {isEditing ? (
                         <>
                           <TextField
-                            label="Full Name"
+                            label={t('specialist.setting.profile.name')}
                             fullWidth
                             value={editData.fullName}
                             onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
                           />
                           <TextField
-                            label="Years of Experience"
+                            label={t('specialist.setting.profile.yearsOfExperience')}
                             fullWidth
                             type="number"
                             value={editData.years_exp}
@@ -193,7 +195,7 @@ export default function SpecialistSettingsView() {
                           />
                           <Box>
                             <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 500 }}>
-                              Specialties
+                              {t('specialist.setting.profile.Specialties')}
                             </Typography>
                             <FormGroup>
                               <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
@@ -236,14 +238,14 @@ export default function SpecialistSettingsView() {
                           />
                           <Stack direction="row" spacing={2} sx={{ justifyContent: 'flex-end' }}>
                             <Button variant="outlined" onClick={handleCancel}>
-                              Cancel
+                              {t('specialist.setting.actions.cancel')}
                             </Button>
                             <Button
                               variant="contained"
                               startIcon={<SaveIcon size={20} />}
                               onClick={handleSaveProfile}
                             >
-                              Save Changes
+                              {t('specialist.setting.actions.saveProfile')}
                             </Button>
                           </Stack>
                         </>
@@ -251,7 +253,7 @@ export default function SpecialistSettingsView() {
                         <>
                           <Box>
                             <Typography variant="subtitle2" color="textSecondary">
-                              Full Name
+                              {t('specialist.setting.profile.name')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 500 }}>
                               {profileData.fullName}
@@ -259,15 +261,15 @@ export default function SpecialistSettingsView() {
                           </Box>
                           <Box>
                             <Typography variant="subtitle2" color="textSecondary">
-                              Years of Experience
+                              {t('specialist.setting.profile.yearsOfExperience')}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                              {profileData.years_exp} years
+                              {profileData.years_exp} {t('specialist.setting.profile.year')}
                             </Typography>
                           </Box>
                           <Box>
                             <Typography variant="subtitle2" color="textSecondary">
-                              Specialty
+                              {t('specialist.setting.profile.Specialties')}
                             </Typography>
                             <Stack
                               direction="row"
@@ -280,17 +282,17 @@ export default function SpecialistSettingsView() {
                                 ))
                               ) : (
                                 <Typography variant="body2" color="textSecondary">
-                                  No specialties selected
+                                  {t('specialist.setting.notify.noSpecialtiesSelected')}
                                 </Typography>
                               )}
                             </Stack>
                           </Box>
                           <Box>
                             <Typography variant="subtitle2" color="textSecondary">
-                              Bio
+                              {t('specialist.setting.profile.bio')}
                             </Typography>
                             <Typography variant="body2">
-                              {profileData.bio || 'No bio added yet'}
+                              {profileData.bio || t('specialist.setting.profile.noBioAdded')}
                             </Typography>
                           </Box>
                         </>
