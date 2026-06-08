@@ -44,6 +44,11 @@ export function useAdminNavData() {
             path: paths.admin.analytics,
             icon: ICONS.analytics,
           },
+          {
+            title: 'Patient Reporting',
+            path: paths.admin.sessionReporting,
+            icon: ICONS.label,
+          },
         ],
       },
     ],

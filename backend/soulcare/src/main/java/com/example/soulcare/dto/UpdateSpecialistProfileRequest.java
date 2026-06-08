@@ -15,4 +15,8 @@ public class UpdateSpecialistProfileRequest {
     private String fullName;
 
     private String[] specialtyTags; // Array of specialty tags
+    
+    private String bio; // Professional bio
+    
+    private Integer years_exp; // Years of experience
 }

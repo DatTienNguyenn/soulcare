@@ -98,6 +98,10 @@ export function useNavData() {
                 title: t('pages.treatmentHistory.title'),
                 path: paths.dashboard['treatment-history'],
               },
+              {
+                title: t('pages.calling.title'),
+                path: paths.dashboard['calling'],
+              },
             ],
           },
         ],

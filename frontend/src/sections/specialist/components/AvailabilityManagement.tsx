@@ -22,6 +22,7 @@ import {
 import { Pencil as EditIcon, Trash2 as DeleteIcon, Plus as PlusIcon } from 'lucide-react';
 import { useSpecialistProfile } from 'src/hooks/use-specialist-profile';
 import { AvailabilityResponse } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -49,6 +50,7 @@ export default function AvailabilityManagement() {
     breakTimeStart: '',
     breakTimeEnd: '',
   });
+  const { t } = useLocales();
 
   // Load availability data on component mount
   useEffect(() => {
@@ -228,7 +230,7 @@ export default function AvailabilityManagement() {
                       <Stack spacing={1}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                           <Typography variant="body2" color="textSecondary">
-                            Hours:
+                            {t('specialist.setting.availability.hours')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {availability.startTime} - {availability.endTime}
@@ -237,7 +239,7 @@ export default function AvailabilityManagement() {
                         {availability.breakTimeStart && availability.breakTimeEnd && (
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="textSecondary">
-                              Break:
+                              {t('specialist.setting.availability.breakTime')}
                             </Typography>
                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
                               {availability.breakTimeStart} - {availability.breakTimeEnd}
@@ -267,7 +269,7 @@ export default function AvailabilityManagement() {
                     </>
                   ) : (
                     <Typography variant="body2" color="textSecondary">
-                      No availability set
+                      {t('specialist.setting.notify.noAvailability')}
                     </Typography>
                   )}
                 </Paper>
@@ -299,7 +301,7 @@ export default function AvailabilityManagement() {
               </TextField>
 
               <TextField
-                label="Start Time"
+                label={t('specialist.setting.availability.startTime')}
                 type="time"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -308,7 +310,7 @@ export default function AvailabilityManagement() {
               />
 
               <TextField
-                label="End Time"
+                label={t('specialist.setting.availability.endTime')}
                 type="time"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -317,11 +319,11 @@ export default function AvailabilityManagement() {
               />
 
               <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 'bold' }}>
-                Break Time (Optional)
+                {t('specialist.setting.availability.breaktime')}
               </Typography>
 
               <TextField
-                label="Break Start Time"
+                label={t('specialist.setting.availability.breakTimeStart')}
                 type="time"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -330,7 +332,7 @@ export default function AvailabilityManagement() {
               />
 
               <TextField
-                label="Break End Time"
+                label={t('specialist.setting.availability.breakTimeEnd')}
                 type="time"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -342,7 +344,9 @@ export default function AvailabilityManagement() {
           <DialogActions>
             <Button onClick={handleCloseDialog}>Cancel</Button>
             <Button onClick={handleSave} variant="contained">
-              {editingId ? 'Update' : 'Add'}
+              {editingId
+                ? t('specialist.setting.actions.update')
+                : t('specialist.setting.actions.add')}
             </Button>
           </DialogActions>
         </Dialog>

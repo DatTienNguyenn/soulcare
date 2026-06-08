@@ -51,4 +51,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     
     // Count appointments by patient and status
     long countByPatientIdAndStatus(UUID patientId, AppointmentStatus status);
+    
+    // Find booked appointments for a specialist in date range (excluding cancelled)
+    @Query("SELECT a FROM Appointment a WHERE a.specialistId = :specialistId AND a.status != :status AND a.scheduledAt BETWEEN :startDate AND :endDate")
+    List<Appointment> findBySpecialistIdAndStatusNotAndScheduledAtBetween(
+            @Param("specialistId") UUID specialistId,
+            @Param("status") AppointmentStatus status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

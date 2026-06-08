@@ -1,2 +1,2 @@
-export { default as TherapyBookingView } from './TherapyBookingView';
-export { default as TreatmentHistoryView } from './TreatmentHistoryView';
+export { default as TherapyBookingView } from './view/TherapyBookingView';
+export { default as TreatmentHistoryView } from './history/TreatmentHistoryView';

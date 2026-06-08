@@ -2,6 +2,7 @@ package com.example.soulcare.controller;
 
 import com.example.soulcare.dto.AppointmentRequest;
 import com.example.soulcare.dto.AppointmentResponse;
+import com.example.soulcare.model.ElectronicHealthRecord;
 import com.example.soulcare.model.AppointmentStatus;
 import com.example.soulcare.repository.PatientRepository;
 import com.example.soulcare.repository.SpecialistRepository;
@@ -150,11 +151,20 @@ public class AppointmentController {
     /**
      * Mark appointment as no-show
      */
+    // @PostMapping("/{appointmentId}/no-show")
+    // public ResponseEntity<AppointmentResponse> markNoShow(@PathVariable UUID appointmentId) {
+    //     AppointmentResponse response = appointmentService.markNoShow(appointmentId);
+    //     return ResponseEntity.ok(response);
+    // }
     @PostMapping("/{appointmentId}/no-show")
-    public ResponseEntity<AppointmentResponse> markNoShow(@PathVariable UUID appointmentId) {
-        AppointmentResponse response = appointmentService.markNoShow(appointmentId);
+    public ResponseEntity<AppointmentResponse> markNoShow(
+            @PathVariable UUID appointmentId,
+            @RequestBody(required = false) Map<String, String> body) {
+        String reason = body != null ? body.get("reason") : null;
+        AppointmentResponse response = appointmentService.markNoShow(appointmentId, reason);
         return ResponseEntity.ok(response);
     }
+
 
     /**
      * Add or update review for a completed appointment
@@ -170,6 +180,23 @@ public class AppointmentController {
         
         AppointmentResponse response = appointmentService.addReview(patientId, appointmentId, rating, comment);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Add or update Electronic Health Record (EHR) for an appointment
+     */
+    @PostMapping("/{appointmentId}/record")
+    public ResponseEntity<ElectronicHealthRecord> submitRecord(
+            @PathVariable UUID appointmentId,
+            @RequestBody Map<String, String> body,
+            Authentication authentication) {
+        UUID specialistId = getSpecialistIdFromAuth(authentication);
+        String diagnosis = body.get("diagnosis");
+        String treatmentPlan = body.get("treatmentPlan");
+        
+        ElectronicHealthRecord record = appointmentService.addElectronicHealthRecord(
+                specialistId, appointmentId, diagnosis, treatmentPlan);
+        return ResponseEntity.ok(record);
     }
 
     /**

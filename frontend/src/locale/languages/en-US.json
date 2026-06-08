@@ -49,6 +49,9 @@
     },
     "treatmentHistory": {
       "title": "Therapy History"
+    },
+    "calling": {
+      "title": "Calling Session"
     }
   },
   "selfTest": {
@@ -372,6 +375,82 @@
       "edit": "Edit",
       "delete": "Delete",
       "manageQuestions": "Manage Questions"
+    }
+  },
+  "admin": {
+    "patientReporting": {
+      "title": "Patient Reports",
+      "description": "View and manage patient attendance reports",
+      "noReports": "No patient reports found",
+      "loadingError": "Failed to load patient reports. Please try again later.",
+      "reportDetails": "Report Details",
+      "patientName": "Patient Name",
+      "specialistName": "Specialist Name",
+      "type": "Report Type",
+      "status": "Status",
+      "sessionNotes": "Session Notes",
+      "date": "Date",
+      "reason": "Reason",
+      "appointmentDate": "Appointment Date",
+      "reportedAt": "Reported At",
+      "loading": "Loading patient reports...",
+      "actions": {
+        "action": "Action",
+        "approve": "Approve",
+        "reject": "Dismiss"
+      }
+    }
+  },
+  "specialist": {
+    "noSessionNeedRecord": "No confirmed sessions available for recording.",
+    "recordSession": "Record Session",
+    "sessionRecording": "Session Recording",
+    "recordTitle": "Electronic Health Records",
+    "patientName": "Patient Name",
+    "writeRecord": "Write Record",
+    "setting": {
+      "title": "Specialist Settings",
+      "management": "Manage your professional information, pricing, and availability",
+      "subtitle": "Settings & Profile Management",
+      "profile": {
+        "edit": "Edit Profile",
+        "name": "Full Name",
+        "email": "Email",
+        "Specialties": "Specialties",
+        "bio": "Bio",
+        "noBioAdded": "No bio added yet",
+        "changeAvatar": "Change Avatar",
+        "yearsOfExperience": "Years of Experience",
+        "year": "Years"
+      },
+      "availability": {
+        "title": "Availability",
+        "description": "Set your available time slots for patient bookings",
+        "addAvailability": "Add Availability",
+        "hours": "Available Hours",
+        "breakTime": "Break Time",
+        "dayOfWeek": "Day of Week",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "breakTimeStart": "Break Time Start",
+        "breakTimeEnd": "Break Time End",
+        "breaktime": "Break Time (optional)"
+      },
+      "actions": {
+        "saveProfile": "Save Profile",
+        "cancel": "Cancel",
+        "updateAvailability": "Update Availability",
+        "update": "Update",
+        "add": "Add"
+      },
+      "notify": {
+        "profileUpdateSuccess": "Your profile has been updated successfully!",
+        "profileUpdateFailed": "Failed to update profile. Please try again later.",
+        "availabilityUpdateSuccess": "Availability updated successfully",
+        "availabilityUpdateFailed": "Failed to update availability. Please try again later.",
+        "noSpecialtiesSelected": "No specialties selected",
+        "noAvailability": "No availability set. Please add your available hours to receive bookings."
+      }
     }
   }
 }
