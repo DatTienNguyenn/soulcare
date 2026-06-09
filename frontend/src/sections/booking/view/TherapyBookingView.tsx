@@ -13,6 +13,7 @@ import {
   getSpecialistPricing,
   SessionPricingResponse,
 } from 'src/utils/specialist-api';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { BrowseTherapistsTab } from './BrowseTherapistsTab';
 import { SelectSlotsTab } from './SelectSlotsTab';
 import { BookingConfirmDialog } from './BookingConfirmDialog';
@@ -178,7 +179,7 @@ export default function TherapyBookingView() {
 
           {error && (
             <Alert severity="error" onClose={() => {}}>
-              {error}
+              {typeof error === 'string' ? error : 'An error occurred'}
             </Alert>
           )}
 
@@ -213,21 +214,29 @@ export default function TherapyBookingView() {
         </Stack>
       </Container>
 
-      {/* Booking Dialog */}
-      <BookingConfirmDialog
-        open={openDialog}
-        therapist={selectedTherapist}
-        slot={selectedSlot}
-        notes={bookingNotes}
-        onNotesChange={setBookingNotes}
-        onConfirm={handleConfirmBooking}
-        onClose={() => setOpenDialog(false)}
-        loading={bookingLoading}
-        error={bookingError}
-        sessionTypes={sessionTypes}
-        selectedSessionType={selectedSessionType}
-        onSessionTypeChange={setSelectedSessionType}
-      />
+      <PayPalScriptProvider
+        options={{
+          clientId:
+            'Abn-C15Gly2e5aCyjm9zDE-XirtpHxByqgMW1VqYcHlscj-vEPvicsWJ5wfdwTcbB79ttp_tkyajf7t1',
+          currency: 'USD',
+          intent: 'capture',
+        }}
+      >
+        <BookingConfirmDialog
+          open={openDialog}
+          therapist={selectedTherapist}
+          slot={selectedSlot}
+          notes={bookingNotes}
+          onNotesChange={setBookingNotes}
+          onConfirm={handleConfirmBooking}
+          onClose={() => setOpenDialog(false)}
+          loading={bookingLoading}
+          error={bookingError}
+          sessionTypes={sessionTypes}
+          selectedSessionType={selectedSessionType}
+          onSessionTypeChange={setSelectedSessionType}
+        />
+      </PayPalScriptProvider>
     </>
   );
 }

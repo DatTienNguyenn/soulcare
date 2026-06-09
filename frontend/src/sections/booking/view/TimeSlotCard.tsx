@@ -1,6 +1,7 @@
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material';
 import { format, parse } from 'date-fns';
 import { AvailableSlotDTO } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface TimeSlotCardProps {
   slot: AvailableSlotDTO;
@@ -8,6 +9,7 @@ interface TimeSlotCardProps {
 }
 
 export function TimeSlotCard({ slot, onClick }: TimeSlotCardProps) {
+  const { t } = useLocales();
   const isAvailable = slot.status === 'available';
 
   return (
@@ -42,7 +44,7 @@ export function TimeSlotCard({ slot, onClick }: TimeSlotCardProps) {
           }}
         >
           <Chip
-            label={isAvailable ? 'Available' : 'Booked'}
+            label={isAvailable ? t('treatment.booking.available') : t('treatment.booking.booked')}
             size="small"
             color={isAvailable ? 'success' : 'default'}
             variant="outlined"

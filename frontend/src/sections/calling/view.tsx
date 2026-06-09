@@ -11,6 +11,7 @@ import {
   submitElectronicHealthRecord,
 } from 'src/utils/specialist-api';
 
+import { useLocales } from 'src/locale/use-locales';
 import SessionList from './session-list';
 import CallRoom from './call-room';
 import { ReviewDialog } from './ReviewDialog';
@@ -20,6 +21,7 @@ import { ReasonDialog } from './ReasonDialog';
 // ----------------------------------------------------------------------
 
 export default function CallingView() {
+  const { t } = useLocales();
   const { user } = useAuthContext();
   const isSpecialist = user?.role === 'SPECIALIST' || user?.role === 'specialist';
 
@@ -198,7 +200,7 @@ export default function CallingView() {
       console.error('PeerJS error:', err);
       if (err.type === 'peer-unavailable') {
         if (isCallingRef.current) {
-          setCallStatusMessage('Waiting for the other user to join the session...');
+          setCallStatusMessage(t('calling.waitingForUser'));
           if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
 
           // Auto-retry connection every 3 seconds
@@ -241,7 +243,7 @@ export default function CallingView() {
             video: false,
             audio: true,
           });
-          setMediaError('Camera is in use by another tab/app. Falling back to audio-only mode.');
+          setMediaError(t('calling.cameraInUse'));
           localStreamRef.current = audioStream;
           if (localVideoRef.current) {
             localVideoRef.current.srcObject = audioStream;
@@ -249,17 +251,13 @@ export default function CallingView() {
           setIsVideoOff(true); // Visually indicate video is off
           return audioStream;
         } catch (audioError) {
-          setMediaError(
-            'Could not start video or audio source. Both might be in use by another application.'
-          );
+          setMediaError(t('calling.mediaErrorBoth'));
           return null;
         }
       } else if (error.name === 'NotAllowedError') {
-        setMediaError(
-          'Permission to access camera/microphone was denied. Please allow access in your browser settings.'
-        );
+        setMediaError(t('calling.mediaErrorPermission'));
       } else {
-        setMediaError(`Failed to access media devices: ${error.message || 'Unknown error'}`);
+        setMediaError(`${t('calling.mediaErrorGeneric')} ${error.message || 'Unknown error'}`);
       }
       return null;
     }
@@ -270,7 +268,7 @@ export default function CallingView() {
 
     setIsCalling(true);
     isCallingRef.current = true;
-    setCallStatusMessage('Dialing...');
+    setCallStatusMessage(t('calling.dialing'));
 
     const stream = localStreamRef.current || (await getMediaStream());
     if (!stream) {
@@ -458,11 +456,11 @@ export default function CallingView() {
 
         <ReasonDialog
           open={reasonDialogOpen}
-          title={reasonDialogType === 'CANCEL' ? 'Cancel Session' : 'Report Session'}
+          title={
+            reasonDialogType === 'CANCEL' ? t('calling.cancelSession') : t('calling.reportSession')
+          }
           description={
-            reasonDialogType === 'CANCEL'
-              ? 'Please provide a reason for cancelling this session.'
-              : 'Please describe the issue to report this session.'
+            reasonDialogType === 'CANCEL' ? t('calling.cancelReason') : t('calling.reportReason')
           }
           onClose={() => setReasonDialogOpen(false)}
           onSubmit={handleSubmitReason}

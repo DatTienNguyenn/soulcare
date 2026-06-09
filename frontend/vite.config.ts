@@ -21,6 +21,14 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: 'react',
+        replacement: path.resolve(__dirname, './node_modules/react'),
+      },
+      {
+        find: 'react-dom',
+        replacement: path.resolve(__dirname, './node_modules/react-dom'),
+      },
+      {
         find: /^~(.+)/,
         replacement: path.join(process.cwd(), 'node_modules/$1'),
       },

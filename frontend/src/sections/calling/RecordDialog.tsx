@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface RecordDialogProps {
   open: boolean;
@@ -28,36 +29,37 @@ export function RecordDialog({
   treatmentPlan,
   onTreatmentPlanChange,
 }: RecordDialogProps) {
+  const { t } = useLocales();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Write Electronic Health Record</DialogTitle>
+      <DialogTitle>{t('calling.writeRecordTitle')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Please fill in the clinical details for the patient session.
+            {t('calling.recordDescription')}
           </Typography>
           <TextField
-            label="Diagnosis"
+            label={t('calling.diagnosis')}
             multiline
             rows={3}
             value={diagnosis}
             onChange={(e) => onDiagnosisChange(e.target.value)}
-            placeholder="Enter diagnosis..."
+            placeholder={t('calling.diagnosisPlaceholder')}
             fullWidth
           />
           <TextField
-            label="Treatment Plan"
+            label={t('calling.treatmentPlan')}
             multiline
             rows={4}
             value={treatmentPlan}
             onChange={(e) => onTreatmentPlanChange(e.target.value)}
-            placeholder="Enter treatment plan..."
+            placeholder={t('calling.treatmentPlanPlaceholder')}
             fullWidth
           />
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{t('common.cancel')}</Button>
         <Button
           onClick={() => {
             onSubmit(diagnosis, treatmentPlan);
@@ -66,7 +68,7 @@ export function RecordDialog({
           color="primary"
           disabled={!diagnosis.trim()}
         >
-          Submit Record
+          {t('calling.submitRecord')}
         </Button>
       </DialogActions>
     </Dialog>

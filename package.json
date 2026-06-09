@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@paypal/react-paypal-js": "^10.0.0",
     "notistack": "^3.0.2"
   }
 }

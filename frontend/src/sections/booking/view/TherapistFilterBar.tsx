@@ -1,5 +1,6 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { TherapyType } from 'src/type/therapist';
+import { useLocales } from 'src/locale/use-locales';
 
 interface TherapistFilterBarProps {
   filterType: TherapyType | 'all';
@@ -12,10 +13,11 @@ export function TherapistFilterBar({
   onFilterChange,
   specializations,
 }: TherapistFilterBarProps) {
+  const { t } = useLocales();
   return (
     <Box>
       <Typography variant="subtitle2" sx={{ mb: 2 }}>
-        Filter by Specialization
+        {t('treatment.booking.filterBySpecialization')}
       </Typography>
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
         {specializations.map((spec) => (

@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
 import { TherapyType } from 'src/type/therapist';
 import { PublicSpecialistDTO } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 import { TherapistCard } from './TherapistCard';
 import { TherapistFilterBar } from './TherapistFilterBar';
 
@@ -21,6 +22,7 @@ export function BrowseTherapistsTab({
   onSelectTherapist,
   specializations,
 }: BrowseTherapistsTabProps) {
+  const { t } = useLocales();
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -33,7 +35,7 @@ export function BrowseTherapistsTab({
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          No therapists available for this specialization
+          {t('treatment.booking.noTherapists')}
         </Typography>
       </Box>
     );
