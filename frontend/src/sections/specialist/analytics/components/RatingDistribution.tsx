@@ -7,6 +7,7 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface RatingItem {
   rating: string;
@@ -19,15 +20,17 @@ interface RatingDistributionProps {
 }
 
 export default function RatingDistribution({ data, totalRated }: RatingDistributionProps) {
+  const { t } = useLocales();
+
   const getRatingColor = (rating: string) => {
-    if (rating === '5 Stars') return '#00C49F';
+    if (rating.startsWith('5')) return '#00C49F';
     if (rating.startsWith('4')) return '#FFBB28';
     return '#FF8042';
   };
 
   return (
     <Card>
-      <CardHeader title="Patient Rating Distribution" />
+      <CardHeader title={t('specialist.analytics.charts.ratingDistribution')} />
       <CardContent>
         <Stack spacing={2}>
           {data.map((item) => {

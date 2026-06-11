@@ -11,6 +11,7 @@ import {
   Typography,
   Chip,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 export interface TopPatient {
   userId: string;
@@ -25,18 +26,20 @@ interface TopPatientsTableProps {
 }
 
 export default function TopPatientsTable({ data }: TopPatientsTableProps) {
+  const { t } = useLocales();
+
   return (
     <Card>
-      <CardHeader title="Top Patients" />
+      <CardHeader title={t('specialist.analytics.charts.topPatients')} />
       <CardContent>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: 'background.neutral' }}>
-                <TableCell>Patient Name</TableCell>
-                <TableCell align="right">Total Bookings</TableCell>
-                <TableCell align="right">Average Rating</TableCell>
-                <TableCell align="right">Total Revenue</TableCell>
+                <TableCell>{t('specialist.analytics.table.patientName')}</TableCell>
+                <TableCell align="right">{t('specialist.analytics.table.totalBookings')}</TableCell>
+                <TableCell align="right">{t('specialist.analytics.table.averageRating')}</TableCell>
+                <TableCell align="right">{t('specialist.analytics.table.totalRevenue')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -53,7 +56,7 @@ export default function TopPatientsTable({ data }: TopPatientsTableProps) {
                       <Typography variant="body2">⭐ {patient.averageRating.toFixed(1)}</Typography>
                     ) : (
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        No rating
+                        {t('specialist.analytics.table.noRating')}
                       </Typography>
                     )}
                   </TableCell>

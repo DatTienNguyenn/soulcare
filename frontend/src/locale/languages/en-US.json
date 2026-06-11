@@ -474,7 +474,141 @@
         "availabilityUpdateSuccess": "Availability updated successfully",
         "availabilityUpdateFailed": "Failed to update availability. Please try again later.",
         "noSpecialtiesSelected": "No specialties selected",
-        "noAvailability": "No availability set. Please add your available hours to receive bookings."
+        "noAvailability": "No availability set. Please add your available hours to receive bookings.",
+        "pricingUpdateSuccess": "Pricing updated successfully",
+        "pricingCreateSuccess": "Pricing created successfully",
+        "pricingDeleteSuccess": "Pricing deleted successfully",
+        "pricingActivated": "Pricing activated",
+        "pricingDeactivated": "Pricing deactivated",
+        "fillFieldsCorrectly": "Please fill in all fields correctly"
+      },
+      "pricing": {
+        "title": "Session Pricing",
+        "addPricing": "Add Pricing",
+        "sessionType": "Session Type",
+        "price": "Price",
+        "duration": "Duration (min)",
+        "status": "Status",
+        "actions": "Actions",
+        "editTitle": "Edit Session Pricing",
+        "addTitle": "Add New Session Pricing",
+        "selectType": "Select session type",
+        "pricePerSession": "Price per Session",
+        "durationMinutes": "Duration (minutes)",
+        "active": "Active",
+        "inactive": "Inactive",
+        "confirmDelete": "Are you sure you want to delete this pricing?"
+      }
+    },
+    "analytics": {
+      "pageTitle": "Analytics | Specialist",
+      "header": {
+        "title": "Analytics Dashboard",
+        "description": "Overview of your bookings and performance metrics"
+      },
+      "metrics": {
+        "averageRating": "Average Rating",
+        "ratings": "ratings",
+        "uniquePatients": "Unique Patients",
+        "returningPatients": "Returning patients",
+        "completionRate": "Completion Rate",
+        "sessionsCompleted": "Sessions completed",
+        "cancelRate": "Cancel Rate",
+        "cancelledSessions": "Cancelled sessions"
+      },
+      "charts": {
+        "bookingTrend": "Booking Trend",
+        "bookingStatus": "Booking Status",
+        "therapyType": "Therapy Type Distribution",
+        "revenueByType": "Revenue by Therapy Type",
+        "ratingDistribution": "Patient Rating Distribution",
+        "topPatients": "Top Patients"
+      },
+      "table": {
+        "patientName": "Patient Name",
+        "totalBookings": "Total Bookings",
+        "averageRating": "Average Rating",
+        "totalRevenue": "Total Revenue",
+        "noRating": "No rating"
+      },
+      "status": {
+        "completed": "Completed",
+        "booked": "Booked",
+        "cancelled": "Cancelled"
+      },
+      "chartLabels": {
+        "bookings": "Bookings",
+        "numberOfBookings": "Number of Bookings",
+        "revenue": "Revenue"
+      },
+      "rating": {
+        "stars": "Stars"
+      }
+    },
+    "bookings": {
+      "pageTitle": "My Bookings | Specialist",
+      "title": "My Bookings",
+      "description": "Manage and view all patient bookings",
+      "tabs": {
+        "all": "All Bookings",
+        "completed": "Completed",
+        "upcoming": "Upcoming",
+        "users": "Users",
+        "allFilter": "All"
+      },
+      "summary": {
+        "totalBookings": "Total Bookings",
+        "completed": "Completed",
+        "upcoming": "Upcoming",
+        "totalRevenue": "Total Revenue"
+      },
+      "tabContent": {
+        "patient": "Patient",
+        "type": "Type",
+        "dateTime": "Date & Time",
+        "duration": "Duration",
+        "price": "Price",
+        "rating": "Rating",
+        "status": "Status",
+        "action": "Action",
+        "view": "View",
+        "pending": "Pending",
+        "noBookings": "No bookings found",
+        "noCompleted": "No completed bookings yet",
+        "patientRating": "Patient Rating",
+        "noRating": "No rating yet",
+        "viewDetails": "View Details",
+        "noUpcoming": "No upcoming bookings",
+        "therapy": "Therapy",
+        "details": "Details",
+        "reschedule": "Reschedule",
+        "userTitle": "Patient Booking Statistics",
+        "patientName": "Patient Name",
+        "totalBookings": "Total Bookings",
+        "averageRating": "Average Rating",
+        "totalRevenue": "Total Revenue",
+        "noData": "No booking data available"
+      },
+      "dialogs": {
+        "bookingDetails": "Booking Details",
+        "patientFeedback": "Patient Feedback",
+        "previousRecords": "Previous Health Records",
+        "noRecords": "No previous health records found for this patient.",
+        "diagnosis": "Diagnosis",
+        "treatmentPlan": "Treatment Plan",
+        "unknownDate": "Unknown date",
+        "close": "Close",
+        "viewNotes": "View Notes",
+        "sessionNotes": "Session Notes",
+        "noNotes": "No notes available",
+        "ehrTitle": "Health Record Details",
+        "date": "Date",
+        "notes": "Notes",
+        "patient": "Patient",
+        "dateTime": "Date & Time",
+        "duration": "Duration",
+        "price": "Price",
+        "status": "Status"
       }
     }
   },

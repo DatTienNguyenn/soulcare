@@ -6,6 +6,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface NotesDialogProps {
   open: boolean;
@@ -14,12 +15,14 @@ interface NotesDialogProps {
 }
 
 export function NotesDialog({ open, onClose, noteText }: NotesDialogProps) {
+  const { t } = useLocales();
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Session Notes</DialogTitle>
+      <DialogTitle>{t('specialist.bookings.dialogs.notes')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <TextField
-          label="Session Notes"
+          label={t('specialist.bookings.dialogs.notes')}
           multiline
           rows={6}
           value={noteText}
@@ -30,7 +33,7 @@ export function NotesDialog({ open, onClose, noteText }: NotesDialogProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>{t('specialist.bookings.dialogs.close')}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -3,6 +3,7 @@ import { Container, Grid, Stack, CircularProgress, Box, Alert } from '@mui/mater
 import { Helmet } from 'react-helmet-async';
 import { useSettingsContext } from 'src/components/settings';
 import { useSpecialistBookings } from 'src/hooks/use-specialist-bookings';
+import { useLocales } from 'src/locale/use-locales';
 
 import {
   AnalyticsHeader,
@@ -20,6 +21,7 @@ import {
 export default function SpecialistAnalyticsView() {
   const settings = useSettingsContext();
   const { bookings, loading, error, getStatistics } = useSpecialistBookings();
+  const { t } = useLocales();
 
   const stats = getStatistics();
 
@@ -62,17 +64,17 @@ export default function SpecialistAnalyticsView() {
   const bookingStatusData = useMemo(() => {
     return [
       {
-        name: 'Completed',
+        name: t('specialist.analytics.status.completed'),
         value: bookings.filter((b) => b.status === 'completed').length,
         color: '#00C49F',
       },
       {
-        name: 'Booked',
+        name: t('specialist.analytics.status.booked'),
         value: bookings.filter((b) => b.status === 'booked').length,
         color: '#FFBB28',
       },
       {
-        name: 'Cancelled',
+        name: t('specialist.analytics.status.cancelled'),
         value: bookings.filter((b) => b.status === 'cancelled').length,
         color: '#FF8042',
       },
@@ -96,21 +98,23 @@ export default function SpecialistAnalyticsView() {
   // Prepare data for rating distribution
   const ratingDistribution = useMemo(() => {
     const ratedBookings = bookings.filter((b) => b.rating);
-    const ratingBuckets = {
-      '5 Stars': 0,
-      '4-4.9 Stars': 0,
-      '3-3.9 Stars': 0,
-      '2-2.9 Stars': 0,
-      '1-1.9 Stars': 0,
+    const starsText = t('specialist.analytics.rating.stars');
+
+    const ratingBuckets: Record<string, number> = {
+      [`5 ${starsText}`]: 0,
+      [`4-4.9 ${starsText}`]: 0,
+      [`3-3.9 ${starsText}`]: 0,
+      [`2-2.9 ${starsText}`]: 0,
+      [`1-1.9 ${starsText}`]: 0,
     };
 
     ratedBookings.forEach((booking) => {
       const rating = booking.rating || 0;
-      if (rating === 5) ratingBuckets['5 Stars'] += 1;
-      else if (rating >= 4) ratingBuckets['4-4.9 Stars'] += 1;
-      else if (rating >= 3) ratingBuckets['3-3.9 Stars'] += 1;
-      else if (rating >= 2) ratingBuckets['2-2.9 Stars'] += 1;
-      else ratingBuckets['1-1.9 Stars'] += 1;
+      if (rating === 5) ratingBuckets[`5 ${starsText}`] += 1;
+      else if (rating >= 4) ratingBuckets[`4-4.9 ${starsText}`] += 1;
+      else if (rating >= 3) ratingBuckets[`3-3.9 ${starsText}`] += 1;
+      else if (rating >= 2) ratingBuckets[`2-2.9 ${starsText}`] += 1;
+      else ratingBuckets[`1-1.9 ${starsText}`] += 1;
     });
 
     return Object.entries(ratingBuckets)
@@ -189,33 +193,33 @@ export default function SpecialistAnalyticsView() {
 
   const metricsData = [
     {
-      label: 'Average Rating',
+      label: t('specialist.analytics.metrics.averageRating'),
       value: `${averageRating} ⭐`,
-      sublabel: `${bookings.filter((b) => b.rating).length} ratings`,
+      sublabel: `${bookings.filter((b) => b.rating).length} ${t('specialist.analytics.metrics.ratings')}`,
       sublabelColor: 'success.main',
     },
     {
-      label: 'Unique Patients',
+      label: t('specialist.analytics.metrics.uniquePatients'),
       value: uniqueUsersCount,
-      sublabel: 'Returning patients',
+      sublabel: t('specialist.analytics.metrics.returningPatients'),
       sublabelColor: 'info.main',
     },
     {
-      label: 'Completion Rate',
+      label: t('specialist.analytics.metrics.completionRate'),
       value:
         stats.totalBookings > 0
           ? `${((stats.completedCount / stats.totalBookings) * 100).toFixed(0)}%`
           : '0%',
-      sublabel: 'Sessions completed',
+      sublabel: t('specialist.analytics.metrics.sessionsCompleted'),
       sublabelColor: 'success.main',
     },
     {
-      label: 'Cancel Rate',
+      label: t('specialist.analytics.metrics.cancelRate'),
       value:
         stats.totalBookings > 0
           ? `${((cancelledCount / stats.totalBookings) * 100).toFixed(0)}%`
           : '0%',
-      sublabel: 'Cancelled sessions',
+      sublabel: t('specialist.analytics.metrics.cancelledSessions'),
       sublabelColor: 'error.main',
     },
   ];
@@ -233,14 +237,14 @@ export default function SpecialistAnalyticsView() {
   return (
     <>
       <Helmet>
-        <title>Analytics | Specialist</title>
+        <title>{t('specialist.analytics.pageTitle')}</title>
       </Helmet>
 
       <Container maxWidth={settings.themeStretch ? false : 'lg'} sx={{ py: 5 }}>
         <Stack spacing={3}>
           <AnalyticsHeader
-            title="Analytics Dashboard"
-            description="Overview of your bookings and performance metrics"
+            title={t('specialist.analytics.header.title')}
+            description={t('specialist.analytics.header.description')}
           />
 
           {error && <Alert severity="error">{error}</Alert>}

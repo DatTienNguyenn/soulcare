@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   Typography,
   Avatar,
   CircularProgress,
@@ -26,6 +25,7 @@ import {
 import { format } from 'date-fns';
 import { SpecialistBooking } from 'src/hooks/use-specialist-bookings';
 import { EHRResponse } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface AllBookingsTabProps {
   filteredBookings: SpecialistBooking[];
@@ -42,29 +42,31 @@ export function AllBookingsTab({
   getStatusColor,
   handleViewDetails,
 }: AllBookingsTabProps) {
+  const { t } = useLocales();
+
   return (
     <Stack spacing={2}>
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         <Chip
-          label="All"
+          label={t('specialist.bookings.tabs.allFilter')}
           onClick={() => setFilterStatus('all')}
           variant={filterStatus === 'all' ? 'filled' : 'outlined'}
           color={filterStatus === 'all' ? 'primary' : 'default'}
         />
         <Chip
-          label="Completed"
+          label={t('specialist.bookings.tabs.completed')}
           onClick={() => setFilterStatus('completed')}
           variant={filterStatus === 'completed' ? 'filled' : 'outlined'}
           color={filterStatus === 'completed' ? 'success' : 'default'}
         />
         <Chip
-          label="Upcoming"
+          label={t('specialist.bookings.tabs.upcoming')}
           onClick={() => setFilterStatus('booked')}
           variant={filterStatus === 'booked' ? 'filled' : 'outlined'}
           color={filterStatus === 'booked' ? 'warning' : 'default'}
         />
         <Chip
-          label="Cancelled"
+          label={t('specialist.analytics.status.cancelled')}
           onClick={() => setFilterStatus('cancelled')}
           variant={filterStatus === 'cancelled' ? 'filled' : 'outlined'}
           color={filterStatus === 'cancelled' ? 'error' : 'default'}
@@ -75,14 +77,14 @@ export function AllBookingsTab({
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: 'background.neutral' }}>
-              <TableCell>Patient</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Date & Time</TableCell>
-              <TableCell>Duration</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Rating</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.patient')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.type')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.dateTime')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.duration')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.price')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.rating')}</TableCell>
+              <TableCell>{t('specialist.bookings.tabContent.status')}</TableCell>
+              <TableCell align="right">{t('specialist.bookings.tabContent.action')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -104,7 +106,20 @@ export function AllBookingsTab({
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={booking.type.charAt(0).toUpperCase() + booking.type.slice(1)}
+                      label={
+                        booking.type === 'psychology'
+                          ? t('treatment.filter.psychology')
+                          : booking.type === 'counseling'
+                            ? t('treatment.filter.counseling')
+                            : booking.type === 'meditation'
+                              ? t('treatment.filter.meditation')
+                              : booking.type === 'behavioral'
+                                ? t('treatment.filter.behavioral')
+                                : booking.type === 'general'
+                                  ? t('treatment.filter.all')
+                                  : String(booking.type).charAt(0).toUpperCase() +
+                                    String(booking.type).slice(1)
+                      }
                       size="small"
                       variant="outlined"
                     />
@@ -133,13 +148,22 @@ export function AllBookingsTab({
                       </Box>
                     ) : (
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        Pending
+                        {t('specialist.bookings.tabContent.pending')}
                       </Typography>
                     )}
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                      label={
+                        booking.status === 'completed'
+                          ? t('specialist.analytics.status.completed')
+                          : booking.status === 'booked'
+                            ? t('specialist.analytics.status.booked')
+                            : booking.status === 'cancelled'
+                              ? t('specialist.analytics.status.cancelled')
+                              : String(booking.status).charAt(0).toUpperCase() +
+                                String(booking.status).slice(1)
+                      }
                       size="small"
                       color={getStatusColor(booking.status)}
                       variant="outlined"
@@ -147,7 +171,7 @@ export function AllBookingsTab({
                   </TableCell>
                   <TableCell align="right">
                     <Button size="small" onClick={() => handleViewDetails(booking)} variant="text">
-                      View
+                      {t('specialist.bookings.tabContent.view')}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -155,7 +179,9 @@ export function AllBookingsTab({
             ) : (
               <TableRow>
                 <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
-                  <Typography color="textSecondary">No bookings found</Typography>
+                  <Typography color="textSecondary">
+                    {t('specialist.bookings.tabContent.noBookings')}
+                  </Typography>
                 </TableCell>
               </TableRow>
             )}
@@ -175,10 +201,14 @@ export function CompletedBookingsTab({
   completedBookings,
   handleViewDetails,
 }: CompletedBookingsTabProps) {
+  const { t } = useLocales();
+
   if (completedBookings.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 5 }}>
-        <Typography color="textSecondary">No completed bookings yet</Typography>
+        <Typography color="textSecondary">
+          {t('specialist.bookings.tabContent.noCompleted')}
+        </Typography>
       </Box>
     );
   }
@@ -191,13 +221,25 @@ export function CompletedBookingsTab({
             <CardHeader
               avatar={<Avatar src={booking.userAvatar} />}
               title={booking.userName}
-              subheader={booking.type.toUpperCase()}
+              subheader={
+                booking.type === 'psychology'
+                  ? t('treatment.filter.psychology')
+                  : booking.type === 'counseling'
+                    ? t('treatment.filter.counseling')
+                    : booking.type === 'meditation'
+                      ? t('treatment.filter.meditation')
+                      : booking.type === 'behavioral'
+                        ? t('treatment.filter.behavioral')
+                        : booking.type === 'general'
+                          ? t('treatment.filter.all')
+                          : String(booking.type).toUpperCase()
+              }
             />
             <CardContent sx={{ flexGrow: 1 }}>
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Date & Time
+                    {t('specialist.bookings.tabContent.dateTime')}
                   </Typography>
                   <Typography variant="body1">
                     {format(booking.date, 'MMM dd, yyyy')} at {booking.startTime}
@@ -205,13 +247,13 @@ export function CompletedBookingsTab({
                 </Box>
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Duration
+                    {t('specialist.bookings.tabContent.duration')}
                   </Typography>
                   <Typography variant="body1">{booking.duration} minutes</Typography>
                 </Box>
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Patient Rating
+                    {t('specialist.bookings.tabContent.patientRating')}
                   </Typography>
                   {booking.rating ? (
                     <Stack spacing={1}>
@@ -223,13 +265,13 @@ export function CompletedBookingsTab({
                     </Stack>
                   ) : (
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                      No rating yet
+                      {t('specialist.bookings.tabContent.noRating')}
                     </Typography>
                   )}
                 </Box>
                 <Box sx={{ pt: 1 }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Price
+                    {t('specialist.bookings.tabContent.price')}
                   </Typography>
                   <Typography variant="h6" sx={{ color: 'success.main' }}>
                     ${booking.totalPrice}
@@ -239,7 +281,7 @@ export function CompletedBookingsTab({
             </CardContent>
             <Box sx={{ p: 2, pt: 0 }}>
               <Button fullWidth variant="outlined" onClick={() => handleViewDetails(booking)}>
-                View Details
+                {t('specialist.bookings.tabContent.viewDetails')}
               </Button>
             </Box>
           </Card>
@@ -258,10 +300,14 @@ export function UpcomingBookingsTab({
   upcomingBookings,
   handleViewDetails,
 }: UpcomingBookingsTabProps) {
+  const { t } = useLocales();
+
   if (upcomingBookings.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 5 }}>
-        <Typography color="textSecondary">No upcoming bookings</Typography>
+        <Typography color="textSecondary">
+          {t('specialist.bookings.tabContent.noUpcoming')}
+        </Typography>
       </Box>
     );
   }
@@ -280,7 +326,19 @@ export function UpcomingBookingsTab({
               <Box sx={{ flex: 1 }}>
                 <Typography variant="h6">{booking.userName}</Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} Therapy
+                  {booking.type === 'psychology'
+                    ? t('treatment.filter.psychology')
+                    : booking.type === 'counseling'
+                      ? t('treatment.filter.counseling')
+                      : booking.type === 'meditation'
+                        ? t('treatment.filter.meditation')
+                        : booking.type === 'behavioral'
+                          ? t('treatment.filter.behavioral')
+                          : booking.type === 'general'
+                            ? t('treatment.filter.all')
+                            : String(booking.type).charAt(0).toUpperCase() +
+                              String(booking.type).slice(1)}{' '}
+                  {t('specialist.bookings.tabContent.therapy')}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
                   <Typography variant="body2">📅 {format(booking.date, 'MMM dd, yyyy')}</Typography>
@@ -293,10 +351,10 @@ export function UpcomingBookingsTab({
             </Stack>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
               <Button variant="outlined" onClick={() => handleViewDetails(booking)}>
-                Details
+                {t('specialist.bookings.tabContent.details')}
               </Button>
               <Button variant="outlined" color="error">
-                Reschedule
+                {t('specialist.bookings.tabContent.reschedule')}
               </Button>
             </Stack>
           </Stack>
@@ -311,21 +369,29 @@ interface UserStatsTabProps {
 }
 
 export function UserStatsTab({ bookings }: UserStatsTabProps) {
+  const { t } = useLocales();
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Patient Booking Statistics" />
+          <CardHeader title={t('specialist.bookings.tabContent.userTitle')} />
           <CardContent>
             {bookings.length > 0 ? (
               <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: 'background.neutral' }}>
-                      <TableCell>Patient Name</TableCell>
-                      <TableCell align="right">Total Bookings</TableCell>
-                      <TableCell align="right">Average Rating</TableCell>
-                      <TableCell align="right">Total Revenue</TableCell>
+                      <TableCell>{t('specialist.bookings.tabContent.patientName')}</TableCell>
+                      <TableCell align="right">
+                        {t('specialist.bookings.tabContent.totalBookings')}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t('specialist.bookings.tabContent.averageRating')}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t('specialist.bookings.tabContent.totalRevenue')}
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -381,7 +447,7 @@ export function UserStatsTab({ bookings }: UserStatsTabProps) {
                               </Typography>
                             ) : (
                               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                No rating
+                                {t('specialist.bookings.tabContent.noRating')}
                               </Typography>
                             )}
                           </TableCell>
@@ -401,7 +467,7 @@ export function UserStatsTab({ bookings }: UserStatsTabProps) {
               </TableContainer>
             ) : (
               <Typography color="textSecondary" align="center" sx={{ py: 3 }}>
-                No booking data available
+                {t('specialist.bookings.tabContent.noData')}
               </Typography>
             )}
           </CardContent>
@@ -435,15 +501,17 @@ export function BookingDetailsDialog({
   onEhrClick,
   onViewNotes,
 }: BookingDetailsDialogProps) {
+  const { t } = useLocales();
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Booking Details</DialogTitle>
+      <DialogTitle>{t('specialist.bookings.dialogs.bookingDetails')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         {selectedBooking && (
           <Stack spacing={2}>
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Patient
+                {t('specialist.bookings.dialogs.patient')}
               </Typography>
               <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
                 <Avatar src={selectedBooking.userAvatar} />
@@ -460,16 +528,27 @@ export function BookingDetailsDialog({
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Type
+                {t('specialist.bookings.tabContent.type')}
               </Typography>
               <Typography variant="body1">
-                {selectedBooking.type.charAt(0).toUpperCase() + selectedBooking.type.slice(1)}
+                {selectedBooking.type === 'psychology'
+                  ? t('treatment.filter.psychology')
+                  : selectedBooking.type === 'counseling'
+                    ? t('treatment.filter.counseling')
+                    : selectedBooking.type === 'meditation'
+                      ? t('treatment.filter.meditation')
+                      : selectedBooking.type === 'behavioral'
+                        ? t('treatment.filter.behavioral')
+                        : selectedBooking.type === 'general'
+                          ? t('treatment.filter.all')
+                          : String(selectedBooking.type).charAt(0).toUpperCase() +
+                            String(selectedBooking.type).slice(1)}
               </Typography>
             </Box>
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Date & Time
+                {t('specialist.bookings.dialogs.dateTime')}
               </Typography>
               <Typography variant="body1">
                 {format(selectedBooking.date, 'EEEE, MMM dd, yyyy')}
@@ -481,14 +560,14 @@ export function BookingDetailsDialog({
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Duration
+                {t('specialist.bookings.dialogs.duration')}
               </Typography>
               <Typography variant="body1">{selectedBooking.duration} minutes</Typography>
             </Box>
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Price
+                {t('specialist.bookings.dialogs.price')}
               </Typography>
               <Typography variant="h6" sx={{ color: 'success.main' }}>
                 ${selectedBooking.totalPrice}
@@ -497,11 +576,20 @@ export function BookingDetailsDialog({
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Status
+                {t('specialist.bookings.dialogs.status')}
               </Typography>
               <Chip
                 label={
-                  selectedBooking.status.charAt(0).toUpperCase() + selectedBooking.status.slice(1)
+                  selectedBooking.status === 'completed'
+                    ? t('specialist.analytics.status.completed')
+                    : selectedBooking.status === 'booked'
+                      ? t('specialist.analytics.status.booked')
+                      : selectedBooking.status === 'cancelled'
+                        ? t('specialist.analytics.status.cancelled')
+                        : selectedBooking.status === 'pending'
+                          ? t('specialist.bookings.tabContent.pending')
+                          : String(selectedBooking.status).charAt(0).toUpperCase() +
+                            String(selectedBooking.status).slice(1)
                 }
                 color={getStatusColor(selectedBooking.status)}
               />
@@ -510,7 +598,7 @@ export function BookingDetailsDialog({
             {selectedBooking.notes && (
               <Box>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Notes
+                  {t('specialist.bookings.dialogs.notes')}
                 </Typography>
                 <Typography variant="body1">{selectedBooking.notes}</Typography>
               </Box>
@@ -519,7 +607,7 @@ export function BookingDetailsDialog({
             {selectedBooking.status === 'completed' && selectedBooking.rating && (
               <Box sx={{ p: 2, backgroundColor: 'info.lighter', borderRadius: 1 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                  Patient Feedback
+                  {t('specialist.bookings.dialogs.patientFeedback')}
                 </Typography>
                 <Typography variant="body1">
                   ⭐ {selectedBooking.rating} - {selectedBooking.feedback}
@@ -529,7 +617,7 @@ export function BookingDetailsDialog({
 
             <Box sx={{ mt: 3 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Previous Health Records
+                {t('specialist.bookings.dialogs.previousRecords')}
               </Typography>
               {loadingEhrs ? (
                 <CircularProgress size={24} />
@@ -549,17 +637,17 @@ export function BookingDetailsDialog({
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                         {ehr.createdAt
                           ? format(new Date(ehr.createdAt), 'MMM dd, yyyy')
-                          : 'Unknown date'}
+                          : t('specialist.bookings.dialogs.unknownDate')}
                       </Typography>
                       <Box sx={{ mt: 1 }}>
                         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                          Diagnosis
+                          {t('specialist.bookings.dialogs.diagnosis')}
                         </Typography>
                         <Typography variant="body2" sx={{ mb: 1 }} noWrap>
                           {ehr.diagnosis}
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                          Treatment Plan
+                          {t('specialist.bookings.dialogs.treatmentPlan')}
                         </Typography>
                         <Typography variant="body2" noWrap>
                           {ehr.treatmentPlan}
@@ -570,7 +658,7 @@ export function BookingDetailsDialog({
                 </Stack>
               ) : (
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  No previous health records found for this patient.
+                  {t('specialist.bookings.dialogs.noRecords')}
                 </Typography>
               )}
             </Box>
@@ -578,10 +666,10 @@ export function BookingDetailsDialog({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>{t('specialist.bookings.dialogs.close')}</Button>
         {selectedBooking?.status === 'completed' && (
           <Button onClick={onViewNotes} variant="contained">
-            View Notes
+            {t('specialist.bookings.dialogs.viewNotes')}
           </Button>
         )}
       </DialogActions>

@@ -471,7 +471,141 @@
         "availabilityUpdateSuccess": "Thời gian rảnh đã được cập nhật thành công!",
         "availabilityUpdateFailed": "Cập nhật thời gian rảnh thất bại. Vui lòng thử lại sau.",
         "noSpecialtiesSelected": "Chưa chọn chuyên môn nào",
-        "noAvailability": "Chưa đặt thời gian rảnh. Vui lòng thêm giờ có sẵn để nhận lịch hẹn."
+        "noAvailability": "Chưa đặt thời gian rảnh. Vui lòng thêm giờ có sẵn để nhận lịch hẹn.",
+        "pricingUpdateSuccess": "Cập nhật bảng giá thành công",
+        "pricingCreateSuccess": "Tạo bảng giá thành công",
+        "pricingDeleteSuccess": "Xóa bảng giá thành công",
+        "pricingActivated": "Đã kích hoạt bảng giá",
+        "pricingDeactivated": "Đã hủy kích hoạt bảng giá",
+        "fillFieldsCorrectly": "Vui lòng điền đúng và đủ tất cả các trường"
+      },
+      "pricing": {
+        "title": "Bảng Giá Trị Liệu",
+        "addPricing": "Thêm Bảng Giá",
+        "sessionType": "Loại Trị Liệu",
+        "price": "Giá",
+        "duration": "Thời Lượng (phút)",
+        "status": "Trạng Thái",
+        "actions": "Hành Động",
+        "editTitle": "Chỉnh Sửa Bảng Giá",
+        "addTitle": "Thêm Bảng Giá Mới",
+        "selectType": "Chọn loại trị liệu",
+        "pricePerSession": "Giá mỗi phiên",
+        "durationMinutes": "Thời lượng (phút)",
+        "active": "Hoạt Động",
+        "inactive": "Không Hoạt Động",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa bảng giá này không?"
+      }
+    },
+    "analytics": {
+      "pageTitle": "Phân tích | Chuyên gia",
+      "header": {
+        "title": "Bảng điều khiển phân tích",
+        "description": "Tổng quan về các lượt đặt lịch và chỉ số hiệu suất của bạn"
+      },
+      "metrics": {
+        "averageRating": "Đánh giá trung bình",
+        "ratings": "đánh giá",
+        "uniquePatients": "Bệnh nhân duy nhất",
+        "returningPatients": "Bệnh nhân quay lại",
+        "completionRate": "Tỷ lệ hoàn thành",
+        "sessionsCompleted": "Phiên đã hoàn thành",
+        "cancelRate": "Tỷ lệ hủy",
+        "cancelledSessions": "Phiên đã hủy"
+      },
+      "charts": {
+        "bookingTrend": "Xu hướng đặt lịch",
+        "bookingStatus": "Trạng thái đặt lịch",
+        "therapyType": "Phân bổ loại trị liệu",
+        "revenueByType": "Doanh thu theo loại",
+        "ratingDistribution": "Phân bổ đánh giá",
+        "topPatients": "Bệnh nhân hàng đầu"
+      },
+      "table": {
+        "patientName": "Tên bệnh nhân",
+        "totalBookings": "Tổng số lần đặt",
+        "averageRating": "Đánh giá trung bình",
+        "totalRevenue": "Tổng doanh thu",
+        "noRating": "Chưa có đánh giá"
+      },
+      "status": {
+        "completed": "Đã hoàn thành",
+        "booked": "Đã đặt",
+        "cancelled": "Đã hủy"
+      },
+      "chartLabels": {
+        "bookings": "Lượt đặt lịch",
+        "numberOfBookings": "Số lượt đặt lịch",
+        "revenue": "Doanh thu"
+      },
+      "rating": {
+        "stars": "Sao"
+      }
+    },
+    "bookings": {
+      "pageTitle": "Lịch hẹn của tôi | Chuyên gia",
+      "title": "Lịch hẹn của tôi",
+      "description": "Quản lý và xem tất cả các lịch hẹn của bệnh nhân",
+      "tabs": {
+        "all": "Tất cả Lịch hẹn",
+        "completed": "Đã hoàn thành",
+        "upcoming": "Sắp tới",
+        "users": "Người dùng",
+        "allFilter": "Tất cả"
+      },
+      "summary": {
+        "totalBookings": "Tổng số Lịch hẹn",
+        "completed": "Đã hoàn thành",
+        "upcoming": "Sắp tới",
+        "totalRevenue": "Tổng Doanh thu"
+      },
+      "tabContent": {
+        "patient": "Bệnh nhân",
+        "type": "Loại",
+        "dateTime": "Ngày & Giờ",
+        "duration": "Thời lượng",
+        "price": "Giá",
+        "rating": "Đánh giá",
+        "status": "Trạng thái",
+        "action": "Hành động",
+        "view": "Xem",
+        "pending": "Chờ duyệt",
+        "noBookings": "Không tìm thấy lịch hẹn nào",
+        "noCompleted": "Chưa có lịch hẹn nào hoàn thành",
+        "patientRating": "Đánh giá từ bệnh nhân",
+        "noRating": "Chưa có đánh giá",
+        "viewDetails": "Xem chi tiết",
+        "noUpcoming": "Không có lịch hẹn sắp tới",
+        "therapy": "Trị liệu",
+        "details": "Chi tiết",
+        "reschedule": "Đổi lịch",
+        "userTitle": "Thống kê Đặt lịch của Bệnh nhân",
+        "patientName": "Tên Bệnh nhân",
+        "totalBookings": "Tổng số Đặt lịch",
+        "averageRating": "Đánh giá Trung bình",
+        "totalRevenue": "Tổng Doanh thu",
+        "noData": "Không có dữ liệu đặt lịch"
+      },
+      "dialogs": {
+        "bookingDetails": "Chi tiết Lịch hẹn",
+        "patientFeedback": "Phản hồi của Bệnh nhân",
+        "previousRecords": "Hồ sơ sức khỏe trước đây",
+        "noRecords": "Không tìm thấy hồ sơ sức khỏe trước đây của bệnh nhân này.",
+        "diagnosis": "Chẩn đoán",
+        "treatmentPlan": "Kế hoạch điều trị",
+        "unknownDate": "Ngày không xác định",
+        "close": "Đóng",
+        "viewNotes": "Xem ghi chú",
+        "sessionNotes": "Ghi chú phiên",
+        "noNotes": "Không có ghi chú nào",
+        "ehrTitle": "Chi tiết Hồ sơ Sức khỏe",
+        "date": "Ngày",
+        "notes": "Ghi chú",
+        "patient": "Bệnh nhân",
+        "dateTime": "Ngày & Giờ",
+        "duration": "Thời lượng",
+        "price": "Giá",
+        "status": "Trạng thái"
       }
     }
   },
