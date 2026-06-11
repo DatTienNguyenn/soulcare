@@ -418,6 +418,24 @@ export const addReview = async (
   return response.data;
 };
 
+export interface EHRResponse {
+  id: string;
+  patientId: string;
+  specialistId: string;
+  appointmentId: string;
+  diagnosis: string;
+  treatmentPlan: string;
+  createdAt: string;
+}
+
+/**
+ * Get Electronic Health Records for a specific patient
+ */
+export const getPatientEHRs = async (patientId: string): Promise<EHRResponse[]> => {
+  const response = await axiosInstance.get<EHRResponse[]>(`/api/v1/ehr/patient/${patientId}`);
+  return response.data;
+};
+
 /**
  * Create Electronic Health Record for a completed session
  */

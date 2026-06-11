@@ -31,16 +31,6 @@ export function BrowseTherapistsTab({
     );
   }
 
-  if (therapists.length === 0) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 4 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {t('treatment.booking.noTherapists')}
-        </Typography>
-      </Box>
-    );
-  }
-
   return (
     <Stack spacing={3}>
       <TherapistFilterBar
@@ -49,13 +39,21 @@ export function BrowseTherapistsTab({
         specializations={specializations}
       />
 
-      <Grid container spacing={3}>
-        {therapists.map((therapist) => (
-          <Grid item xs={12} sm={6} md={4} key={therapist.id}>
-            <TherapistCard therapist={therapist} onClick={onSelectTherapist} />
-          </Grid>
-        ))}
-      </Grid>
+      {therapists.length === 0 ? (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {t('treatment.booking.noTherapists')}
+          </Typography>
+        </Box>
+      ) : (
+        <Grid container spacing={3}>
+          {therapists.map((therapist) => (
+            <Grid item xs={12} sm={6} md={4} key={therapist.id}>
+              <TherapistCard therapist={therapist} onClick={onSelectTherapist} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Stack>
   );
 }
