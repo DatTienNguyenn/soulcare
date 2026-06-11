@@ -15,12 +15,15 @@ import {
   InputLabel,
   Select,
 } from '@mui/material';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import { format, parse } from 'date-fns';
+import { useState } from 'react';
 import {
   PublicSpecialistDTO,
   AvailableSlotDTO,
   SessionPricingResponse,
 } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface BookingConfirmDialogProps {
   open: boolean;
@@ -51,19 +54,25 @@ export function BookingConfirmDialog({
   selectedSessionType = '',
   onSessionTypeChange,
 }: BookingConfirmDialogProps) {
+  const { t } = useLocales();
   // Calculate price based on selected session type
   const selectedPricing = sessionTypes.find((type) => type.sessionType === selectedSessionType);
   const displayPrice = selectedPricing ? selectedPricing.pricePerSession : slot?.price || 0;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const showErrorPayment = () => {
+    return <Alert severity="error">{errorMessage}</Alert>;
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Confirm Your Booking</DialogTitle>
+      <DialogTitle>{t('treatment.booking.confirmBookingTitle')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
           {error && <Alert severity="error">{error}</Alert>}
           <Box>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Therapist
+              {t('treatment.booking.therapist')}
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
               {therapist?.name}
@@ -71,7 +80,7 @@ export function BookingConfirmDialog({
           </Box>
           <Box>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Date & Time
+              {t('treatment.booking.dateTime')}
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
               {slot && format(parse(slot.date, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')} at{' '}
@@ -80,11 +89,11 @@ export function BookingConfirmDialog({
           </Box>
           {sessionTypes.length > 0 && (
             <FormControl fullWidth>
-              <InputLabel>Session Type</InputLabel>
+              <InputLabel>{t('treatment.booking.sessionType')}</InputLabel>
               <Select
                 value={selectedSessionType}
                 onChange={(e) => onSessionTypeChange?.(e.target.value)}
-                label="Session Type"
+                label={t('treatment.booking.sessionType')}
                 disabled={loading}
               >
                 {sessionTypes.map((type) => (
@@ -97,35 +106,72 @@ export function BookingConfirmDialog({
           )}
           <Box>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Total Price
+              {t('treatment.booking.totalPrice')}
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
               ${displayPrice}
             </Typography>
           </Box>
           <TextField
-            label="Notes (Optional)"
+            label={t('treatment.booking.notesOptional')}
             multiline
             rows={3}
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
-            placeholder="Add any notes about your booking..."
+            placeholder={t('treatment.booking.notesPlaceholder')}
             disabled={loading}
           />
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>
-          Cancel
+          {t('common.cancel')}
         </Button>
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          disabled={loading}
-          startIcon={loading ? <CircularProgress size={20} /> : null}
-        >
-          {loading ? 'Confirming...' : 'Confirm Booking'}
-        </Button>
+
+        {displayPrice > 0 ? (
+          <Box sx={{ minWidth: 200, zIndex: 1 }}>
+            <PayPalButtons
+              style={{ layout: 'horizontal', height: 36, color: 'blue' }}
+              createOrder={(data: any, actions: any) => {
+                return actions.order.create({
+                  intent: 'CAPTURE',
+                  purchase_units: [
+                    {
+                      amount: {
+                        currency_code: 'USD',
+                        value: displayPrice.toString(),
+                      },
+                      description: `Therapy Booking - ${therapist?.name}`,
+                    },
+                  ],
+                });
+              }}
+              onApprove={(data: any, actions: any) => {
+                if (actions.order) {
+                  return actions.order.capture().then((details: any) => {
+                    // Payment successful, trigger the actual booking creation
+                    return onConfirm();
+                  });
+                }
+                return Promise.resolve();
+              }}
+              onError={(err: any) => {
+                console.error('PayPal Checkout onError', err);
+                // Optionally handle errors here (e.g. show a notification)
+                showErrorPayment();
+              }}
+            />
+          </Box>
+        ) : (
+          <Button
+            onClick={onConfirm}
+            variant="contained"
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} /> : null}
+          >
+            {loading ? t('treatment.booking.confirming') : t('treatment.booking.confirmBooking')}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

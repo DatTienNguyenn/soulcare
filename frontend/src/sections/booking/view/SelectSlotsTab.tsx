@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Box, Button, CircularProgress, Grid, Stack, Typography } from '@mui/material';
 import { PublicSpecialistDTO, AvailableSlotDTO } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 import { TherapistDetailCard } from './TherapistDetailCard';
 import { DateCard } from './DateCard';
 import { TimeSlotCard } from './TimeSlotCard';
@@ -20,6 +21,7 @@ export function SelectSlotsTab({
   onSelectSlot,
   onDateSelected,
 }: SelectSlotsTabProps) {
+  const { t } = useLocales();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [slotsLoadingForDate, setSlotsLoadingForDate] = useState(false);
 
@@ -68,7 +70,7 @@ export function SelectSlotsTab({
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          No available dates for this therapist
+          {t('treatment.booking.noAvailableDates')}
         </Typography>
       </Box>
     );
@@ -82,7 +84,7 @@ export function SelectSlotsTab({
         // Date Selection View
         <Box>
           <Typography variant="subtitle1" sx={{ mb: 2 }}>
-            Select a Date
+            {t('treatment.booking.selectDate')}
           </Typography>
           <Grid container spacing={2}>
             {availableDates.map(({ date, slotCount }) => (
@@ -102,10 +104,10 @@ export function SelectSlotsTab({
         <Box>
           <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
             <Typography variant="subtitle1" sx={{ flex: 1 }}>
-              Available Times
+              {t('treatment.booking.availableTimes')}
             </Typography>
             <Button size="small" variant="outlined" onClick={handleBackToDateSelection}>
-              Change Date
+              {t('treatment.booking.changeDate')}
             </Button>
           </Stack>
 
@@ -116,7 +118,7 @@ export function SelectSlotsTab({
           ) : selectedDateSlots.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                No available time slots for this date
+                {t('treatment.booking.noAvailableTimeSlots')}
               </Typography>
             </Box>
           ) : (

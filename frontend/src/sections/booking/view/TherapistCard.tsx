@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, CardHeader, Chip, Rating, Stack, Typography } from '@mui/material';
 import { PublicSpecialistDTO } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface TherapistCardProps {
   therapist: PublicSpecialistDTO;
@@ -7,6 +8,7 @@ interface TherapistCardProps {
 }
 
 export function TherapistCard({ therapist, onClick }: TherapistCardProps) {
+  const { t } = useLocales();
   return (
     <Card
       sx={{
@@ -33,7 +35,7 @@ export function TherapistCard({ therapist, onClick }: TherapistCardProps) {
           />
         }
         title={therapist.name}
-        subheader="SPECIALIST"
+        subheader={t('treatment.booking.specialist').toUpperCase()}
       />
       <CardContent>
         <Stack spacing={2}>
@@ -51,8 +53,16 @@ export function TherapistCard({ therapist, onClick }: TherapistCardProps) {
           </Box>
 
           <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-            <Chip label={`${therapist.experience} yrs exp`} size="small" variant="outlined" />
-            <Chip label={`$${therapist.hourlyRate}/hr`} size="small" color="primary" />
+            <Chip
+              label={`${therapist.experience} ${t('treatment.booking.yrsExp')}`}
+              size="small"
+              variant="outlined"
+            />
+            <Chip
+              label={`$${therapist.hourlyRate}${t('treatment.booking.perHour')}`}
+              size="small"
+              color="primary"
+            />
           </Stack>
 
           {therapist.specializations && therapist.specializations.length > 0 && (
@@ -61,7 +71,7 @@ export function TherapistCard({ therapist, onClick }: TherapistCardProps) {
                 variant="caption"
                 sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}
               >
-                <strong>Specializations:</strong>
+                <strong>{t('treatment.booking.specializations')}</strong>
               </Typography>
               <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
                 {therapist.specializations.map((spec, idx) => (
@@ -78,12 +88,12 @@ export function TherapistCard({ therapist, onClick }: TherapistCardProps) {
 
           {therapist.languages && therapist.languages.length > 0 && (
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              <strong>Languages:</strong> {therapist.languages.join(', ')}
+              <strong>{t('treatment.booking.languages')}</strong> {therapist.languages.join(', ')}
             </Typography>
           )}
 
           <Typography variant="body2">
-            <strong>Available:</strong> {therapist.availableHours}
+            <strong>{t('treatment.booking.availableLabel')}</strong> {therapist.availableHours}
           </Typography>
 
           <Typography variant="caption" sx={{ color: 'success.main' }}>

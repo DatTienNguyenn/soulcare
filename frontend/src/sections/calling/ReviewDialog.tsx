@@ -12,6 +12,7 @@ import {
   Rating,
   Box,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface ReviewDialogProps {
   open: boolean;
@@ -20,6 +21,7 @@ interface ReviewDialogProps {
 }
 
 export function ReviewDialog({ open, onClose, onSubmit }: ReviewDialogProps) {
+  const { t } = useLocales();
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>('');
 
@@ -37,16 +39,14 @@ export function ReviewDialog({ open, onClose, onSubmit }: ReviewDialogProps) {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Rate Your Specialist</DialogTitle>
+      <DialogTitle>{t('calling.rateTitle')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={3}>
-          <Typography variant="body2">
-            How was your session? Please rate your specialist and leave a comment.
-          </Typography>
+          <Typography variant="body2">{t('calling.rateDescription')}</Typography>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Rating
+              {t('calling.rating')}
             </Typography>
             <Rating
               name="specialist-rating"
@@ -59,25 +59,20 @@ export function ReviewDialog({ open, onClose, onSubmit }: ReviewDialogProps) {
           </Box>
 
           <TextField
-            label="Comment (Optional)"
+            label={t('calling.commentOptional')}
             multiline
             rows={4}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Share your experience..."
+            placeholder={t('calling.commentPlaceholder')}
             fullWidth
           />
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Skip</Button>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          color="primary"
-          disabled={rating === 0}
-        >
-          Submit Review
+        <Button onClick={handleClose}>{t('calling.skip')}</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary" disabled={rating === 0}>
+          {t('calling.submitReview')}
         </Button>
       </DialogActions>
     </Dialog>

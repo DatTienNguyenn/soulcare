@@ -9,6 +9,7 @@ import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { useLocales } from 'src/locale/use-locales';
 import { AppointmentResponse } from 'src/utils/specialist-api';
 
 interface SessionListProps {
@@ -36,12 +37,13 @@ export default function SessionList({
   onCancelSession,
   onReportSession,
 }: SessionListProps) {
+  const { t } = useLocales();
   const upcomingBookings = appointments.filter((b) => b.status === 'PENDING');
 
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
-        <Typography variant="h4">Select a Session to Call</Typography>
+        <Typography variant="h4">{t('calling.selectSession')}</Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>
@@ -49,7 +51,7 @@ export default function SessionList({
           </Box>
         )}
         {!loading && upcomingBookings.length === 0 && (
-          <Alert severity="info">No upcoming sessions available.</Alert>
+          <Alert severity="info">{t('calling.noSessions')}</Alert>
         )}
         {!loading &&
           upcomingBookings.map((booking) => {
@@ -66,12 +68,12 @@ export default function SessionList({
                 }}
               >
                 <Box>
-                  <Typography variant="h6">{targetName || 'Unknown User'}</Typography>
+                  <Typography variant="h6">{targetName || t('calling.unknownUser')}</Typography>
                   <Typography
                     variant="body2"
                     sx={{ color: 'text.secondary', textTransform: 'capitalize' }}
                   >
-                    {booking.bookingType.toLowerCase()} Session
+                    {booking.bookingType.toLowerCase()} {t('calling.session')}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                     <Typography variant="body2">
@@ -89,7 +91,7 @@ export default function SessionList({
                       return (
                         <Stack direction="row" spacing={2} justifyContent="flex-end">
                           <Button variant="outlined" color="error" disabled>
-                            Session Ended
+                            {t('calling.sessionEnded')}
                           </Button>
                           {isSpecialist ? (
                             <Button
@@ -97,7 +99,7 @@ export default function SessionList({
                               color="info"
                               onClick={() => onWriteRecord?.(booking)}
                             >
-                              Write Record
+                              {t('calling.writeRecord')}
                             </Button>
                           ) : (
                             <Button
@@ -105,7 +107,7 @@ export default function SessionList({
                               color="info"
                               onClick={() => onRateSpecialist?.(booking)}
                             >
-                              Rate Specialist
+                              {t('calling.rateSpecialist')}
                             </Button>
                           )}
                           <Button
@@ -113,7 +115,7 @@ export default function SessionList({
                             color="error"
                             onClick={() => onReportSession?.(booking)}
                           >
-                            Report
+                            {t('calling.report')}
                           </Button>
                         </Stack>
                       );
@@ -122,14 +124,14 @@ export default function SessionList({
                       return (
                         <Stack direction="row" spacing={2} justifyContent="flex-end">
                           <Button variant="outlined" color="inherit" disabled>
-                            Starts at {booking.startTime}
+                            {t('calling.startsAt')} {booking.startTime}
                           </Button>
                           <Button
                             variant="outlined"
                             color="error"
                             onClick={() => onCancelSession?.(booking)}
                           >
-                            Cancel
+                            {t('common.cancel')}
                           </Button>
                         </Stack>
                       );
@@ -140,7 +142,7 @@ export default function SessionList({
                         color="primary"
                         onClick={() => onSelectBooking(booking)}
                       >
-                        Enter Call Room
+                        {t('calling.enterCallRoom')}
                       </Button>
                     );
                   })()}

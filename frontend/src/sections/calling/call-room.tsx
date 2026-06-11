@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import Iconify from 'src/components/iconify';
+import { useLocales } from 'src/locale/use-locales';
 
 interface CallRoomProps {
   targetName: string;
@@ -60,13 +61,16 @@ export default function CallRoom({
   remoteVideoRef,
   localVideoRef,
 }: CallRoomProps) {
+  const { t } = useLocales();
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Video Call with {targetName || 'User'}</Typography>
+          <Typography variant="h4">
+            {t('calling.videoCallWith')} {targetName || t('calling.unknownUser')}
+          </Typography>
           <Button startIcon={<Iconify icon="eva:arrow-ios-back-fill" />} onClick={onBackToList}>
-            Back to Sessions
+            {t('calling.backToSessions')}
           </Button>
         </Stack>
 
@@ -82,25 +86,27 @@ export default function CallRoom({
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Box>
                 <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                  Session Information
+                  {t('calling.sessionInfo')}
                 </Typography>
                 <Card variant="outlined" sx={{ p: 2 }}>
                   <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>{isSpecialist ? 'Patient' : 'Specialist'}:</strong>{' '}
-                    {targetName || 'Unknown User'}
+                    <strong>
+                      {isSpecialist ? t('calling.patient') : t('calling.specialist')}:
+                    </strong>{' '}
+                    {targetName || t('calling.unknownUser')}
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-                    <strong>Target Peer ID:</strong> {remotePeerIdValue}
+                    <strong>{t('calling.targetPeerId')}</strong> {remotePeerIdValue}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    <strong>Your Peer ID:</strong> {peerId}
+                    <strong>{t('calling.yourPeerId')}</strong> {peerId}
                   </Typography>
                 </Card>
                 <Typography
                   variant="caption"
                   sx={{ color: 'text.secondary', mt: 2, display: 'block' }}
                 >
-                  Connection IDs are strictly bound to this session and its assigned users.
+                  {t('calling.connectionWarning')}
                 </Typography>
               </Box>
 
@@ -114,7 +120,9 @@ export default function CallRoom({
                     onClick={onCall}
                     disabled={!remotePeerIdValue || isCalling || !!incomingCall}
                   >
-                    {isCalling ? 'Calling...' : `Start Call with ${targetName || 'User'}`}
+                    {isCalling
+                      ? t('calling.calling')
+                      : `${t('calling.startCallWith')} ${targetName || t('calling.unknownUser')}`}
                   </Button>
 
                   {isCalling && callStatusMessage && (
@@ -132,24 +140,14 @@ export default function CallRoom({
               {incomingCall && !callActive && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                   <Typography variant="subtitle2">
-                    Incoming Call from {targetName || 'User'}...
+                    {t('calling.incomingCallFrom')} {targetName || t('calling.unknownUser')}...
                   </Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={onAnswerCall}
-                      size="small"
-                    >
-                      Answer
+                    <Button variant="contained" color="success" onClick={onAnswerCall} size="small">
+                      {t('calling.answer')}
                     </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={onRejectCall}
-                      size="small"
-                    >
-                      Reject
+                    <Button variant="contained" color="error" onClick={onRejectCall} size="small">
+                      {t('calling.reject')}
                     </Button>
                   </Stack>
                 </Alert>
@@ -171,9 +169,7 @@ export default function CallRoom({
               }}
             >
               {!callActive && !isCalling && !incomingCall && (
-                <Typography sx={{ color: 'background.paper' }}>
-                  Ready to make or receive a call
-                </Typography>
+                <Typography sx={{ color: 'background.paper' }}>{t('calling.ready')}</Typography>
               )}
 
               {/* Remote Video (Main) */}

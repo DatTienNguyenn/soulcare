@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface ReasonDialogProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface ReasonDialogProps {
 }
 
 export function ReasonDialog({ open, title, description, onClose, onSubmit }: ReasonDialogProps) {
+  const { t } = useLocales();
   const [reason, setReason] = useState('');
 
   const handleSubmit = () => {
@@ -38,25 +40,25 @@ export function ReasonDialog({ open, title, description, onClose, onSubmit }: Re
         <Stack spacing={2}>
           <Typography variant="body2">{description}</Typography>
           <TextField
-            label="Reason"
+            label={t('calling.reason')}
             multiline
             rows={3}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Please enter your reason here..."
+            placeholder={t('calling.reasonPlaceholder')}
             fullWidth
           />
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
+        <Button onClick={handleClose}>{t('common.close')}</Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
           color="primary"
           disabled={!reason.trim()}
         >
-          Submit
+          {t('calling.submit')}
         </Button>
       </DialogActions>
     </Dialog>

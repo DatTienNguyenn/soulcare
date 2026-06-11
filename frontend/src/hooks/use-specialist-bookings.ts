@@ -8,6 +8,7 @@ import {
 
 export interface SpecialistBooking {
   id: string;
+  patientId: string;
   userName: string;
   userEmail: string;
   userAvatar?: string;
@@ -40,6 +41,7 @@ export function useSpecialistBookings() {
 
     return {
       id: appointment.id,
+      patientId: appointment.patientId,
       userName: appointment.patientName || 'Unknown Patient',
       userEmail: appointment.patientEmail || '',
       userAvatar: appointment.patientAvatar,

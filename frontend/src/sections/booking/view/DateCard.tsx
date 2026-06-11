@@ -1,6 +1,7 @@
 import { Box, Paper, Stack, Typography, Chip } from '@mui/material';
 import { format, parse } from 'date-fns';
 import { AvailableSlotDTO } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface DateCardProps {
   date: string;
@@ -10,6 +11,7 @@ interface DateCardProps {
 }
 
 export function DateCard({ date, slotCount, isSelected, onClick }: DateCardProps) {
+  const { t } = useLocales();
   const formattedDate = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE, MMM dd');
   const dayName = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEEE');
 
@@ -37,7 +39,7 @@ export function DateCard({ date, slotCount, isSelected, onClick }: DateCardProps
           {formattedDate}
         </Typography>
         <Chip
-          label={`${slotCount} slot${slotCount !== 1 ? 's' : ''}`}
+          label={`${slotCount} ${slotCount !== 1 ? t('treatment.booking.slots') : t('treatment.booking.slot')}`}
           size="small"
           variant={isSelected ? 'filled' : 'outlined'}
           color={isSelected ? 'primary' : 'default'}
