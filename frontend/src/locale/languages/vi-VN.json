@@ -49,6 +49,9 @@
     },
     "treatmentHistory": {
       "title": "Lịch sử trị liệu"
+    },
+    "settings": {
+      "title": "Cài đặt thông tin người dùng"
     }
   },
   "selfTest": {

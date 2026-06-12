@@ -17,6 +17,7 @@ const AnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const TherapyBookingPage = lazy(() => import('src/pages/dashboard/treatment-booking'));
 const TreatmentHistoryPage = lazy(() => import('src/pages/dashboard/treatment-history'));
 const CallingPage = lazy(() => import('src/pages/dashboard/callingPage'));
+const SettingsPage = lazy(() => import('src/pages/dashboard/settings'));
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +57,7 @@ export const dashboardRoutes = [
           { path: 'calling', element: <CallingPage /> },
         ],
       },
+      { path: 'settings', element: <SettingsPage /> },
     ],
   },
 ];

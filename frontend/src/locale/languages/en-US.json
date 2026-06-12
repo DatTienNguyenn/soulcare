@@ -52,6 +52,9 @@
     },
     "calling": {
       "title": "Calling Session"
+    },
+    "settings": {
+      "title": "User Settings Informations"
     }
   },
   "selfTest": {
