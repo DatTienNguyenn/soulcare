@@ -212,7 +212,7 @@ public class SpecialistPublicService {
                 .rating(averageRating)
                 .reviewCount(reviewCount)
                 .hourlyRate(hourlyRate)
-                .avatarUrl(null) // TODO: add profilePicture field to User model
+                .avatarUrl(user != null ? user.getAvatarUrl() : null)
                 .experience(specialist.getYearsExp() != null ? specialist.getYearsExp() : 0)
                 // .certifications(specializations.isEmpty() ? Arrays.asList("Certified Mental Health Professional") : specializations)
                 // .languages(Arrays.asList("English")) // TODO: add to model

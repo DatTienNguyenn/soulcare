@@ -63,14 +63,18 @@ export default function SpecialistSettingsView() {
         specialty: Array.isArray(profile.specialtyTags) ? profile.specialtyTags : [],
         bio: profile.bio || '',
         years_exp: profile.years_exp || 0,
-        avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
+        avatar:
+          (profile as any).avatarUrl ||
+          'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
       setEditData({
         fullName: profile.fullName || '',
         specialty: Array.isArray(profile.specialtyTags) ? profile.specialtyTags : [],
         bio: profile.bio || '',
         years_exp: profile.years_exp || 0,
-        avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
+        avatar:
+          (profile as any).avatarUrl ||
+          'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to load profile';
@@ -91,7 +95,8 @@ export default function SpecialistSettingsView() {
         specialtyTags: editData.specialty,
         bio: editData.bio,
         years_exp: editData.years_exp,
-      });
+        avatarUrl: editData.avatar,
+      } as any);
 
       // Update local state with successful response
       setProfileData({
@@ -99,7 +104,10 @@ export default function SpecialistSettingsView() {
         specialty: Array.isArray(result.specialtyTags) ? result.specialtyTags : [],
         bio: result.bio || '',
         years_exp: result.years_exp || 0,
-        avatar: 'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
+        avatar:
+          (result as any).avatarUrl ||
+          editData.avatar ||
+          'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_default.jpg',
       });
 
       setIsEditing(false);
@@ -109,6 +117,18 @@ export default function SpecialistSettingsView() {
       const errorMsg = err instanceof Error ? err.message : 'Failed to save profile';
       setLoadError(errorMsg);
       console.error('Error saving profile:', err);
+    }
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setEditData({ ...editData, avatar: result });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -163,10 +183,19 @@ export default function SpecialistSettingsView() {
                   {/* Avatar Section */}
                   <Grid item xs={12} md={3} sx={{ textAlign: 'center' }}>
                     <Stack spacing={2} sx={{ alignItems: 'center' }}>
-                      <Avatar src={profileData.avatar} sx={{ width: 120, height: 120 }} />
+                      <Avatar
+                        src={isEditing ? editData.avatar : profileData.avatar}
+                        sx={{ width: 120, height: 120 }}
+                      />
                       {isEditing && (
-                        <Button variant="outlined" size="small">
+                        <Button variant="outlined" size="small" component="label">
                           {t('specialist.setting.profile.changeAvatar')}
+                          <input
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                          />
                         </Button>
                       )}
                     </Stack>
