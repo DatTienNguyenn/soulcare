@@ -39,7 +39,7 @@ export default function SelfTestView() {
         // Transform API response to frontend format
         const transformedTests = activeTestsFromAPI.map((test) => {
           try {
-            return transformAPITestToFrontend(test);
+            return transformAPITestToFrontend(test, t);
           } catch (transformError) {
             console.error('Error transforming test:', test, transformError);
             throw transformError;
@@ -57,7 +57,7 @@ export default function SelfTestView() {
     };
 
     loadData();
-  }, [fetchActiveTests, setError]);
+  }, [fetchActiveTests, setError, t]);
 
   const handleStartTest = async (test: MentalHealthTest) => {
     try {
@@ -122,7 +122,7 @@ export default function SelfTestView() {
         maxScore: apiResult.maxScore,
         level: apiResult.level,
         color: getColorByLevel(apiResult.level),
-        description: apiResult.description || getDescriptionByLevel(apiResult.level),
+        description: apiResult.description || getDescriptionByLevel(apiResult.level, t),
         timestamp: new Date(),
         answers,
       };

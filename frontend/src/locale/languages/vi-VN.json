@@ -3,6 +3,20 @@
     "name": "Soul Care",
     "title": "Soul Care - Trợ thủ hằng ngày của bạn"
   },
+  "nav": {
+    "features": "Tính năng",
+    "management": "Quản lý",
+    "diary": "Nhật ký",
+    "canvas": "Bảng vẽ",
+    "selfTest": "Tự kiểm tra",
+    "treatment": "Trị liệu",
+    "settings": "Cài đặt",
+    "bookings": "Lịch hẹn",
+    "viewBookings": "Xem Lịch hẹn",
+    "calling": "Cuộc gọi",
+    "electronicRecords": "Hồ sơ y tế",
+    "analytics": "Phân tích"
+  },
   "common": {
     "home": "Trang chủ",
     "dashboard": "Bảng điều khiển",
@@ -50,6 +64,9 @@
     "treatmentHistory": {
       "title": "Lịch sử trị liệu"
     },
+    "calling": {
+      "title": "Phiên gọi điện"
+    },
     "settings": {
       "title": "Cài đặt thông tin người dùng"
     }
@@ -79,7 +96,18 @@
     "next": "Tiếp",
     "recommendationNormal": "Tiếp tục duy trì các chiến lược đối phó lành mạnh và lối sống cân bằng. Hãy cân nhắc tập thể dục đều đặn, thiền định và kết nối xã hội.",
     "recommendationModerate": "Hãy xem xét tìm kiếm sự hướng dẫn từ chuyên gia sức khỏe tâm thần. Trị liệu hoặc tư vấn có thể hữu ích.",
-    "recommendationSevere": "Nên tìm kiếm hỗ trợ sức khỏe tâm thần chuyên nghiệp càng sớm càng tốt. Liên hệ với nhà cung cấp dịch vụ y tế hoặc chuyên gia sức khỏe tâm thần."
+    "recommendationSevere": "Nên tìm kiếm hỗ trợ sức khỏe tâm thần chuyên nghiệp càng sớm càng tốt. Liên hệ với nhà cung cấp dịch vụ y tế hoặc chuyên gia sức khỏe tâm thần.",
+    "levelNormal": "Bình thường",
+    "levelMild": "Nhẹ",
+    "levelModerate": "Trung bình",
+    "levelSevere": "Nặng",
+    "levelVerySevere": "Rất nặng",
+    "descNormal": "Bạn đang làm rất tốt.",
+    "descMild": "Bạn có thể trải qua một số triệu chứng nhẹ.",
+    "descModerate": "Các triệu chứng của bạn ở mức trung bình. Hãy cân nhắc tìm kiếm sự hỗ trợ.",
+    "descSevere": "Các triệu chứng của bạn ở mức độ nặng. Vui lòng tìm kiếm sự giúp đỡ từ chuyên gia.",
+    "descVerySevere": "Các triệu chứng của bạn ở mức độ rất nặng. Rất khuyến khích tìm kiếm sự giúp đỡ chuyên nghiệp khẩn cấp.",
+    "minutes": "phút"
   },
   "analytics": {
     "header": {
@@ -403,6 +431,7 @@
     }
   },
   "admin": {
+    "management": "Quản lý",
     "patientReporting": {
       "title": "Báo cáo Bệnh nhân",
       "description": "Xem và quản lý các báo cáo được gửi bởi bệnh nhân về các vấn đề sức khỏe tâm thần hoặc trải nghiệm trị liệu của họ",

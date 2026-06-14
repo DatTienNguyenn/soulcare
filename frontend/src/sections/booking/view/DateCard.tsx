@@ -1,5 +1,6 @@
 import { Box, Paper, Stack, Typography, Chip } from '@mui/material';
 import { format, parse } from 'date-fns';
+import { vi, enUS } from 'date-fns/locale';
 import { AvailableSlotDTO } from 'src/utils/specialist-api';
 import { useLocales } from 'src/locale/use-locales';
 
@@ -11,9 +12,13 @@ interface DateCardProps {
 }
 
 export function DateCard({ date, slotCount, isSelected, onClick }: DateCardProps) {
-  const { t } = useLocales();
-  const formattedDate = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE, MMM dd');
-  const dayName = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEEE');
+  const { t, currentLang } = useLocales();
+
+  const dateLocale = currentLang.value.includes('vi') ? vi : enUS;
+  const formattedDate = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE, MMM dd', {
+    locale: dateLocale,
+  });
+  const dayName = format(parse(date, 'yyyy-MM-dd', new Date()), 'EEEE', { locale: dateLocale });
 
   return (
     <Paper

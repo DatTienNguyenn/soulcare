@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { paths } from 'src/routes/paths';
 
 import SvgColor from 'src/components/svg-color';
+import { useLocales } from 'src/locale/use-locales';
 
 // ----------------------------------------------------------------------
 
@@ -22,37 +23,39 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useAdminNavData() {
+  const { t } = useLocales();
+
   const data = useMemo(
     () => [
       // ADMIN MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: 'management',
+        subheader: t('admin.management'),
         items: [
           {
-            title: 'Test Management',
+            title: t('testManagement.title'),
             path: paths.admin.testManagement,
             icon: ICONS.dashboard,
           },
           {
-            title: 'User Management',
+            title: t('userManagement.title'),
             path: paths.admin.userManagement,
             icon: ICONS.user,
           },
           {
-            title: 'Analytics',
+            title: t('pages.analytics.title'),
             path: paths.admin.analytics,
             icon: ICONS.analytics,
           },
           {
-            title: 'Patient Reporting',
+            title: t('admin.patientReporting.title'),
             path: paths.admin.sessionReporting,
             icon: ICONS.label,
           },
         ],
       },
     ],
-    []
+    [t]
   );
 
   return data;

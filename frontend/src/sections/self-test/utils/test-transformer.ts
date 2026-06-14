@@ -8,7 +8,13 @@ import { MentalHealthTest, MentalHealthQuestion } from 'src/_mock/_self-test';
 /**
  * Transform API test response to frontend format
  */
-export const transformAPITestToFrontend = (apiTest: APITest): MentalHealthTest => {
+export const transformAPITestToFrontend = (apiTest: APITest, t?: any): MentalHealthTest => {
+  const translate = (key: string, fallback: string) => {
+    if (!t) return fallback;
+    const result = t(key);
+    return result === key ? fallback : result;
+  };
+
   // Transform questions from API format to frontend format
   // Handle case where questions might not be included in list responses
   const transformedQuestions: MentalHealthQuestion[] = apiTest.questions
@@ -21,7 +27,6 @@ export const transformAPITestToFrontend = (apiTest: APITest): MentalHealthTest =
         })),
       }))
     : [];
-
   return {
     id: apiTest.id,
     name: apiTest.name,
@@ -29,8 +34,8 @@ export const transformAPITestToFrontend = (apiTest: APITest): MentalHealthTest =
     description: apiTest.description,
     duration:
       typeof apiTest.duration === 'number'
-        ? `${apiTest.duration} minutes`
-        : apiTest.duration || '5-10 minutes',
+        ? `${apiTest.duration} ${translate('selfTest.minutes', 'minutes')}`
+        : apiTest.duration || `5-10 ${translate('selfTest.minutes', 'minutes')}`,
     totalQuestions: apiTest.totalQuestions || transformedQuestions.length || 0,
     questions: transformedQuestions,
     // Default scoring guide when backend doesn't provide one
@@ -40,33 +45,42 @@ export const transformAPITestToFrontend = (apiTest: APITest): MentalHealthTest =
       categories: [
         {
           range: [0, 20] as [number, number],
-          level: 'Normal',
+          level: translate('selfTest.levelNormal', 'Normal'),
           color: '#00B074',
-          description: 'You are doing well.',
+          description: translate('selfTest.descNormal', 'You are doing well.'),
         },
         {
           range: [21, 40] as [number, number],
-          level: 'Mild',
+          level: translate('selfTest.levelMild', 'Mild'),
           color: '#FFC107',
-          description: 'You may experience some mild symptoms.',
+          description: translate('selfTest.descMild', 'You may experience some mild symptoms.'),
         },
         {
           range: [41, 60] as [number, number],
-          level: 'Moderate',
+          level: translate('selfTest.levelModerate', 'Moderate'),
           color: '#FF9800',
-          description: 'Your symptoms are moderate. Consider seeking support.',
+          description: translate(
+            'selfTest.descModerate',
+            'Your symptoms are moderate. Consider seeking support.'
+          ),
         },
         {
           range: [61, 80] as [number, number],
-          level: 'Severe',
+          level: translate('selfTest.levelSevere', 'Severe'),
           color: '#FF6B6B',
-          description: 'Your symptoms are severe. Please seek professional help.',
+          description: translate(
+            'selfTest.descSevere',
+            'Your symptoms are severe. Please seek professional help.'
+          ),
         },
         {
           range: [81, 100] as [number, number],
-          level: 'Very Severe',
+          level: translate('selfTest.levelVerySevere', 'Very Severe'),
           color: '#D32F2F',
-          description: 'Your symptoms are very severe. Urgent professional help is recommended.',
+          description: translate(
+            'selfTest.descVerySevere',
+            'Your symptoms are very severe. Urgent professional help is recommended.'
+          ),
         },
       ],
     },
@@ -96,18 +110,42 @@ export const getColorByLevel = (level: string): string => {
 /**
  * Get description by level name
  */
-export const getDescriptionByLevel = (level: string): string => {
+export const getDescriptionByLevel = (level: string, t?: any): string => {
+  const translate = (key: string, fallback: string) => {
+    if (!t) return fallback;
+    const result = t(key);
+    return result === key ? fallback : result;
+  };
+
   const descMap: Record<string, string> = {
-    Normal: 'You are doing well.',
-    Mild: 'You may experience some mild symptoms.',
-    Moderate: 'Your symptoms are moderate. Consider seeking support.',
-    Severe: 'Your symptoms are severe. Please seek professional help.',
-    'Very Severe': 'Your symptoms are very severe. Urgent professional help is recommended.',
-    MINIMAL: 'You are doing well.',
-    MILD: 'You may experience some mild symptoms.',
-    MODERATE: 'Your symptoms are moderate. Consider seeking support.',
-    SEVERE: 'Your symptoms are severe. Please seek professional help.',
-    VERY_SEVERE: 'Your symptoms are very severe. Urgent professional help is recommended.',
+    Normal: translate('selfTest.descNormal', 'You are doing well.'),
+    Mild: translate('selfTest.descMild', 'You may experience some mild symptoms.'),
+    Moderate: translate(
+      'selfTest.descModerate',
+      'Your symptoms are moderate. Consider seeking support.'
+    ),
+    Severe: translate(
+      'selfTest.descSevere',
+      'Your symptoms are severe. Please seek professional help.'
+    ),
+    'Very Severe': translate(
+      'selfTest.descVerySevere',
+      'Your symptoms are very severe. Urgent professional help is recommended.'
+    ),
+    MINIMAL: translate('selfTest.descNormal', 'You are doing well.'),
+    MILD: translate('selfTest.descMild', 'You may experience some mild symptoms.'),
+    MODERATE: translate(
+      'selfTest.descModerate',
+      'Your symptoms are moderate. Consider seeking support.'
+    ),
+    SEVERE: translate(
+      'selfTest.descSevere',
+      'Your symptoms are severe. Please seek professional help.'
+    ),
+    VERY_SEVERE: translate(
+      'selfTest.descVerySevere',
+      'Your symptoms are very severe. Urgent professional help is recommended.'
+    ),
   };
   return descMap[level] || '';
 };

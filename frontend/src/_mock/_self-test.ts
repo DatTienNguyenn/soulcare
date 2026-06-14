@@ -564,9 +564,15 @@ export const getMentalHealthTestById = (id: string): MentalHealthTest | undefine
 
 export const calculateTestScore = (
   test: MentalHealthTest,
-  answers: Record<string, number>
+  answers: Record<string, number>,
+  t?: any
 ): { score: number; level: string; color: string; description: string } => {
   let totalScore = 0;
+  const translate = (key: string, fallback: string) => {
+    if (!t) return fallback;
+    const result = t(key);
+    return result === key ? fallback : result;
+  };
 
   test.questions.forEach((question) => {
     if (answers[question.id] !== undefined) {
@@ -578,10 +584,35 @@ export const calculateTestScore = (
     (cat) => totalScore >= cat.range[0] && totalScore <= cat.range[1]
   );
 
+  // Map the level name dynamically if translated versions exist
+  const levelKeyMap: Record<string, string> = {
+    Normal: 'selfTest.levelNormal',
+    Mild: 'selfTest.levelMild',
+    Moderate: 'selfTest.levelModerate',
+    Severe: 'selfTest.levelSevere',
+    'Very Severe': 'selfTest.levelVerySevere',
+  };
+
+  const descKeyMap: Record<string, string> = {
+    Normal: 'selfTest.descNormal',
+    Mild: 'selfTest.descMild',
+    Moderate: 'selfTest.descModerate',
+    Severe: 'selfTest.descSevere',
+    'Very Severe': 'selfTest.descVerySevere',
+  };
+
+  const levelName = category?.level || 'Unknown';
+  const translatedLevel = levelKeyMap[levelName]
+    ? translate(levelKeyMap[levelName], levelName)
+    : levelName;
+  const translatedDesc = descKeyMap[levelName]
+    ? translate(descKeyMap[levelName], category?.description || '')
+    : category?.description || '';
+
   return {
     score: totalScore,
-    level: category?.level || 'Unknown',
+    level: translatedLevel,
     color: category?.color || '#95989A',
-    description: category?.description || '',
+    description: translatedDesc,
   };
 };

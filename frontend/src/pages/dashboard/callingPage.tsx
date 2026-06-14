@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Calling | WebRTC </title>
+        <title>{t('pages.calling.title')}</title>
       </Helmet>
 
       <CallingView />

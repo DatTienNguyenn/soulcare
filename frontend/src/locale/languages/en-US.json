@@ -3,6 +3,20 @@
     "name": "Soul Care",
     "title": "Soul Care - Your Daily Companion"
   },
+  "nav": {
+    "features": "Features",
+    "management": "Management",
+    "diary": "Diary",
+    "canvas": "Canvas",
+    "selfTest": "Self-test",
+    "treatment": "Treatment",
+    "settings": "Settings",
+    "bookings": "Bookings",
+    "viewBookings": "View Bookings",
+    "calling": "Calling",
+    "electronicRecords": "Electronic Records",
+    "analytics": "Analytics"
+  },
   "common": {
     "home": "Home",
     "dashboard": "Dashboard",
@@ -82,7 +96,18 @@
     "next": "Next",
     "recommendationNormal": "Continue maintaining healthy coping strategies and a balanced lifestyle. Consider regular exercise, meditation, and social connections.",
     "recommendationModerate": "Consider reaching out to a mental health professional for guidance. Therapy or counseling might be beneficial.",
-    "recommendationSevere": "It is strongly recommended to seek professional mental health support as soon as possible. Contact a healthcare provider or mental health specialist."
+    "recommendationSevere": "It is strongly recommended to seek professional mental health support as soon as possible. Contact a healthcare provider or mental health specialist.",
+    "levelNormal": "Normal",
+    "levelMild": "Mild",
+    "levelModerate": "Moderate",
+    "levelSevere": "Severe",
+    "levelVerySevere": "Very Severe",
+    "descNormal": "You are doing well.",
+    "descMild": "You may experience some mild symptoms.",
+    "descModerate": "Your symptoms are moderate. Consider seeking support.",
+    "descSevere": "Your symptoms are severe. Please seek professional help.",
+    "descVerySevere": "Your symptoms are very severe. Urgent professional help is recommended.",
+    "minutes": "minutes"
   },
   "analytics": {
     "header": {
@@ -406,6 +431,7 @@
     }
   },
   "admin": {
+    "management": "Management",
     "patientReporting": {
       "title": "Patient Reports",
       "description": "View and manage patient attendance reports",
