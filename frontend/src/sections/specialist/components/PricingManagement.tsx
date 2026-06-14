@@ -24,6 +24,7 @@ import {
 import { Pencil as EditIcon, Trash2 as DeleteIcon, Plus as PlusIcon } from 'lucide-react';
 import { useSpecialistProfile } from 'src/hooks/use-specialist-profile';
 import { SessionPricingResponse } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 export default function PricingManagement() {
   const {
@@ -37,6 +38,7 @@ export default function PricingManagement() {
   } = useSpecialistProfile();
 
   const [pricings, setPricings] = useState<SessionPricingResponse[]>([]);
+  const { t } = useLocales();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export default function PricingManagement() {
 
   const handleSave = async () => {
     if (!formData.sessionType || formData.pricePerSession <= 0) {
-      setSaveError('Please fill in all fields correctly');
+      setSaveError(t('specialist.setting.notify.fillFieldsCorrectly'));
       return;
     }
 
@@ -99,7 +101,7 @@ export default function PricingManagement() {
           pricePerSession: formData.pricePerSession,
           durationMinutes: formData.durationMinutes,
         });
-        setSuccessMessage('Pricing updated successfully');
+        setSuccessMessage(t('specialist.setting.notify.pricingUpdateSuccess'));
       } else {
         // Create new pricing
         await createSessionPricing({
@@ -108,7 +110,7 @@ export default function PricingManagement() {
           durationMinutes: formData.durationMinutes,
           active: true,
         });
-        setSuccessMessage('Pricing created successfully');
+        setSuccessMessage(t('specialist.setting.notify.pricingCreateSuccess'));
       }
 
       // Reload pricing data
@@ -125,10 +127,10 @@ export default function PricingManagement() {
     const pricing = pricings.find((p) => p.id === id);
     if (!pricing) return;
 
-    if (window.confirm('Are you sure you want to delete this pricing?')) {
+    if (window.confirm(t('specialist.setting.pricing.confirmDelete'))) {
       try {
         await deletePricing(pricing.sessionType);
-        setSuccessMessage('Pricing deleted successfully');
+        setSuccessMessage(t('specialist.setting.notify.pricingDeleteSuccess'));
         await loadPricing();
         setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
@@ -144,7 +146,11 @@ export default function PricingManagement() {
 
     try {
       await togglePricing(pricing.sessionType);
-      setSuccessMessage(pricing.active ? 'Pricing deactivated' : 'Pricing activated');
+      setSuccessMessage(
+        pricing.active
+          ? t('specialist.setting.notify.pricingDeactivated')
+          : t('specialist.setting.notify.pricingActivated')
+      );
       await loadPricing();
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
@@ -156,14 +162,14 @@ export default function PricingManagement() {
   return (
     <Card>
       <CardHeader
-        title="Session Pricing"
+        title={t('specialist.setting.pricing.title')}
         action={
           <Button
             variant="contained"
             startIcon={<PlusIcon size={20} />}
             onClick={() => handleOpenDialog()}
           >
-            Add Pricing
+            {t('specialist.setting.pricing.addPricing')}
           </Button>
         }
       />
@@ -186,18 +192,20 @@ export default function PricingManagement() {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                <TableCell sx={{ fontWeight: 'bold' }}>Session Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>
+                  {t('specialist.setting.pricing.sessionType')}
+                </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                  Price
+                  {t('specialist.setting.pricing.price')}
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                  Duration (min)
+                  {t('specialist.setting.pricing.duration')}
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                  Status
+                  {t('specialist.setting.pricing.status')}
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                  Actions
+                  {t('specialist.setting.pricing.actions')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -209,7 +217,11 @@ export default function PricingManagement() {
                   <TableCell align="center">{pricing.durationMinutes}</TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={pricing.active ? 'Active' : 'Inactive'}
+                      label={
+                        pricing.active
+                          ? t('specialist.setting.pricing.active')
+                          : t('specialist.setting.pricing.inactive')
+                      }
                       color={pricing.active ? 'success' : 'default'}
                       size="small"
                       onClick={() => handleToggleActive(pricing.id)}
@@ -217,14 +229,18 @@ export default function PricingManagement() {
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton size="small" onClick={() => handleOpenDialog(pricing)} title="Edit">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(pricing)}
+                      title={t('common.edit')}
+                    >
                       <EditIcon size={18} />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="error"
                       onClick={() => handleDelete(pricing.id)}
-                      title="Delete"
+                      title={t('common.delete')}
                     >
                       <DeleteIcon size={18} />
                     </IconButton>
@@ -239,12 +255,14 @@ export default function PricingManagement() {
         {/* Add/Edit Dialog */}
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
           <DialogTitle>
-            {editingId ? 'Edit Session Pricing' : 'Add New Session Pricing'}
+            {editingId
+              ? t('specialist.setting.pricing.editTitle')
+              : t('specialist.setting.pricing.addTitle')}
           </DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ mt: 2 }}>
               <TextField
-                label="Session Type"
+                label={t('specialist.setting.pricing.sessionType')}
                 select
                 fullWidth
                 SelectProps={{
@@ -253,16 +271,16 @@ export default function PricingManagement() {
                 value={formData.sessionType}
                 onChange={(e) => setFormData({ ...formData, sessionType: e.target.value })}
               >
-                <option value="">Select session type</option>
-                <option value="PSYCHOLOGY">Psychology</option>
-                <option value="COUNSELING">Counseling</option>
-                <option value="BEHAVIORAL">Behavioral</option>
-                <option value="MEDITATION">Meditation</option>
-                <option value="GENERAL">General</option>
+                <option value="">{t('specialist.setting.pricing.selectType')}</option>
+                <option value="PSYCHOLOGY">{t('treatment.filter.psychology')}</option>
+                <option value="COUNSELING">{t('treatment.filter.counseling')}</option>
+                <option value="BEHAVIORAL">{t('treatment.filter.behavioral')}</option>
+                <option value="MEDITATION">{t('treatment.filter.meditation')}</option>
+                <option value="GENERAL">{t('treatment.filter.all')}</option>
               </TextField>
 
               <TextField
-                label="Price per Session"
+                label={t('specialist.setting.pricing.pricePerSession')}
                 type="number"
                 fullWidth
                 inputProps={{ step: '0.01', min: '0' }}
@@ -276,7 +294,7 @@ export default function PricingManagement() {
               />
 
               <TextField
-                label="Duration (minutes)"
+                label={t('specialist.setting.pricing.durationMinutes')}
                 type="number"
                 fullWidth
                 inputProps={{ min: '15', max: '480' }}
@@ -291,9 +309,11 @@ export default function PricingManagement() {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleCloseDialog}>{t('common.cancel')}</Button>
             <Button onClick={handleSave} variant="contained">
-              {editingId ? 'Update' : 'Add'}
+              {editingId
+                ? t('specialist.setting.actions.update')
+                : t('specialist.setting.actions.add')}
             </Button>
           </DialogActions>
         </Dialog>

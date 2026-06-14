@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { EHRResponse } from 'src/utils/specialist-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface EHRDetailsDialogProps {
   open: boolean;
@@ -18,26 +19,28 @@ interface EHRDetailsDialogProps {
 }
 
 export function EHRDetailsDialog({ open, onClose, selectedEhr }: EHRDetailsDialogProps) {
+  const { t } = useLocales();
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Health Record Details</DialogTitle>
+      <DialogTitle>{t('specialist.bookings.dialogs.ehrTitle')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         {selectedEhr && (
           <Stack spacing={2}>
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Date
+                {t('specialist.bookings.dialogs.date')}
               </Typography>
               <Typography variant="body1">
                 {selectedEhr.createdAt
                   ? format(new Date(selectedEhr.createdAt), 'MMMM dd, yyyy HH:mm')
-                  : 'Unknown date'}
+                  : t('specialist.bookings.dialogs.unknownDate')}
               </Typography>
             </Box>
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Diagnosis
+                {t('specialist.bookings.dialogs.diagnosis')}
               </Typography>
               <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                 {selectedEhr.diagnosis}
@@ -46,7 +49,7 @@ export function EHRDetailsDialog({ open, onClose, selectedEhr }: EHRDetailsDialo
 
             <Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Treatment Plan
+                {t('specialist.bookings.dialogs.treatmentPlan')}
               </Typography>
               <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                 {selectedEhr.treatmentPlan}
@@ -56,7 +59,7 @@ export function EHRDetailsDialog({ open, onClose, selectedEhr }: EHRDetailsDialo
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>{t('specialist.bookings.dialogs.close')}</Button>
       </DialogActions>
     </Dialog>
   );

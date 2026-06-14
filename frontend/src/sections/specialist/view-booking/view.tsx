@@ -12,6 +12,7 @@ import {
 import { Helmet } from 'react-helmet-async';
 
 import { SpecialistBooking, useSpecialistBookings } from 'src/hooks/use-specialist-bookings';
+import { useLocales } from 'src/locale/use-locales';
 import { getPatientEHRs, EHRResponse } from 'src/utils/specialist-api';
 import { BookingSummaryCards } from './summary-cards';
 import {
@@ -42,6 +43,7 @@ export default function SpecialistBookingView() {
 
   // Use the specialist bookings hook
   const { bookings, loading, error, getBookingsByStatus, getStatistics } = useSpecialistBookings();
+  const { t } = useLocales();
 
   const stats = getStatistics();
 
@@ -111,17 +113,17 @@ export default function SpecialistBookingView() {
   return (
     <>
       <Helmet>
-        <title>My Bookings | Specialist</title>
+        <title>{t('specialist.bookings.pageTitle')}</title>
       </Helmet>
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack spacing={3}>
           <Box>
             <Typography variant="h3" sx={{ mb: 1 }}>
-              My Bookings
+              {t('specialist.bookings.title')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Manage and view all patient bookings
+              {t('specialist.bookings.description')}
             </Typography>
           </Box>
 
@@ -133,10 +135,10 @@ export default function SpecialistBookingView() {
           {/* Tabs */}
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange}>
-              <Tab label="All Bookings" />
-              <Tab label="Completed" />
-              <Tab label="Upcoming" />
-              <Tab label="Users" />
+              <Tab label={t('specialist.bookings.tabs.all')} />
+              <Tab label={t('specialist.bookings.tabs.completed')} />
+              <Tab label={t('specialist.bookings.tabs.upcoming')} />
+              <Tab label={t('specialist.bookings.tabs.users')} />
             </Tabs>
           </Box>
 

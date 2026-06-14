@@ -1,5 +1,6 @@
 import Chart from 'react-apexcharts';
 import { Card, CardHeader, CardContent, Box } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface BookingStatusChartProps {
   data: Array<{
@@ -10,6 +11,8 @@ interface BookingStatusChartProps {
 }
 
 export default function BookingStatusChart({ data }: BookingStatusChartProps) {
+  const { t } = useLocales();
+
   const chartOptions: any = {
     chart: {
       type: 'pie',
@@ -43,7 +46,8 @@ export default function BookingStatusChart({ data }: BookingStatusChartProps) {
       enabled: true,
       theme: 'light',
       y: {
-        formatter: (value: number) => `${value} bookings`,
+        formatter: (value: number) =>
+          `${value} ${t('specialist.analytics.chartLabels.bookings').toLowerCase()}`,
       },
     },
   };
@@ -52,7 +56,7 @@ export default function BookingStatusChart({ data }: BookingStatusChartProps) {
 
   return (
     <Card>
-      <CardHeader title="Booking Status" />
+      <CardHeader title={t('specialist.analytics.charts.bookingStatus')} />
       <CardContent>
         <Box>
           <Chart options={chartOptions} series={chartSeries} type="pie" height={300} />

@@ -1,5 +1,6 @@
 import Chart from 'react-apexcharts';
 import { Card, CardHeader, CardContent, Box } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface RevenueData {
   type: string;
@@ -11,6 +12,8 @@ interface RevenueByTypeChartProps {
 }
 
 export default function RevenueByTypeChart({ data }: RevenueByTypeChartProps) {
+  const { t } = useLocales();
+
   const chartOptions: any = {
     chart: {
       type: 'bar',
@@ -68,14 +71,14 @@ export default function RevenueByTypeChart({ data }: RevenueByTypeChartProps) {
 
   const chartSeries = [
     {
-      name: 'Revenue',
+      name: t('specialist.analytics.chartLabels.revenue'),
       data: data.map((d) => d.revenue),
     },
   ];
 
   return (
     <Card>
-      <CardHeader title="Revenue by Therapy Type" />
+      <CardHeader title={t('specialist.analytics.charts.revenueByType')} />
       <CardContent>
         <Box>
           <Chart options={chartOptions} series={chartSeries} type="bar" height={300} />

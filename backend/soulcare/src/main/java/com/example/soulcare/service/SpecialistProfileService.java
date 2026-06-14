@@ -7,9 +7,11 @@ import com.example.soulcare.dto.SessionPricingResponse;
 import com.example.soulcare.model.Specialist;
 import com.example.soulcare.model.SpecialistAvailability;
 import com.example.soulcare.model.SpecialistSessionPricing;
+import com.example.soulcare.model.User;
 import com.example.soulcare.repository.SpecialistAvailabilityRepository;
 import com.example.soulcare.repository.SpecialistRepository;
 import com.example.soulcare.repository.SpecialistSessionPricingRepository;
+import com.example.soulcare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class SpecialistProfileService {
     private final SpecialistRepository specialistRepository;
     private final SpecialistSessionPricingRepository pricingRepository;
     private final SpecialistAvailabilityRepository availabilityRepository;
+    private final UserRepository userRepository;
 
     private static final String[] DAYS_OF_WEEK = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -241,6 +244,13 @@ public class SpecialistProfileService {
         
         Specialist updated = specialistRepository.save(specialist);
 
+        // Update user avatar
+        User user = userRepository.findById(specialist.getUserId()).orElse(null);
+        if (user != null && request.getAvatarUrl() != null) {
+            user.setAvatarUrl(request.getAvatarUrl());
+            userRepository.save(user);
+        }
+
         // Return updated profile with all data
         List<SessionPricingResponse> pricings = getSpecialistPricing(specialistId);
         List<AvailabilityResponse> availabilities = getSpecialistAvailability(specialistId);
@@ -253,6 +263,7 @@ public class SpecialistProfileService {
         profile.put("bio", updated.getBio());
         profile.put("years_exp", updated.getYearsExp());
         profile.put("ratingAverage", updated.getRatingAverage());
+        profile.put("avatarUrl", user != null ? user.getAvatarUrl() : null);
         profile.put("pricing", pricings);
         profile.put("availability", availabilities);
 
@@ -267,6 +278,8 @@ public class SpecialistProfileService {
         Specialist specialist = specialistRepository.findById(specialistId)
                 .orElseThrow(() -> new RuntimeException("Specialist not found"));
 
+        User user = userRepository.findById(specialist.getUserId()).orElse(null);
+
         List<SessionPricingResponse> pricings = getSpecialistPricing(specialistId);
         List<AvailabilityResponse> availabilities = getSpecialistAvailability(specialistId);
 
@@ -278,6 +291,7 @@ public class SpecialistProfileService {
         profile.put("bio", specialist.getBio());
         profile.put("years_exp", specialist.getYearsExp());
         profile.put("ratingAverage", specialist.getRatingAverage());
+        profile.put("avatarUrl", user != null ? user.getAvatarUrl() : null);
         profile.put("pricing", pricings);
         profile.put("availability", availabilities);
 

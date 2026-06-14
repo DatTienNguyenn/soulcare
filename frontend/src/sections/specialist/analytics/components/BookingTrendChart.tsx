@@ -1,5 +1,6 @@
 import Chart from 'react-apexcharts';
 import { Card, CardHeader, CardContent, Box } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface BookingData {
   date: string;
@@ -11,6 +12,8 @@ interface BookingTrendChartProps {
 }
 
 export default function BookingTrendChart({ data }: BookingTrendChartProps) {
+  const { t } = useLocales();
+
   const chartOptions: any = {
     chart: {
       type: 'bar',
@@ -51,7 +54,7 @@ export default function BookingTrendChart({ data }: BookingTrendChartProps) {
     },
     yaxis: {
       title: {
-        text: 'Number of Bookings',
+        text: t('specialist.analytics.chartLabels.numberOfBookings'),
       },
     },
     grid: {
@@ -64,14 +67,14 @@ export default function BookingTrendChart({ data }: BookingTrendChartProps) {
 
   const chartSeries = [
     {
-      name: 'Bookings',
+      name: t('specialist.analytics.chartLabels.bookings'),
       data: data.map((d) => d.bookings),
     },
   ];
 
   return (
     <Card>
-      <CardHeader title="Booking Trend" />
+      <CardHeader title={t('specialist.analytics.charts.bookingTrend')} />
       <CardContent>
         <Box>
           <Chart options={chartOptions} series={chartSeries} type="bar" height={300} />

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useLocales } from 'src/locale/use-locales';
 
-import CallingView from 'src/sections/calling/view';
+import UserSettingView from 'src/sections/auth/jwt/user-settings';
 
 // ----------------------------------------------------------------------
 
@@ -11,10 +11,10 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title>{t('pages.calling.title')}</title>
+        <title>{t('pages.settings.title')}</title>
       </Helmet>
 
-      <CallingView />
+      <UserSettingView />
     </>
   );
 }

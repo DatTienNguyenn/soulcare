@@ -315,6 +315,7 @@ public class AppointmentService {
                 .cancelledReason(appointment.getCancelledReason())
                 .createdAt(appointment.getCreatedAt())
                 .patientName(patient != null ? patient.getFullName() : null)
+                .patientAvatar(patientUser != null ? patientUser.getAvatarUrl() : null)
                 .patientEmail(patientUser != null ? patientUser.getEmail() : null)
                 .specialistName(specialist != null ? specialist.getFullName() : null)
                 .specialistEmail(specialistUser != null ? specialistUser.getEmail() : null)

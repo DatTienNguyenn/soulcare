@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "avatar_url", columnDefinition = "text")
+    private String avatarUrl;
+
     // Các phương thức bắt buộc của UserDetails cho Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

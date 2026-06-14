@@ -24,7 +24,7 @@ public class UserService {
                 .displayName(toDisplayName(user.getEmail()))
                 .email(user.getEmail())
                 .role(user.getRole())
-                .photoURL(null)
+                .photoURL(user.getAvatarUrl())
                 .build();
     }
 
@@ -36,7 +36,7 @@ public class UserService {
                         .displayName(toDisplayName(user.getEmail()))
                         .email(user.getEmail())
                         .role(user.getRole())
-                        .photoURL(null)
+                        .photoURL(user.getAvatarUrl())
                         .build())
                 .toList();
     }

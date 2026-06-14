@@ -1,5 +1,7 @@
 // ----------------------------------------------------------------------
 
+import { settings } from 'nprogress';
+
 const ROOTS = {
   AUTH: '/auth',
   DASHBOARD: '/dashboard',
@@ -33,6 +35,7 @@ export const paths = {
     'treatment-booking': `${ROOTS.DASHBOARD}/treatment/booking`,
     'treatment-history': `${ROOTS.DASHBOARD}/treatment/history`,
     calling: `${ROOTS.DASHBOARD}/treatment/calling`,
+    settings: `${ROOTS.DASHBOARD}/settings`,
   },
   // SPECIALIST
   specialist: {

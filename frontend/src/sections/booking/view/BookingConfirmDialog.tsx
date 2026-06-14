@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { format, parse } from 'date-fns';
+import { vi, enUS } from 'date-fns/locale';
 import { useState } from 'react';
 import {
   PublicSpecialistDTO,
@@ -54,7 +55,9 @@ export function BookingConfirmDialog({
   selectedSessionType = '',
   onSessionTypeChange,
 }: BookingConfirmDialogProps) {
-  const { t } = useLocales();
+  const { t, currentLang } = useLocales();
+  const dateLocale = currentLang.value.includes('vi') ? vi : enUS;
+
   // Calculate price based on selected session type
   const selectedPricing = sessionTypes.find((type) => type.sessionType === selectedSessionType);
   const displayPrice = selectedPricing ? selectedPricing.pricePerSession : slot?.price || 0;
@@ -83,8 +86,11 @@ export function BookingConfirmDialog({
               {t('treatment.booking.dateTime')}
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-              {slot && format(parse(slot.date, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')} at{' '}
-              {slot?.startTime}
+              {slot &&
+                format(parse(slot.date, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy', {
+                  locale: dateLocale,
+                })}{' '}
+              at {slot?.startTime}
             </Typography>
           </Box>
           {sessionTypes.length > 0 && (

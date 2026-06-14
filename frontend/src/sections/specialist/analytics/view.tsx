@@ -1,13 +1,10 @@
 import { useMemo } from 'react';
-import { Container, Grid, Stack } from '@mui/material';
+import { Container, Grid, Stack, CircularProgress, Box, Alert } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import { useSettingsContext } from 'src/components/settings';
+import { useSpecialistBookings } from 'src/hooks/use-specialist-bookings';
+import { useLocales } from 'src/locale/use-locales';
 
-import {
-  _specialistBookings,
-  _userBookingStats,
-  _specialistAnalyticsSummary,
-} from 'src/_mock/_specialist';
 import {
   AnalyticsHeader,
   AnalyticsMetrics,
@@ -23,14 +20,31 @@ import {
 
 export default function SpecialistAnalyticsView() {
   const settings = useSettingsContext();
+  const { bookings, loading, error, getStatistics } = useSpecialistBookings();
+  const { t } = useLocales();
+
+  const stats = getStatistics();
+
+  // Calculate general stats
+  const uniqueUsersCount = useMemo(() => {
+    const uniqueEmails = new Set(bookings.map((b) => b.userEmail));
+    return uniqueEmails.size;
+  }, [bookings]);
+
+  const averageRating = useMemo(() => {
+    const ratedBookings = bookings.filter((b) => b.rating);
+    if (ratedBookings.length === 0) return 0;
+    const sum = ratedBookings.reduce((acc, b) => acc + (b.rating || 0), 0);
+    return (sum / ratedBookings.length).toFixed(1);
+  }, [bookings]);
 
   // Prepare data for booking trend chart
   const bookingTrendData = useMemo(() => {
     const data: any[] = [];
     const bookingsByDate: { [key: string]: number } = {};
 
-    _specialistBookings.forEach((booking) => {
-      const dateKey = booking.date.toISOString().split('T')[0];
+    bookings.forEach((booking) => {
+      const dateKey = new Date(booking.date).toISOString().split('T')[0];
       bookingsByDate[dateKey] = (bookingsByDate[dateKey] || 0) + 1;
     });
 
@@ -50,28 +64,28 @@ export default function SpecialistAnalyticsView() {
   const bookingStatusData = useMemo(() => {
     return [
       {
-        name: 'Completed',
-        value: _specialistBookings.filter((b) => b.status === 'completed').length,
+        name: t('specialist.analytics.status.completed'),
+        value: bookings.filter((b) => b.status === 'completed').length,
         color: '#00C49F',
       },
       {
-        name: 'Booked',
-        value: _specialistBookings.filter((b) => b.status === 'booked').length,
+        name: t('specialist.analytics.status.booked'),
+        value: bookings.filter((b) => b.status === 'booked').length,
         color: '#FFBB28',
       },
       {
-        name: 'Cancelled',
-        value: _specialistBookings.filter((b) => b.status === 'cancelled').length,
+        name: t('specialist.analytics.status.cancelled'),
+        value: bookings.filter((b) => b.status === 'cancelled').length,
         color: '#FF8042',
       },
     ].filter((item) => item.value > 0);
-  }, []);
+  }, [bookings]);
 
   // Prepare data for therapy type distribution
   const therapyTypeData = useMemo(() => {
     const typeCount: { [key: string]: number } = {};
 
-    _specialistBookings.forEach((booking) => {
+    bookings.forEach((booking) => {
       typeCount[booking.type] = (typeCount[booking.type] || 0) + 1;
     });
 
@@ -79,26 +93,28 @@ export default function SpecialistAnalyticsView() {
       name: type.charAt(0).toUpperCase() + type.slice(1),
       value: count,
     }));
-  }, []);
+  }, [bookings]);
 
   // Prepare data for rating distribution
   const ratingDistribution = useMemo(() => {
-    const ratedBookings = _specialistBookings.filter((b) => b.rating);
-    const ratingBuckets = {
-      '5 Stars': 0,
-      '4-4.9 Stars': 0,
-      '3-3.9 Stars': 0,
-      '2-2.9 Stars': 0,
-      '1-1.9 Stars': 0,
+    const ratedBookings = bookings.filter((b) => b.rating);
+    const starsText = t('specialist.analytics.rating.stars');
+
+    const ratingBuckets: Record<string, number> = {
+      [`5 ${starsText}`]: 0,
+      [`4-4.9 ${starsText}`]: 0,
+      [`3-3.9 ${starsText}`]: 0,
+      [`2-2.9 ${starsText}`]: 0,
+      [`1-1.9 ${starsText}`]: 0,
     };
 
     ratedBookings.forEach((booking) => {
       const rating = booking.rating || 0;
-      if (rating === 5) ratingBuckets['5 Stars'] += 1;
-      else if (rating >= 4) ratingBuckets['4-4.9 Stars'] += 1;
-      else if (rating >= 3) ratingBuckets['3-3.9 Stars'] += 1;
-      else if (rating >= 2) ratingBuckets['2-2.9 Stars'] += 1;
-      else ratingBuckets['1-1.9 Stars'] += 1;
+      if (rating === 5) ratingBuckets[`5 ${starsText}`] += 1;
+      else if (rating >= 4) ratingBuckets[`4-4.9 ${starsText}`] += 1;
+      else if (rating >= 3) ratingBuckets[`3-3.9 ${starsText}`] += 1;
+      else if (rating >= 2) ratingBuckets[`2-2.9 ${starsText}`] += 1;
+      else ratingBuckets[`1-1.9 ${starsText}`] += 1;
     });
 
     return Object.entries(ratingBuckets)
@@ -107,18 +123,58 @@ export default function SpecialistAnalyticsView() {
         count,
       }))
       .filter((item) => item.count > 0);
-  }, []);
+  }, [bookings]);
 
   // Prepare top patients data
   const topPatients = useMemo(() => {
-    return _userBookingStats.sort((a, b) => b.bookingCount - a.bookingCount).slice(0, 5);
-  }, []);
+    const patientStats = bookings.reduce(
+      (acc, booking) => {
+        const existing = acc.find((p) => p.userEmail === booking.userEmail);
+        if (existing) {
+          existing.bookingCount += 1;
+          if (booking.rating) {
+            existing.totalRating += booking.rating;
+            existing.ratedCount += 1;
+          }
+          existing.totalSpent += booking.totalPrice;
+          existing.averageRating =
+            existing.ratedCount > 0 ? existing.totalRating / existing.ratedCount : 0;
+        } else {
+          acc.push({
+            userId: booking.userEmail,
+            userName: booking.userName,
+            userEmail: booking.userEmail,
+            bookingCount: 1,
+            totalRating: booking.rating || 0,
+            ratedCount: booking.rating ? 1 : 0,
+            totalSpent: booking.totalPrice,
+            userAvatar: booking.userAvatar,
+            averageRating: booking.rating || 0,
+          });
+        }
+        return acc;
+      },
+      [] as Array<{
+        userId: string;
+        userName: string;
+        userEmail: string;
+        bookingCount: number;
+        totalRating: number;
+        ratedCount: number;
+        totalSpent: number;
+        userAvatar?: string;
+        averageRating: number;
+      }>
+    );
+
+    return patientStats.sort((a, b) => b.bookingCount - a.bookingCount).slice(0, 5);
+  }, [bookings]);
 
   // Prepare revenue by type
   const revenueByType = useMemo(() => {
     const revenueData: { [key: string]: number } = {};
 
-    _specialistBookings
+    bookings
       .filter((b) => b.status !== 'cancelled')
       .forEach((booking) => {
         revenueData[booking.type] = (revenueData[booking.type] || 0) + booking.totalPrice;
@@ -130,48 +186,68 @@ export default function SpecialistAnalyticsView() {
         revenue,
       }))
       .sort((a, b) => b.revenue - a.revenue);
-  }, []);
+  }, [bookings]);
 
   // Prepare metrics data
+  const cancelledCount = bookings.filter((b) => b.status === 'cancelled').length;
+
   const metricsData = [
     {
-      label: 'Average Rating',
-      value: `${_specialistAnalyticsSummary.averageRating} ⭐`,
-      sublabel: `${_specialistBookings.filter((b) => b.rating).length} ratings`,
+      label: t('specialist.analytics.metrics.averageRating'),
+      value: `${averageRating} ⭐`,
+      sublabel: `${bookings.filter((b) => b.rating).length} ${t('specialist.analytics.metrics.ratings')}`,
       sublabelColor: 'success.main',
     },
     {
-      label: 'Unique Patients',
-      value: _specialistAnalyticsSummary.uniqueUsers,
-      sublabel: 'Returning patients',
+      label: t('specialist.analytics.metrics.uniquePatients'),
+      value: uniqueUsersCount,
+      sublabel: t('specialist.analytics.metrics.returningPatients'),
       sublabelColor: 'info.main',
     },
     {
-      label: 'Completion Rate',
-      value: `${((_specialistAnalyticsSummary.completedBookings / _specialistAnalyticsSummary.totalBookings) * 100).toFixed(0)}%`,
-      sublabel: 'Sessions completed',
+      label: t('specialist.analytics.metrics.completionRate'),
+      value:
+        stats.totalBookings > 0
+          ? `${((stats.completedCount / stats.totalBookings) * 100).toFixed(0)}%`
+          : '0%',
+      sublabel: t('specialist.analytics.metrics.sessionsCompleted'),
       sublabelColor: 'success.main',
     },
     {
-      label: 'Cancel Rate',
-      value: `${((_specialistAnalyticsSummary.cancelledBookings / _specialistAnalyticsSummary.totalBookings) * 100).toFixed(0)}%`,
-      sublabel: 'Cancelled sessions',
+      label: t('specialist.analytics.metrics.cancelRate'),
+      value:
+        stats.totalBookings > 0
+          ? `${((cancelledCount / stats.totalBookings) * 100).toFixed(0)}%`
+          : '0%',
+      sublabel: t('specialist.analytics.metrics.cancelledSessions'),
       sublabelColor: 'error.main',
     },
   ];
 
+  if (loading) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'lg'} sx={{ py: 5 }}>
+        <Box display="flex" justifyContent="center" my={5}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
   return (
     <>
       <Helmet>
-        <title>Analytics | Specialist</title>
+        <title>{t('specialist.analytics.pageTitle')}</title>
       </Helmet>
 
       <Container maxWidth={settings.themeStretch ? false : 'lg'} sx={{ py: 5 }}>
         <Stack spacing={3}>
           <AnalyticsHeader
-            title="Analytics Dashboard"
-            description="Overview of your bookings and performance metrics"
+            title={t('specialist.analytics.header.title')}
+            description={t('specialist.analytics.header.description')}
           />
+
+          {error && <Alert severity="error">{error}</Alert>}
 
           {/* Key Metrics */}
           <AnalyticsMetrics metrics={metricsData} />
@@ -189,10 +265,7 @@ export default function SpecialistAnalyticsView() {
           {/* Charts Row 2 */}
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <TherapyTypeDistribution
-                data={therapyTypeData}
-                totalBookings={_specialistBookings.length}
-              />
+              <TherapyTypeDistribution data={therapyTypeData} totalBookings={bookings.length} />
             </Grid>
             <Grid item xs={12} md={6}>
               <RevenueByTypeChart data={revenueByType} />
@@ -205,7 +278,7 @@ export default function SpecialistAnalyticsView() {
               <Grid item xs={12}>
                 <RatingDistribution
                   data={ratingDistribution}
-                  totalRated={_specialistBookings.filter((b) => b.rating).length}
+                  totalRated={bookings.filter((b) => b.rating).length}
                 />
               </Grid>
             </Grid>

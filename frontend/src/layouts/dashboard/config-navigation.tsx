@@ -52,11 +52,11 @@ export function useNavData() {
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: 'features',
+        subheader: t('nav.features'),
         items: [
-          { title: 'Diary', path: paths.dashboard.diary, icon: ICONS.calendar },
+          { title: t('nav.diary'), path: paths.dashboard.diary, icon: ICONS.calendar },
           {
-            title: 'Canvas',
+            title: t('nav.canvas'),
             path: paths.dashboard.canvas,
             icon: ICONS.chat,
             children: [
@@ -71,7 +71,7 @@ export function useNavData() {
             ],
           },
           {
-            title: 'Self-test',
+            title: t('nav.selfTest'),
             path: paths.dashboard['self-test'],
             icon: ICONS.user,
             children: [
@@ -86,7 +86,7 @@ export function useNavData() {
             ],
           },
           {
-            title: 'Treatment',
+            title: t('nav.treatment'),
             path: paths.dashboard['treatment'],
             icon: ICONS.job,
             children: [
@@ -110,7 +110,7 @@ export function useNavData() {
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: 'management',
+        subheader: t('nav.management'),
         items: [
           {
             title: t('pages.analytics.title'),
@@ -120,7 +120,7 @@ export function useNavData() {
         ],
       },
     ],
-    []
+    [t]
   );
 
   return data;

@@ -22,23 +22,6 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-const OPTIONS = [
-  {
-    label: 'Home',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    linkTo: '/#1',
-  },
-  {
-    label: 'Settings',
-    linkTo: '/#2',
-  },
-];
-
-// ----------------------------------------------------------------------
-
 type CurrentUserResponse = {
   id?: string;
   displayName?: string;
@@ -47,12 +30,30 @@ type CurrentUserResponse = {
   photoURL?: string | null;
 };
 
-export default function AccountPopover() {
+type Props = {
+  route?: string;
+};
+
+export default function AccountPopover({ route }: Props) {
   const router = useRouter();
 
   const { user: authUser, logout } = useAuthContext();
 
   const [backendUser, setBackendUser] = useState<CurrentUserResponse | null>(null);
+
+  const OPTIONS = [
+    {
+      label: 'Home',
+      linkTo: '/',
+    },
+  ];
+
+  if (route !== 'admin' && route !== undefined) {
+    OPTIONS.push({
+      label: 'Profile',
+      linkTo: route,
+    });
+  }
 
   useEffect(() => {
     let active = true;

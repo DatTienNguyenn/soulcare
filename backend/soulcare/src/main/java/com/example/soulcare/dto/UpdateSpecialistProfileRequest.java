@@ -19,4 +19,5 @@ public class UpdateSpecialistProfileRequest {
     private String bio; // Professional bio
     
     private Integer years_exp; // Years of experience
+    private String avatarUrl; // URL to the specialist's avatar image
 }

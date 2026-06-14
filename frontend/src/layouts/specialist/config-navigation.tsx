@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { paths } from 'src/routes/paths';
 
 import SvgColor from 'src/components/svg-color';
+import { useLocales } from 'src/locale/use-locales';
 
 // ----------------------------------------------------------------------
 
@@ -24,46 +25,48 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useSpecialistNavData() {
+  const { t } = useLocales();
+
   const data = useMemo(
     () => [
       // SPECIALIST MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: 'management',
+        subheader: t('nav.management'),
         items: [
           {
-            title: 'Settings',
+            title: t('nav.settings'),
             path: paths.specialist.settings,
             icon: ICONS.user,
           },
           {
-            title: 'Bookings',
+            title: t('nav.bookings'),
             path: paths.specialist.root,
             icon: ICONS.booking,
             children: [
               {
-                title: 'View Bookings',
+                title: t('nav.viewBookings'),
                 path: paths.specialist.root,
               },
               {
-                title: 'Calling',
+                title: t('nav.calling'),
                 path: paths.specialist.calling,
               },
               {
-                title: 'Electronic Records',
+                title: t('nav.electronicRecords'),
                 path: paths.specialist.electronicRecords,
               },
             ],
           },
           {
-            title: 'Analytics',
+            title: t('nav.analytics'),
             path: paths.specialist.analytics,
             icon: ICONS.analytics,
           },
         ],
       },
     ],
-    []
+    [t]
   );
 
   return data;

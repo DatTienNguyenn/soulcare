@@ -87,28 +87,6 @@ export default function SelfTestIntro({ t, tests, history, onStartTest }: SelfTe
                   />
                 </Box>
 
-                {test.dimensions && (
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: 'text.secondary', display: 'block', mb: 1 }}
-                    >
-                      {t('selfTest.measures')}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                      {test.dimensions.map((dim) => (
-                        <Chip
-                          key={dim}
-                          label={dim}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-
                 <Button variant="contained" fullWidth sx={{ mt: 1 }}>
                   {t('selfTest.takeTest')}
                 </Button>

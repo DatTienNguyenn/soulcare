@@ -1,5 +1,6 @@
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material';
 import { format, parse } from 'date-fns';
+import { vi, enUS } from 'date-fns/locale';
 import { AvailableSlotDTO } from 'src/utils/specialist-api';
 import { useLocales } from 'src/locale/use-locales';
 
@@ -9,8 +10,9 @@ interface TimeSlotCardProps {
 }
 
 export function TimeSlotCard({ slot, onClick }: TimeSlotCardProps) {
-  const { t } = useLocales();
+  const { t, currentLang } = useLocales();
   const isAvailable = slot.status === 'available';
+  const dateLocale = currentLang.value.includes('vi') ? vi : enUS;
 
   return (
     <Paper
@@ -31,7 +33,9 @@ export function TimeSlotCard({ slot, onClick }: TimeSlotCardProps) {
     >
       <Stack spacing={1}>
         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-          {format(parse(slot.date, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')}
+          {format(parse(slot.date, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy', {
+            locale: dateLocale,
+          })}
         </Typography>
         <Typography variant="body1" sx={{ color: 'primary.main' }}>
           {slot.startTime} - {slot.endTime}

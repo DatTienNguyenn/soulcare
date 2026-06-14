@@ -7,6 +7,7 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -24,9 +25,11 @@ export default function TherapyTypeDistribution({
   data,
   totalBookings,
 }: TherapyTypeDistributionProps) {
+  const { t } = useLocales();
+
   return (
     <Card>
-      <CardHeader title="Therapy Type Distribution" />
+      <CardHeader title={t('specialist.analytics.charts.therapyType')} />
       <CardContent>
         <Stack spacing={2}>
           {data.map((item, index) => {
