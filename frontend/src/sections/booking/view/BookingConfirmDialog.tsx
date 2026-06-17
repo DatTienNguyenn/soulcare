@@ -26,6 +26,8 @@ import {
 } from 'src/utils/specialist-api';
 import { useLocales } from 'src/locale/use-locales';
 
+const PaymentButtons: any = PayPalButtons;
+
 interface BookingConfirmDialogProps {
   open: boolean;
   therapist: PublicSpecialistDTO | null;
@@ -136,7 +138,7 @@ export function BookingConfirmDialog({
 
         {displayPrice > 0 ? (
           <Box sx={{ minWidth: 200, zIndex: 1 }}>
-            <PayPalButtons
+            <PaymentButtons
               style={{ layout: 'horizontal', height: 36, color: 'blue' }}
               createOrder={(data: any, actions: any) => {
                 return actions.order.create({

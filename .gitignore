@@ -34,3 +34,6 @@ target/
 
 # OS
 Thumbs.db
+
+#program property
+*.properties

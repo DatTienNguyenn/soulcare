@@ -71,6 +71,9 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
+  ai: {
+    chat: '/api/v1/ai/chat',
+  },
   diary: {
     list: '/api/v1/diaries',
     create: '/api/v1/diaries',

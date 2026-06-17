@@ -21,6 +21,7 @@ import DiaryHeader from './componants/DiaryHeader';
 import DiaryEntryCard from './componants/DiaryEntryCard';
 import DiaryRecentEntries from './componants/DiaryRecentEntries';
 import DiaryEntryDialog from './componants/DiaryEntryDialog';
+import AiAssistantFab from './componants/AiAssistantFab';
 
 // ----------------------------------------------------------------------
 
@@ -218,6 +219,8 @@ export default function DiaryView() {
         error={saveError}
         t={t}
       />
+
+      <AiAssistantFab diaryContext={diaryEntry?.content || editContent || ''} />
     </Container>
   );
 }
