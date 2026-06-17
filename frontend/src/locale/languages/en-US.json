@@ -265,7 +265,8 @@
       "meditation": "Meditation",
       "behavioral": "Behavioral",
       "cognitive": "Cognitive",
-      "family": "Family"
+      "family": "Family",
+      "general": "General"
     }
   },
   "selfTestHistory": {
@@ -284,6 +285,28 @@
     "dateTaken": "Date Taken",
     "actions": "Actions",
     "loading": "Loading test history..."
+  },
+  "drawingHistory": {
+    "title": "Drawing History",
+    "drawingsSaved": "{{count}} drawing(s) saved",
+    "noDrawings": "No drawings saved yet. Start creating and saving your drawings!",
+    "untitled": "Untitled Drawing",
+    "status": {
+      "private": "Private",
+      "published": "Published"
+    },
+    "duration": "Duration:",
+    "tools": "Tools:",
+    "strokes": "Strokes:",
+    "details": "Drawing Details",
+    "createdDate": "Created Date",
+    "lastUpdated": "Last Updated",
+    "statusLabel": "Status",
+    "drawingTime": "Drawing Time",
+    "drawingMetadata": "Drawing Metadata",
+    "toolsUsed": "Tools Used:",
+    "totalStrokes": "Total Strokes:",
+    "close": "Close"
   },
   "login": {
     "header": "Hi, Welcome Back!",
@@ -628,6 +651,7 @@
         "unknownDate": "Unknown date",
         "close": "Close",
         "viewNotes": "View Notes",
+        "viewPictures": "View Patient's Canvas",
         "sessionNotes": "Session Notes",
         "noNotes": "No notes available",
         "ehrTitle": "Health Record Details",
@@ -637,7 +661,11 @@
         "dateTime": "Date & Time",
         "duration": "Duration",
         "price": "Price",
-        "status": "Status"
+        "status": "Status",
+        "viewPatientRecords": "View Patient Records",
+        "patientRecords": "Patient Records: {{name}}",
+        "healthRecords": "Health Records",
+        "canvas": "Canvas"
       }
     }
   },

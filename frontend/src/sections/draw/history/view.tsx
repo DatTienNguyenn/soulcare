@@ -15,9 +15,13 @@ import {
   CardMedia,
   CardContent,
   Grid,
+  Chip,
+  FormControl,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { usePictureSave } from 'src/hooks/use-picture-save';
-import { PictureData } from 'src/utils/picture-api';
+import { PictureData, updatePicture } from 'src/utils/picture-api';
 import { useLocales } from 'src/locale/use-locales';
 
 export default function DrawingHistoryView() {
@@ -27,6 +31,7 @@ export default function DrawingHistoryView() {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const { t } = useLocales();
 
   // Load drawings on mount
@@ -118,6 +123,23 @@ export default function DrawingHistoryView() {
     }
   };
 
+  const handleStatusChange = async (newStatus: string) => {
+    if (!selectedDrawing || !selectedDrawing.id) return;
+    try {
+      setUpdatingStatus(true);
+      const updated = await updatePicture(selectedDrawing.id, {
+        ...selectedDrawing,
+        status: newStatus as any,
+      });
+      setSelectedDrawing(updated);
+      setDrawings((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
+    } catch (err) {
+      console.error('Failed to update status', err);
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -133,19 +155,17 @@ export default function DrawingHistoryView() {
       <Stack spacing={3}>
         <Box>
           <Typography variant="h3" component="h1" sx={{ mb: 1 }}>
-            Drawing History
+            {t('drawingHistory.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {drawings.length} drawing{drawings.length !== 1 ? 's' : ''} saved
+            {t('drawingHistory.drawingsSaved', { count: drawings.length })}
           </Typography>
         </Box>
 
         {error && <Alert severity="error">{error}</Alert>}
 
         {drawings.length === 0 ? (
-          <Alert severity="info">
-            No drawings saved yet. Start creating and saving your drawings!
-          </Alert>
+          <Alert severity="info">{t('drawingHistory.noDrawings')}</Alert>
         ) : (
           <Grid container spacing={2}>
             {drawings.map((drawing) => {
@@ -176,9 +196,28 @@ export default function DrawingHistoryView() {
                       />
                     )}
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography variant="h6" sx={{ mb: 1 }}>
-                        {drawing.description || 'Untitled Drawing'}
-                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          mb: 1,
+                        }}
+                      >
+                        <Typography variant="h6" sx={{ wordBreak: 'break-word', mr: 1 }}>
+                          {drawing.description || t('drawingHistory.untitled')}
+                        </Typography>
+                        <Chip
+                          label={
+                            drawing.status === 'PRIVATE'
+                              ? t('drawingHistory.status.private')
+                              : t('drawingHistory.status.published')
+                          }
+                          size="small"
+                          color={drawing.status === 'PRIVATE' ? 'default' : 'primary'}
+                          variant={drawing.status === 'PRIVATE' ? 'outlined' : 'filled'}
+                        />
+                      </Box>
                       <Typography
                         variant="caption"
                         color="text.secondary"
@@ -188,13 +227,13 @@ export default function DrawingHistoryView() {
                       </Typography>
                       <Stack spacing={0.5}>
                         <Typography variant="caption">
-                          <strong>Duration:</strong> {metadata.duration}
+                          <strong>{t('drawingHistory.duration')}</strong> {metadata.duration}
                         </Typography>
                         <Typography variant="caption">
-                          <strong>Tools:</strong> {metadata.tools}
+                          <strong>{t('drawingHistory.tools')}</strong> {metadata.tools}
                         </Typography>
                         <Typography variant="caption">
-                          <strong>Strokes:</strong> {metadata.strokes}
+                          <strong>{t('drawingHistory.strokes')}</strong> {metadata.strokes}
                         </Typography>
                       </Stack>
                     </CardContent>
@@ -208,7 +247,7 @@ export default function DrawingHistoryView() {
 
       {/* Detail Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>{selectedDrawing?.description || 'Drawing Details'}</DialogTitle>
+        <DialogTitle>{selectedDrawing?.description || t('drawingHistory.details')}</DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Stack spacing={2}>
             {selectedDrawing?.imageUrl && (
@@ -226,21 +265,35 @@ export default function DrawingHistoryView() {
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                  Created Date
+                  {t('drawingHistory.createdDate')}
                 </Typography>
                 <Typography variant="body2">{formatDate(selectedDrawing?.createdAt)}</Typography>
               </Box>
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                  Last Updated
+                  {t('drawingHistory.lastUpdated')}
                 </Typography>
                 <Typography variant="body2">{formatDate(selectedDrawing?.lastUpdate)}</Typography>
               </Box>
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                  Status
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', mb: 0.5 }}
+                >
+                  {t('drawingHistory.statusLabel')}
                 </Typography>
-                <Typography variant="body2">{selectedDrawing?.status || 'PUBLISHED'}</Typography>
+                <FormControl size="small" fullWidth>
+                  <Select
+                    value={selectedDrawing?.status || 'PUBLISHED'}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    disabled={updatingStatus}
+                    sx={{ height: 32 }}
+                  >
+                    <MenuItem value="PUBLISHED">{t('drawingHistory.status.published')}</MenuItem>
+                    <MenuItem value="PRIVATE">{t('drawingHistory.status.private')}</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
               {selectedDrawing?.metadata &&
                 (() => {
@@ -252,7 +305,7 @@ export default function DrawingHistoryView() {
                         color="text.secondary"
                         sx={{ display: 'block' }}
                       >
-                        Drawing Time
+                        {t('drawingHistory.drawingTime')}
                       </Typography>
                       <Typography variant="body2">{metadata.duration}</Typography>
                     </Box>
@@ -269,13 +322,13 @@ export default function DrawingHistoryView() {
                       color="text.secondary"
                       sx={{ display: 'block', mb: 1 }}
                     >
-                      Drawing Metadata
+                      {t('drawingHistory.drawingMetadata')}
                     </Typography>
                     <Typography variant="body2">
-                      <strong>Tools Used:</strong> {metadata.tools}
+                      <strong>{t('drawingHistory.toolsUsed')}</strong> {metadata.tools}
                     </Typography>
                     <Typography variant="body2">
-                      <strong>Total Strokes:</strong> {metadata.strokes}
+                      <strong>{t('drawingHistory.totalStrokes')}</strong> {metadata.strokes}
                     </Typography>
                   </Box>
                 );
@@ -283,7 +336,7 @@ export default function DrawingHistoryView() {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
+          <Button onClick={handleCloseDialog}>{t('drawingHistory.close')}</Button>
         </DialogActions>
       </Dialog>
     </Container>
