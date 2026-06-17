@@ -18,6 +18,8 @@ import { BrowseTherapistsTab } from './BrowseTherapistsTab';
 import { SelectSlotsTab } from './SelectSlotsTab';
 import { BookingConfirmDialog } from './BookingConfirmDialog';
 
+const ScriptProvider: any = PayPalScriptProvider;
+
 // -------------------------------------------------------
 
 export default function TherapyBookingView() {
@@ -214,7 +216,7 @@ export default function TherapyBookingView() {
         </Stack>
       </Container>
 
-      <PayPalScriptProvider
+      <ScriptProvider
         options={{
           clientId:
             'Abn-C15Gly2e5aCyjm9zDE-XirtpHxByqgMW1VqYcHlscj-vEPvicsWJ5wfdwTcbB79ttp_tkyajf7t1',
@@ -236,7 +238,7 @@ export default function TherapyBookingView() {
           selectedSessionType={selectedSessionType}
           onSessionTypeChange={setSelectedSessionType}
         />
-      </PayPalScriptProvider>
+      </ScriptProvider>
     </>
   );
 }
