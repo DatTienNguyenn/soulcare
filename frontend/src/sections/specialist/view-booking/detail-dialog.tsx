@@ -125,17 +125,6 @@ export function BookingDetailsDialog({
               </Grid>
             </Grid>
 
-            {selectedBooking.notes && (
-              <Box>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {t('specialist.bookings.dialogs.notes')}
-                </Typography>
-                <Typography variant="body1" noWrap>
-                  {selectedBooking.notes}
-                </Typography>
-              </Box>
-            )}
-
             {selectedBooking.status === 'completed' && selectedBooking.rating && (
               <Box sx={{ p: 2, backgroundColor: 'info.lighter', borderRadius: 1 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>

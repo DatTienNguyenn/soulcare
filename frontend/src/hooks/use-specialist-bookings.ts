@@ -18,7 +18,7 @@ export interface SpecialistBooking {
   endTime: string;
   duration: number;
   totalPrice: number;
-  status: 'completed' | 'booked' | 'cancelled';
+  status: 'completed' | 'booked' | 'cancelled' | 'reported';
   rating?: number;
   feedback?: string;
   notes?: string;
@@ -31,12 +31,14 @@ export function useSpecialistBookings() {
 
   // Convert AppointmentResponse to SpecialistBooking format
   const convertToSpecialistBooking = (appointment: AppointmentResponse): SpecialistBooking => {
-    const statusMap: { [key in AppointmentStatus]: 'completed' | 'booked' | 'cancelled' } = {
+    const statusMap: {
+      [key in AppointmentStatus]: 'completed' | 'booked' | 'cancelled' | 'reported';
+    } = {
       PENDING: 'booked',
       CONFIRMED: 'booked',
       COMPLETED: 'completed',
       CANCELLED: 'cancelled',
-      NO_SHOW: 'cancelled',
+      NO_SHOW: 'reported',
     };
 
     return {
@@ -99,7 +101,7 @@ export function useSpecialistBookings() {
 
   // Filter bookings by status locally
   const getBookingsByStatus = useCallback(
-    (status: 'completed' | 'booked' | 'cancelled') => {
+    (status: 'completed' | 'booked' | 'cancelled' | 'reported') => {
       return bookings.filter((b) => b.status === status);
     },
     [bookings]
@@ -112,6 +114,7 @@ export function useSpecialistBookings() {
       completedCount: bookings.filter((b) => b.status === 'completed').length,
       upcomingCount: bookings.filter((b) => b.status === 'booked').length,
       cancelledCount: bookings.filter((b) => b.status === 'cancelled').length,
+      reportedCount: bookings.filter((b) => b.status === 'reported').length,
       totalRevenue: bookings
         .filter((b) => b.status !== 'cancelled')
         .reduce((sum, b) => sum + b.totalPrice, 0),

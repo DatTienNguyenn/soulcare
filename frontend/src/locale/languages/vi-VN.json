@@ -283,7 +283,8 @@
     "detailsTitle": "Chi tiết kết quả kiểm tra",
     "dateTaken": "Ngày thực hiện",
     "actions": "Hành động",
-    "loading": "Đang tải lịch sử kiểm tra..."
+    "loading": "Đang tải lịch sử kiểm tra...",
+    "publishResults": "Công khai kết quả cho chuyên gia"
   },
   "drawingHistory": {
     "title": "Lịch sử bản vẽ",
@@ -665,7 +666,9 @@
         "viewPatientRecords": "Xem Hồ Sơ Bệnh Nhân",
         "patientRecords": "Hồ Sơ Bệnh Nhân: {{name}}",
         "healthRecords": "Hồ Sơ Sức Khỏe",
-        "canvas": "Bảng Vẽ"
+        "canvas": "Bảng Vẽ",
+        "testResults": "Kết quả xét nghiệm",
+        "noTestResults": "Không tìm thấy kết quả xét nghiệm công khai cho bệnh nhân này, lý do có thể là bệnh nhân {{patientName}} không muốn công khai dữ liệu."
       }
     }
   },

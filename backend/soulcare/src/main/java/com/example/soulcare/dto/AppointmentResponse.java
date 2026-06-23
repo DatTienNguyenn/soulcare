@@ -37,6 +37,7 @@ public class AppointmentResponse {
     private String patientEmail;
     private String patientAvatar;
     private String specialistName;
+    private String specialistAvatar;
     private String specialistEmail;
     private Double specialistRating;
     

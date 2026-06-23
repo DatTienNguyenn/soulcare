@@ -248,7 +248,11 @@
       "therapistName": "Therapist Name",
       "treatmentType": "Treatment Type",
       "date": "Date",
-      "notes": "Session Notes"
+      "notes": "Session Notes",
+      "notesForSpecialist": "Notes for Specialist",
+      "notesPlaceholder": "Share anything you'd like your specialist to know before the session...",
+      "saveNotes": "Save Notes",
+      "saving": "Saving..."
     },
     "bookingDetails": {
       "title": "Therapy Session Details",
@@ -284,7 +288,8 @@
     "detailsTitle": "Test Result Details",
     "dateTaken": "Date Taken",
     "actions": "Actions",
-    "loading": "Loading test history..."
+    "loading": "Loading test history...",
+    "publishResults": "Make Results Public To Specialists"
   },
   "drawingHistory": {
     "title": "Drawing History",
@@ -665,7 +670,9 @@
         "viewPatientRecords": "View Patient Records",
         "patientRecords": "Patient Records: {{name}}",
         "healthRecords": "Health Records",
-        "canvas": "Canvas"
+        "canvas": "Canvas",
+        "testResults": "Test Results",
+        "noTestResults": "No public test results found for this patient, this reason can caused by patients {{patientName}} do not want to publish data."
       }
     }
   },

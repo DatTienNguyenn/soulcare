@@ -14,6 +14,10 @@ import { Helmet } from 'react-helmet-async';
 import { SpecialistBooking, useSpecialistBookings } from 'src/hooks/use-specialist-bookings';
 import { useLocales } from 'src/locale/use-locales';
 import { getPatientEHRs, EHRResponse } from 'src/utils/specialist-api';
+import {
+  getPatientTestResultsForSpecialist,
+  TestResultResponse,
+} from 'src/utils/mental-health-api';
 import { getPatientPictures, getPatientPictureById, PictureData } from 'src/utils/picture-api';
 import { BookingSummaryCards } from './summary-cards';
 import {
@@ -30,7 +34,7 @@ import { BookingDetailsDialog } from './detail-dialog';
 
 export default function SpecialistBookingView() {
   const [tabValue, setTabValue] = useState(0);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<SpecialistBooking | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'booked' | 'cancelled'>(
     'all'
@@ -43,6 +47,8 @@ export default function SpecialistBookingView() {
 
   const [patientPictures, setPatientPictures] = useState<PictureData[]>([]);
   const [loadingPictures, setLoadingPictures] = useState(false);
+  const [patientTestResults, setPatientTestResults] = useState<TestResultResponse[]>([]);
+  const [loadingTestResults, setLoadingTestResults] = useState(false);
 
   // Use the specialist bookings hook
   const { bookings, loading, error, getBookingsByStatus, getStatistics } = useSpecialistBookings();
@@ -84,6 +90,7 @@ export default function SpecialistBookingView() {
     setOpenRecordDialog(true);
     setLoadingEhrs(true);
     setLoadingPictures(true);
+    setLoadingTestResults(true);
 
     // Fetch EHRs
     getPatientEHRs(patientId)
@@ -110,6 +117,19 @@ export default function SpecialistBookingView() {
       console.error('Failed to load patient pictures', err);
     } finally {
       setLoadingPictures(false);
+    }
+
+    // Fetch Test Results
+    try {
+      const results = await getPatientTestResultsForSpecialist(patientId);
+      const sorted = results.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setPatientTestResults(sorted);
+    } catch (err) {
+      console.error('Failed to fetch patient test results:', err);
+    } finally {
+      setLoadingTestResults(false);
     }
   };
 
@@ -254,6 +274,9 @@ export default function SpecialistBookingView() {
         loadingEhrs={loadingEhrs}
         pictures={patientPictures}
         loadingPictures={loadingPictures}
+        testResults={patientTestResults}
+        loadingTestResults={loadingTestResults}
+        sessionNotes={selectedBooking?.notes}
       />
     </>
   );

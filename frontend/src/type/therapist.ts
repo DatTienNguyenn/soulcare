@@ -7,7 +7,7 @@ export type TherapyType =
   | 'cognitive'
   | 'family';
 
-export type BookingStatus = 'available' | 'booked' | 'completed' | 'cancelled';
+export type BookingStatus = 'available' | 'booked' | 'completed' | 'cancelled' | 'reported';
 
 export interface Therapist {
   id: string;
@@ -52,4 +52,5 @@ export interface TherapyBooking {
   totalPrice: number;
   createdAt: Date;
   completedAt?: Date;
+  specialistAvatar?: string;
 }

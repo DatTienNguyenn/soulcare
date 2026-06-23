@@ -169,6 +169,20 @@ export const getUserTestResults = async (): Promise<TestResultResponse[]> => {
   }
 };
 
+// Fetch a patient's public test results (for specialists)
+export const getPatientTestResultsForSpecialist = async (
+  patientId: string
+): Promise<TestResultResponse[]> => {
+  try {
+    const response = await apiClient.get<TestResultResponse[]>(
+      `/api/v1/test-results/patient/${patientId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("Failed to fetch patient's test results");
+  }
+};
+
 // Fetch user's test results for a specific test
 export const getUserTestResultsByTest = async (testId: string): Promise<TestResultResponse[]> => {
   try {
