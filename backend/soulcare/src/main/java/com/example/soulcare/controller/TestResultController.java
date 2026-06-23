@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -91,6 +92,17 @@ public class TestResultController {
         UUID patientId = getPatientIdFromAuth(authentication);
         TestResultHistoryResponse response = resultService.getTestResultHistory(patientId);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get public test results for a specific patient (for specialists)
+     */
+    @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasAnyRole('SPECIALIST', 'ADMIN')")
+    public ResponseEntity<List<TestResultResponse>> getPublicPatientTestResultsForSpecialist(
+            @PathVariable UUID patientId) {
+        List<TestResultResponse> results = resultService.getPublicPatientTestResultsForSpecialist(patientId);
+        return ResponseEntity.ok(results);
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {

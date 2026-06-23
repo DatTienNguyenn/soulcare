@@ -4,9 +4,11 @@ import com.example.soulcare.dto.TestResultRequest;
 import com.example.soulcare.dto.TestResultResponse;
 import com.example.soulcare.dto.TestScoreTrendResponse;
 import com.example.soulcare.dto.TestResultHistoryResponse;
+import com.example.soulcare.model.Patient;
 import com.example.soulcare.model.TestResult;
 import com.example.soulcare.repository.TestResultRepository;
 import com.example.soulcare.repository.MentalHealthTestRepository;
+import com.example.soulcare.repository.PatientRepository;
 import com.example.soulcare.model.MentalHealthTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 public class TestResultService {
     private final TestResultRepository resultRepository;
     private final MentalHealthTestRepository testRepository;
+    private final PatientRepository patientRepository;
     private final ObjectMapper objectMapper;
 
     public TestResultResponse submitTestResult(UUID patientId, TestResultRequest request) {
@@ -130,6 +134,22 @@ public class TestResultService {
     @Transactional(readOnly = true)
     public List<TestResultResponse> getPatientTestResultsByTest(UUID patientId, UUID testId) {
         List<TestResult> results = resultRepository.findByPatientIdAndTestId(patientId, testId);
+        return results.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TestResultResponse> getPublicPatientTestResultsForSpecialist(UUID patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + patientId));
+
+        if ( !patient.isPublish()) {
+            // Return empty list if results are not public
+            return Collections.emptyList();
+        }
+
+        List<TestResult> results = resultRepository.findByPatientId(patientId);
         return results.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

@@ -10,6 +10,7 @@ import com.example.soulcare.service.PictureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,5 +97,21 @@ public class PictureController {
                     org.springframework.http.HttpStatus.FORBIDDEN,
                     "Patient profile not found for this user"
                 ));
+    }
+
+    // Get all pictures for a specific patient
+    @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasAnyRole('SPECIALIST', 'ADMIN')")
+    public ResponseEntity<List<PictureResponse>> getPatientPictures(@PathVariable UUID patientId) {
+        return ResponseEntity.ok(pictureService.getAllPatientPictures(patientId));
+    }
+
+    // Get full details of a specific picture for a patient
+    @GetMapping("/patient/{patientId}/{pictureId}")
+    @PreAuthorize("hasAnyRole('SPECIALIST', 'ADMIN')")
+    public ResponseEntity<PictureResponse> getPatientPictureById(
+            @PathVariable UUID patientId, 
+            @PathVariable UUID pictureId) {
+        return ResponseEntity.ok(pictureService.getPicture(patientId, pictureId));
     }
 }

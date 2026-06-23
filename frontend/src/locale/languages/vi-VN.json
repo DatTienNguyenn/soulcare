@@ -264,7 +264,8 @@
       "meditation": "Thiền định",
       "behavioral": "Hành vi",
       "cognitive": "Nhận thức",
-      "family": "Gia đình"
+      "family": "Gia đình",
+      "general": "Tổng quát"
     }
   },
   "selfTestHistory": {
@@ -282,7 +283,30 @@
     "detailsTitle": "Chi tiết kết quả kiểm tra",
     "dateTaken": "Ngày thực hiện",
     "actions": "Hành động",
-    "loading": "Đang tải lịch sử kiểm tra..."
+    "loading": "Đang tải lịch sử kiểm tra...",
+    "publishResults": "Công khai kết quả cho chuyên gia"
+  },
+  "drawingHistory": {
+    "title": "Lịch sử bản vẽ",
+    "drawingsSaved": "Đã lưu {{count}} bản vẽ",
+    "noDrawings": "Chưa có bản vẽ nào được lưu. Hãy bắt đầu tạo và lưu các bản vẽ của bạn!",
+    "untitled": "Bản vẽ chưa có tên",
+    "status": {
+      "private": "Riêng tư",
+      "published": "Công khai"
+    },
+    "duration": "Thời lượng:",
+    "tools": "Công cụ:",
+    "strokes": "Nét vẽ:",
+    "details": "Chi tiết bản vẽ",
+    "createdDate": "Ngày tạo",
+    "lastUpdated": "Cập nhật lần cuối",
+    "statusLabel": "Trạng thái",
+    "drawingTime": "Thời gian vẽ",
+    "drawingMetadata": "Siêu dữ liệu bản vẽ",
+    "toolsUsed": "Công cụ đã sử dụng:",
+    "totalStrokes": "Tổng số nét vẽ:",
+    "close": "Đóng"
   },
   "login": {
     "header": "Chào mừng bạn quay trở lại",
@@ -628,6 +652,7 @@
         "unknownDate": "Ngày không xác định",
         "close": "Đóng",
         "viewNotes": "Xem ghi chú",
+        "viewPictures": "Xem hình vẽ của bệnh nhân",
         "sessionNotes": "Ghi chú phiên",
         "noNotes": "Không có ghi chú nào",
         "ehrTitle": "Chi tiết Hồ sơ Sức khỏe",
@@ -637,7 +662,13 @@
         "dateTime": "Ngày & Giờ",
         "duration": "Thời lượng",
         "price": "Giá",
-        "status": "Trạng thái"
+        "status": "Trạng thái",
+        "viewPatientRecords": "Xem Hồ Sơ Bệnh Nhân",
+        "patientRecords": "Hồ Sơ Bệnh Nhân: {{name}}",
+        "healthRecords": "Hồ Sơ Sức Khỏe",
+        "canvas": "Bảng Vẽ",
+        "testResults": "Kết quả xét nghiệm",
+        "noTestResults": "Không tìm thấy kết quả xét nghiệm công khai cho bệnh nhân này, lý do có thể là bệnh nhân {{patientName}} không muốn công khai dữ liệu."
       }
     }
   },

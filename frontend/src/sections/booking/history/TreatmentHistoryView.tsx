@@ -12,20 +12,28 @@ import {
 import { Helmet } from 'react-helmet-async';
 
 import { TherapyBooking } from 'src/type/therapist';
-import { useBookingHistory } from 'src/hooks/use-booking-history';
-import { AppointmentResponse } from 'src/utils/specialist-api';
+import { AppointmentResponse, PublicSpecialistDTO } from 'src/utils/specialist-api';
 import { SummaryCards } from './SummaryCards';
 import { AllSessionsTab } from './AllSessionsTab';
 import { CompletedSessionsTab } from './CompletedSessionsTab';
 import { UpcomingSessionsTab } from './UpcomingSessionsTab';
 import { SessionDetailsDialog } from './SessionDetailsDialog';
 import { ReviewDialog } from './ReviewDialog';
+import { ReasonDialog } from 'src/sections/calling/ReasonDialog';
+import { useBookingHistory } from 'src/hooks/use-booking-history';
+import { useTherapyBooking } from 'src/hooks/use-therapy-booking';
+import axios from 'src/utils/axios';
 
 // -------------------------------------------------------
 
 // Utility function to convert AppointmentResponse to TherapyBooking
-function convertAppointmentToTherapyBooking(appointment: AppointmentResponse): TherapyBooking {
+function convertAppointmentToTherapyBooking(
+  appointment: AppointmentResponse,
+  therapists: PublicSpecialistDTO[]
+): TherapyBooking {
   const scheduledDate = new Date(appointment.scheduledAt);
+  const therapist = therapists.find((t) => t.id === appointment.specialistId);
+
   return {
     id: appointment.id,
     therapistId: appointment.specialistId,
@@ -33,6 +41,7 @@ function convertAppointmentToTherapyBooking(appointment: AppointmentResponse): T
     userId: appointment.patientId,
     userName: appointment.patientName || 'You',
     userEmail: appointment.patientEmail || '',
+    specialistAvatar: appointment.specialistAvatar || therapist?.avatarUrl,
     type: 'counseling', // Default type, could be expanded based on appointment data
     date: scheduledDate,
     startTime: appointment.startTime,
@@ -43,7 +52,9 @@ function convertAppointmentToTherapyBooking(appointment: AppointmentResponse): T
         ? 'completed'
         : appointment.status === 'CANCELLED'
           ? 'cancelled'
-          : 'booked',
+          : appointment.status === 'NO_SHOW'
+            ? 'reported'
+            : 'booked', // PENDING is upcoming
     notes: appointment.sessionNotes,
     totalPrice: Number(appointment.totalPrice),
     createdAt: new Date(appointment.createdAt),
@@ -58,11 +69,16 @@ export default function TreatmentHistoryView() {
   const [openReviewDialog, setOpenReviewDialog] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<TherapyBooking | null>(null);
 
   const { appointments, loading, error, fetchAppointments, cancelBooking } = useBookingHistory();
+  const { therapists, loading: therapistsLoading } = useTherapyBooking();
 
   // Convert API responses to TherapyBooking format
-  const therapyBookings: TherapyBooking[] = appointments.map(convertAppointmentToTherapyBooking);
+  const therapyBookings: TherapyBooking[] = appointments.map((appointment: AppointmentResponse) =>
+    convertAppointmentToTherapyBooking(appointment, therapists)
+  );
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -86,7 +102,53 @@ export default function TreatmentHistoryView() {
     setReviewText('');
   };
 
-  if (loading) {
+  const handleOpenCancelDialog = (booking: TherapyBooking) => {
+    setBookingToCancel(booking);
+    setOpenCancelDialog(true);
+    setOpenDialog(false); // Close details dialog if it was open
+  };
+
+  const handleConfirmCancel = async (reason: string) => {
+    if (bookingToCancel) {
+      try {
+        await cancelBooking(bookingToCancel.id, reason);
+      } catch (e) {
+        console.error('Failed to cancel booking:', e);
+      }
+      setOpenCancelDialog(false);
+      setBookingToCancel(null);
+    }
+  };
+
+  const handleSaveNotes = async (notes: string) => {
+    if (!selectedBooking) return;
+
+    const originalAppointment = appointments.find(
+      (a: AppointmentResponse) => a.id === selectedBooking.id
+    );
+    if (!originalAppointment) return;
+
+    try {
+      await axios.put<AppointmentResponse>(`/api/v1/appointments/${selectedBooking.id}`, {
+        specialistId: originalAppointment.specialistId,
+        scheduledAt: originalAppointment.scheduledAt,
+        duration: originalAppointment.duration,
+        currency: originalAppointment.currency || 'USD',
+        bookingType: originalAppointment.bookingType,
+        totalPrice: originalAppointment.totalPrice,
+        startTime: originalAppointment.startTime,
+        endTime: originalAppointment.endTime,
+        sessionNotes: notes,
+      });
+      // Refetch appointments to get the latest data
+      fetchAppointments();
+    } catch (err) {
+      console.error('Failed to save notes:', err);
+      // You could show an error notification here
+    }
+  };
+
+  if (loading || therapistsLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack alignItems="center" justifyContent="center" sx={{ minHeight: '400px' }}>
@@ -142,7 +204,11 @@ export default function TreatmentHistoryView() {
           )}
 
           {tabValue === 2 && (
-            <UpcomingSessionsTab bookings={therapyBookings} onViewDetails={handleViewDetails} />
+            <UpcomingSessionsTab
+              bookings={therapyBookings}
+              onViewDetails={handleViewDetails}
+              onCancel={handleOpenCancelDialog}
+            />
           )}
         </Stack>
       </Container>
@@ -153,6 +219,8 @@ export default function TreatmentHistoryView() {
         booking={selectedBooking}
         onClose={() => setOpenDialog(false)}
         onReview={handleOpenReviewDialog}
+        onCancel={() => selectedBooking && handleOpenCancelDialog(selectedBooking)}
+        onSaveNotes={handleSaveNotes}
       />
 
       {/* Review Dialog */}
@@ -164,6 +232,15 @@ export default function TreatmentHistoryView() {
         onRatingChange={setReviewRating}
         text={reviewText}
         onTextChange={setReviewText}
+      />
+
+      {/* Cancel Dialog */}
+      <ReasonDialog
+        open={openCancelDialog}
+        onClose={() => setOpenCancelDialog(false)}
+        onSubmit={handleConfirmCancel}
+        title="Cancel Booking"
+        description="Please provide a reason for cancelling this booking. This will be shared with the specialist."
       />
     </>
   );

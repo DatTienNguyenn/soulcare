@@ -12,4 +12,5 @@ public class PatientProfileDTO {
     private LocalDate dateOfBirth;
     private String gender;
     private String avatarUrl;
+    private Boolean publish;
 }

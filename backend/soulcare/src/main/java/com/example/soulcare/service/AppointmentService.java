@@ -318,6 +318,7 @@ public class AppointmentService {
                 .patientAvatar(patientUser != null ? patientUser.getAvatarUrl() : null)
                 .patientEmail(patientUser != null ? patientUser.getEmail() : null)
                 .specialistName(specialist != null ? specialist.getFullName() : null)
+                .specialistAvatar(specialistUser != null ? specialistUser.getAvatarUrl() : null)
                 .specialistEmail(specialistUser != null ? specialistUser.getEmail() : null)
                 .specialistRating(specialist != null ? specialist.getRatingAverage() != null ? 
                         specialist.getRatingAverage().doubleValue() : null : null)

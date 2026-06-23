@@ -329,6 +329,7 @@ export interface AppointmentResponse {
   patientEmail?: string;
   patientAvatar?: string;
   specialistName?: string;
+  specialistAvatar?: string;
   specialistEmail?: string;
   specialistRating?: number;
   reviewRating?: number;

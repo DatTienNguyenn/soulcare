@@ -2,22 +2,31 @@ import {
   Alert,
   Box,
   Button,
+  Avatar,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Stack,
+  Grid,
   Typography,
+  TextField,
+  CircularProgress,
 } from '@mui/material';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { TherapyBooking } from 'src/type/therapist';
+import { useLocales } from 'src/locale/use-locales';
+import axios from 'src/utils/axios';
 
 interface SessionDetailsDialogProps {
   open: boolean;
   booking: TherapyBooking | null;
   onClose: () => void;
   onReview: () => void;
+  onCancel: () => void;
+  onSaveNotes: (notes: string) => Promise<void>;
 }
 
 export function SessionDetailsDialog({
@@ -25,7 +34,44 @@ export function SessionDetailsDialog({
   booking,
   onClose,
   onReview,
+  onCancel,
+  onSaveNotes,
 }: SessionDetailsDialogProps) {
+  const { t } = useLocales();
+  const [notes, setNotes] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+
+  useEffect(() => {
+    if (booking) {
+      setNotes(booking.notes || '');
+    }
+  }, [booking]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    await onSaveNotes(notes);
+    setIsSaving(false);
+    onClose();
+  };
+
+  const handleSummarizeDiary = async () => {
+    if (!booking) return;
+    setIsSummarizing(true);
+    try {
+      const response = await axios.get(`/api/v1/ai/summary-diary`);
+      const summary = response.data.response || response.data.message || response.data;
+
+      setNotes((prevNotes) =>
+        prevNotes ? `${prevNotes}\n\n[AI Summary]\n${summary}` : `[AI Summary]\n${summary}`
+      );
+    } catch (error) {
+      console.error('Failed to generate summary', error);
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
     switch (status) {
       case 'completed':
@@ -39,74 +85,113 @@ export function SessionDetailsDialog({
     }
   };
 
+  const isEditable = booking?.status === 'booked';
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Session Details</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         {booking && (
-          <Stack spacing={2}>
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Therapist
-              </Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                {booking.therapistName}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Type
-              </Typography>
-              <Typography variant="body1">
-                {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Date & Time
-              </Typography>
-              <Typography variant="body1">{format(booking.date, 'EEEE, MMM dd, yyyy')}</Typography>
-              <Typography variant="body1">
-                {booking.startTime} - {booking.endTime}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Duration
-              </Typography>
-              <Typography variant="body1">{booking.duration} minutes</Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Price
-              </Typography>
-              <Typography variant="h6" sx={{ color: 'success.main' }}>
-                ${booking.totalPrice}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Status
-              </Typography>
-              <Chip
-                label={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                color={getStatusColor(booking.status)}
-              />
-            </Box>
-
-            {booking.notes && (
+          <Stack spacing={2.5}>
+            {/* Therapist Info Header */}
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={booking.specialistAvatar} sx={{ width: 80, height: 80 }} />
               <Box>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Notes
+                <Typography variant="h5">{booking.therapistName}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)}
                 </Typography>
-                <Typography variant="body1">{booking.notes}</Typography>
               </Box>
-            )}
+            </Stack>
+
+            {/* Details Grid */}
+            <Grid container spacing={2} rowSpacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {t('specialist.bookings.dialogs.dateTime')}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  {format(booking.date, 'EEEE, MMM dd, yyyy')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {booking.startTime} - {booking.endTime}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {t('specialist.bookings.dialogs.duration')}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  {booking.duration} minutes
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {t('specialist.bookings.dialogs.price')}
+                </Typography>
+                <Typography variant="h6" sx={{ color: 'success.main' }}>
+                  ${booking.totalPrice}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {t('specialist.bookings.dialogs.status')}
+                </Typography>
+                <Chip
+                  label={booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                  color={getStatusColor(booking.status)}
+                  variant="outlined"
+                />
+              </Grid>
+            </Grid>
+
+            <Box>
+              {booking.status === 'reported' && (
+                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                  Admin note:
+                </Typography>
+              )}
+              {booking.status !== 'reported' && (
+                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                  {t('treatment.history.notesForSpecialist')}
+                </Typography>
+              )}
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={t('treatment.history.notesPlaceholder')}
+                disabled={!isEditable || isSaving}
+              />
+              {isEditable && (
+                <>
+                  <Box sx={{ mt: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={handleSummarizeDiary}
+                      disabled={isSummarizing}
+                      startIcon={isSummarizing ? <CircularProgress size={16} /> : null}
+                    >
+                      {isSummarizing ? 'Summarizing...' : 'Summary Diary by AI'}
+                    </Button>
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    sx={{ mt: 1, display: 'block', color: 'text.secondary' }}
+                  >
+                    By clicking the "Summary Diary by AI" button, you allow the system to access
+                    your diary entries and generate a summary to help the specialist better
+                    understand your circumstances and emotions.
+                  </Typography>
+                </>
+              )}
+            </Box>
 
             {booking.status === 'completed' && (
               <Alert severity="success">
@@ -117,20 +202,16 @@ export function SessionDetailsDialog({
         )}
       </DialogContent>
       <DialogActions>
-        {booking?.status === 'completed' ? (
-          <>
-            <Button onClick={onClose}>Close</Button>
-            <Button onClick={onReview} variant="contained">
-              Leave Review
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button onClick={onClose}>Close</Button>
-            <Button onClick={onClose} color="error">
-              Cancel Booking
-            </Button>
-          </>
+        <Button onClick={onClose}>{t('common.close')}</Button>
+        {isEditable && (
+          <Button onClick={handleSave} variant="contained" disabled={isSaving}>
+            {isSaving ? t('treatment.history.saving') : t('treatment.history.saveNotes')}
+          </Button>
+        )}
+        {booking?.status === 'completed' && (
+          <Button onClick={onReview} variant="contained">
+            Leave Review
+          </Button>
         )}
       </DialogActions>
     </Dialog>

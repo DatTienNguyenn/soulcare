@@ -17,7 +17,8 @@ CREATE TABLE patients (
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     full_name varchar(255),
     date_of_birth date,
-    gender varchar(50)
+    gender varchar(50),
+    publish boolean DEFAULT false
 );
 
 CREATE TABLE specialists (

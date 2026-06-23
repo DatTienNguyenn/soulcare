@@ -30,4 +30,7 @@ public class Patient {
     
     @Column(name = "gender", length = 50)
     private String gender;
+
+    @Column(name = "publish", nullable = false)
+    private boolean publish; 
 }

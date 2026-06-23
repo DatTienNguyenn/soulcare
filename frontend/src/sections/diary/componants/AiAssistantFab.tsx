@@ -110,7 +110,16 @@ export default function AiAssistantFab({ diaryContext }: Props) {
             justifyContent="space-between"
             sx={{ p: 2, borderBottom: (theme) => `dashed 1px ${theme.palette.divider}` }}
           >
-            <Typography variant="subtitle1">Soulcare Companion</Typography>
+            <Tooltip
+              title="AI chat can not access to your personal data. It only uses the context you provide and
+            the conversation history to generate responses."
+              placement="top"
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="subtitle1">Soulcare Companion</Typography>
+                <Iconify icon="eva:info-outline" width={16} sx={{ ml: 0.5 }} />
+              </Box>
+            </Tooltip>
             <IconButton size="small" onClick={() => setOpen(false)}>
               <Iconify icon="eva:close-fill" />
             </IconButton>

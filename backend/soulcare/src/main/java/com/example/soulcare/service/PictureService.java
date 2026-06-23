@@ -67,6 +67,14 @@ public class PictureService {
     }
 
     @Transactional(readOnly = true)
+    public List<PictureResponse> getAllPatientPictures(UUID patientId) {
+        List<Picture> pictures = pictureRepository.findByPatientIdOrderByCreatedAtDesc(patientId);
+        return pictures.stream().filter(picture -> "PUBLISHED".equalsIgnoreCase(picture.getStatus()))
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public DiaryFrequencyResponse getDrawingFrequency(UUID patientId) {
         List<Picture> pictures = pictureRepository.findByPatientIdOrderByCreatedAtDesc(patientId);
         

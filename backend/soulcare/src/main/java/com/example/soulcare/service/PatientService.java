@@ -42,6 +42,9 @@ public class PatientService {
         if (profileData.getGender() != null) {
             patient.setGender(profileData.getGender());
         }
+        if (profileData.getPublish() != null) {
+            patient.setPublish(profileData.getPublish());
+        }
 
         patient = patientRepository.save(patient);
 
@@ -61,6 +64,7 @@ public class PatientService {
         dto.setDateOfBirth(patient.getDateOfBirth());
         dto.setGender(patient.getGender());
         dto.setAvatarUrl(user.getAvatarUrl());
+        dto.setPublish(patient.isPublish());
         return dto;
     }
 }

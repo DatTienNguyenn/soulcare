@@ -113,4 +113,66 @@ public class AiAssistantService {
             return new AiChatResponse("I'm sorry, I am currently unavailable. Please try again later. (Error: " + e.getMessage() + ")");
         }
     }
+
+    public AiChatResponse summarizePatientDiary(String diaryContent) {
+        String url = GEMINI_API_URL + geminiApiKey;
+
+        // System prompt defining the AI's role for summarization
+        String systemInstruction = "You are an expert psychological assistant. " +
+                "Your task is to summarize the patient's diary entries for a mental health specialist. " +
+                "The summary must be brief, short and paraphrased. Do not directly cite any specific entries. " +
+                "Highlight key information regarding the patient's emotional state, recurring themes, and any potential areas of concern. " +
+                "The tone should be objective and clinical, suitable for a professional. Do not diagnose.";
+
+        Map<String, Object> requestBody = new HashMap<>();
+        
+        Map<String, Object> systemInstructionContent = new HashMap<>();
+        List<Map<String, Object>> sysParts = new ArrayList<>();
+        Map<String, Object> sysPart = new HashMap<>();
+        sysPart.put("text", systemInstruction);
+        sysParts.add(sysPart);
+        systemInstructionContent.put("parts", sysParts);
+        
+        requestBody.put("systemInstruction", systemInstructionContent);
+
+        List<Map<String, Object>> contents = new ArrayList<>();
+        Map<String, Object> currentMessageContent = new HashMap<>();
+        currentMessageContent.put("role", "user");
+        List<Map<String, Object>> currentParts = new ArrayList<>();
+        Map<String, Object> currentPart = new HashMap<>();
+        currentPart.put("text", "Please summarize the following diary entries:\n\"" + diaryContent + "\"");
+        currentParts.add(currentPart);
+        currentMessageContent.put("parts", currentParts);
+        contents.add(currentMessageContent);
+
+        requestBody.put("contents", contents);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            Map<String, Object> responseBody = response.getBody();
+
+            if (responseBody != null && responseBody.containsKey("candidates")) {
+                List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
+                if (!candidates.isEmpty()) {
+                    Map<String, Object> firstCandidate = candidates.get(0);
+                    Map<String, Object> content = (Map<String, Object>) firstCandidate.get("content");
+                    List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+                    if (parts != null && !parts.isEmpty()) {
+                        String responseText = (String) parts.get(0).get("text");
+                        return new AiChatResponse(responseText);
+                    }
+                }
+            }
+            return new AiChatResponse("I'm sorry, I couldn't generate the summary right now.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new AiChatResponse("I'm sorry, I am currently unavailable. Please try again later. (Error: " + e.getMessage() + ")");
+        }
+    }
 }

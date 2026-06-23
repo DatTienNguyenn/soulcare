@@ -14,22 +14,27 @@ import { Helmet } from 'react-helmet-async';
 import { SpecialistBooking, useSpecialistBookings } from 'src/hooks/use-specialist-bookings';
 import { useLocales } from 'src/locale/use-locales';
 import { getPatientEHRs, EHRResponse } from 'src/utils/specialist-api';
+import {
+  getPatientTestResultsForSpecialist,
+  TestResultResponse,
+} from 'src/utils/mental-health-api';
+import { getPatientPictures, getPatientPictureById, PictureData } from 'src/utils/picture-api';
 import { BookingSummaryCards } from './summary-cards';
 import {
   AllBookingsTab,
-  BookingDetailsDialog,
   CompletedBookingsTab,
   UpcomingBookingsTab,
   UserStatsTab,
 } from './all-tabs-content';
 import { NotesDialog } from './note-detail';
-import { EHRDetailsDialog } from './ehr-detail';
+import { PatientRecordDataDialog } from './patient-record-data-dialog';
+import { BookingDetailsDialog } from './detail-dialog';
 
 // -------------------------------------------------------
 
 export default function SpecialistBookingView() {
   const [tabValue, setTabValue] = useState(0);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<SpecialistBooking | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'booked' | 'cancelled'>(
     'all'
@@ -38,8 +43,12 @@ export default function SpecialistBookingView() {
   const [noteText, setNoteText] = useState('');
   const [ehrs, setEhrs] = useState<EHRResponse[]>([]);
   const [loadingEhrs, setLoadingEhrs] = useState(false);
-  const [selectedEhr, setSelectedEhr] = useState<EHRResponse | null>(null);
-  const [openEhrDialog, setOpenEhrDialog] = useState(false);
+  const [openRecordDialog, setOpenRecordDialog] = useState(false);
+
+  const [patientPictures, setPatientPictures] = useState<PictureData[]>([]);
+  const [loadingPictures, setLoadingPictures] = useState(false);
+  const [patientTestResults, setPatientTestResults] = useState<TestResultResponse[]>([]);
+  const [loadingTestResults, setLoadingTestResults] = useState(false);
 
   // Use the specialist bookings hook
   const { bookings, loading, error, getBookingsByStatus, getStatistics } = useSpecialistBookings();
@@ -59,20 +68,6 @@ export default function SpecialistBookingView() {
   const handleViewDetails = async (booking: SpecialistBooking) => {
     setSelectedBooking(booking);
     setOpenDialog(true);
-
-    // Suppress TypeScript error by casting to any
-    const patientId = (booking as any).patientId;
-    if (patientId) {
-      setLoadingEhrs(true);
-      try {
-        const records = await getPatientEHRs(patientId);
-        setEhrs(records);
-      } catch (err) {
-        console.error('Failed to fetch patient records:', err);
-      } finally {
-        setLoadingEhrs(false);
-      }
-    }
   };
 
   const handleOpenNoteDialog = () => {
@@ -88,9 +83,54 @@ export default function SpecialistBookingView() {
     setNoteText('');
   };
 
-  const handleEhrClick = (ehr: EHRResponse) => {
-    setSelectedEhr(ehr);
-    setOpenEhrDialog(true);
+  const handleViewPatientRecords = async () => {
+    const patientId = selectedBooking?.patientId;
+    if (!patientId) return;
+
+    setOpenRecordDialog(true);
+    setLoadingEhrs(true);
+    setLoadingPictures(true);
+    setLoadingTestResults(true);
+
+    // Fetch EHRs
+    getPatientEHRs(patientId)
+      .then((records) => {
+        setEhrs(records);
+        setLoadingEhrs(false);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch patient records:', err);
+        setLoadingEhrs(false);
+      });
+
+    try {
+      // Fetch pictures for the patient
+      const list = await getPatientPictures(patientId);
+      // Filter only PUBLISHED pictures
+      const published = list.filter((p) => p.status === 'PUBLISHED');
+      // Load full data for the images
+      const fullPictures = await Promise.all(
+        published.map((p) => getPatientPictureById(patientId, p.id))
+      );
+      setPatientPictures(fullPictures);
+    } catch (err) {
+      console.error('Failed to load patient pictures', err);
+    } finally {
+      setLoadingPictures(false);
+    }
+
+    // Fetch Test Results
+    try {
+      const results = await getPatientTestResultsForSpecialist(patientId);
+      const sorted = results.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setPatientTestResults(sorted);
+    } catch (err) {
+      console.error('Failed to fetch patient test results:', err);
+    } finally {
+      setLoadingTestResults(false);
+    }
   };
 
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
@@ -214,10 +254,8 @@ export default function SpecialistBookingView() {
         onClose={() => setOpenDialog(false)}
         selectedBooking={selectedBooking}
         getStatusColor={getStatusColor}
-        loadingEhrs={loadingEhrs}
-        ehrs={ehrs}
-        onEhrClick={handleEhrClick}
         onViewNotes={handleOpenNoteDialog}
+        onViewPatientRecords={handleViewPatientRecords}
       />
 
       {/* Notes Dialog */}
@@ -227,11 +265,18 @@ export default function SpecialistBookingView() {
         noteText={noteText}
       />
 
-      {/* EHR Details Dialog */}
-      <EHRDetailsDialog
-        open={openEhrDialog}
-        onClose={() => setOpenEhrDialog(false)}
-        selectedEhr={selectedEhr}
+      {/* Patient Record Data Dialog */}
+      <PatientRecordDataDialog
+        open={openRecordDialog}
+        onClose={() => setOpenRecordDialog(false)}
+        patientName={selectedBooking?.userName || 'Patient'}
+        ehrs={ehrs}
+        loadingEhrs={loadingEhrs}
+        pictures={patientPictures}
+        loadingPictures={loadingPictures}
+        testResults={patientTestResults}
+        loadingTestResults={loadingTestResults}
+        sessionNotes={selectedBooking?.notes}
       />
     </>
   );

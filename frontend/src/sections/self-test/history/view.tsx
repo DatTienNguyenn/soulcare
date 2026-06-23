@@ -21,11 +21,14 @@ import {
   Chip,
   Card,
   CardContent,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import { useMentalHealthAPI } from 'src/hooks/use-mental-health-api';
 import { TestResultResponse } from 'src/utils/mental-health-api';
 import { useLocales } from 'src/locale/use-locales';
+import { usePatientProfile } from 'src/hooks/use-patient-profile';
 
 const getLevelColor = (
   level: string
@@ -39,10 +42,13 @@ const getLevelColor = (
 
 export default function SelfTestHistoryView() {
   const { fetchUserTestResults, loading, error, setError } = useMentalHealthAPI();
+  const { fetchProfile, updateProfile } = usePatientProfile();
   const [testResults, setTestResults] = useState<TestResultResponse[]>([]);
   const [selectedResult, setSelectedResult] = useState<TestResultResponse | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingResults, setLoadingResults] = useState(true);
+  const [isPublish, setIsPublish] = useState<boolean>(false);
+  const [updatingPublish, setUpdatingPublish] = useState(false);
   const { t } = useLocales();
 
   // Load test results on mount
@@ -65,8 +71,32 @@ export default function SelfTestHistoryView() {
       }
     };
 
+    const loadProfile = async () => {
+      try {
+        const profile = await fetchProfile();
+        setIsPublish(!!profile.publish);
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      }
+    };
+
     loadTestResults();
-  }, [fetchUserTestResults, setError]);
+    loadProfile();
+  }, [fetchUserTestResults, setError, fetchProfile]);
+
+  const handlePublishChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    setIsPublish(checked);
+    setUpdatingPublish(true);
+    try {
+      await updateProfile({ publish: checked });
+    } catch (err) {
+      console.error('Failed to update publish status:', err);
+      setIsPublish(!checked); // Revert on failure
+    } finally {
+      setUpdatingPublish(false);
+    }
+  };
 
   const handleOpenDetails = (result: TestResultResponse) => {
     setSelectedResult(result);
@@ -121,13 +151,34 @@ export default function SelfTestHistoryView() {
       </Helmet>
 
       <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-            {t('selfTestHistory.header')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {t('selfTestHistory.description')}
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
+              {t('selfTestHistory.header')}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {t('selfTestHistory.description')}
+            </Typography>
+          </Box>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isPublish}
+                onChange={handlePublishChange}
+                disabled={updatingPublish}
+                color="primary"
+              />
+            }
+            label={t('selfTestHistory.publishResults') || 'Make Results Public'}
+          />
         </Box>
 
         {testResults.length === 0 ? (

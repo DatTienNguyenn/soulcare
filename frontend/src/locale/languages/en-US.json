@@ -248,7 +248,11 @@
       "therapistName": "Therapist Name",
       "treatmentType": "Treatment Type",
       "date": "Date",
-      "notes": "Session Notes"
+      "notes": "Session Notes",
+      "notesForSpecialist": "Notes for Specialist",
+      "notesPlaceholder": "Share anything you'd like your specialist to know before the session...",
+      "saveNotes": "Save Notes",
+      "saving": "Saving..."
     },
     "bookingDetails": {
       "title": "Therapy Session Details",
@@ -265,7 +269,8 @@
       "meditation": "Meditation",
       "behavioral": "Behavioral",
       "cognitive": "Cognitive",
-      "family": "Family"
+      "family": "Family",
+      "general": "General"
     }
   },
   "selfTestHistory": {
@@ -283,7 +288,30 @@
     "detailsTitle": "Test Result Details",
     "dateTaken": "Date Taken",
     "actions": "Actions",
-    "loading": "Loading test history..."
+    "loading": "Loading test history...",
+    "publishResults": "Make Results Public To Specialists"
+  },
+  "drawingHistory": {
+    "title": "Drawing History",
+    "drawingsSaved": "{{count}} drawing(s) saved",
+    "noDrawings": "No drawings saved yet. Start creating and saving your drawings!",
+    "untitled": "Untitled Drawing",
+    "status": {
+      "private": "Private",
+      "published": "Published"
+    },
+    "duration": "Duration:",
+    "tools": "Tools:",
+    "strokes": "Strokes:",
+    "details": "Drawing Details",
+    "createdDate": "Created Date",
+    "lastUpdated": "Last Updated",
+    "statusLabel": "Status",
+    "drawingTime": "Drawing Time",
+    "drawingMetadata": "Drawing Metadata",
+    "toolsUsed": "Tools Used:",
+    "totalStrokes": "Total Strokes:",
+    "close": "Close"
   },
   "login": {
     "header": "Hi, Welcome Back!",
@@ -628,6 +656,7 @@
         "unknownDate": "Unknown date",
         "close": "Close",
         "viewNotes": "View Notes",
+        "viewPictures": "View Patient's Canvas",
         "sessionNotes": "Session Notes",
         "noNotes": "No notes available",
         "ehrTitle": "Health Record Details",
@@ -637,7 +666,13 @@
         "dateTime": "Date & Time",
         "duration": "Duration",
         "price": "Price",
-        "status": "Status"
+        "status": "Status",
+        "viewPatientRecords": "View Patient Records",
+        "patientRecords": "Patient Records: {{name}}",
+        "healthRecords": "Health Records",
+        "canvas": "Canvas",
+        "testResults": "Test Results",
+        "noTestResults": "No public test results found for this patient, this reason can caused by patients {{patientName}} do not want to publish data."
       }
     }
   },

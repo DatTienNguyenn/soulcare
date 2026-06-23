@@ -8,6 +8,7 @@ export interface PatientProfile {
   dateOfBirth?: string;
   gender?: string;
   avatarUrl?: string;
+  publish?: boolean;
 }
 
 export function usePatientProfile() {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Box,
   Button,
+  Avatar,
   Chip,
   Paper,
   Stack,
@@ -85,9 +86,15 @@ export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps)
             {filteredBookings.map((booking) => (
               <TableRow key={booking.id} hover>
                 <TableCell>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                    {booking.therapistName}
-                  </Typography>
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Avatar
+                      src={booking.specialistAvatar || '/assets/images/default-avatar.png'}
+                      sx={{ width: 36, height: 36 }}
+                    />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {booking.therapistName}
+                    </Typography>
+                  </Stack>
                 </TableCell>
                 <TableCell>
                   <Chip
