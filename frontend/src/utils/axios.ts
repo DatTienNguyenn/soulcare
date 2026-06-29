@@ -1,10 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-import { HOST_API, ASSETS_API } from 'src/config-global';
+// Get API from Vite env, when production then Vite will replace this with the value in .env.production, when running local (dev) then this will be undefined and axios will use relative path, allowing proxy in vite.config.ts to work.
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: HOST_API });
+const axiosInstance = axios.create({ baseURL: API_URL });
 
 axiosInstance.interceptors.response.use(
   (res) => res,
@@ -13,33 +14,12 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
-// Assets API Instance
-// ----------------------------------------------------------------------
-
-export const assetAxiosInstance = axios.create({ baseURL: ASSETS_API });
-
-assetAxiosInstance.interceptors.response.use(
-  (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
-);
-
 // ----------------------------------------------------------------------
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   const [url, config] = Array.isArray(args) ? args : [args];
 
   const res = await axiosInstance.get(url, { ...config });
-
-  return res.data;
-};
-
-// Asset Fetcher
-// ----------------------------------------------------------------------
-
-export const assetFetcher = async (args: string | [string, AxiosRequestConfig]) => {
-  const [url, config] = Array.isArray(args) ? args : [args];
-
-  const res = await assetAxiosInstance.get(url, { ...config });
 
   return res.data;
 };
@@ -52,8 +32,8 @@ export const endpoints = {
   calendar: '/api/calendar',
   auth: {
     me: '/api/v1/users/me',
-    login: '/api/auth/login',
-    register: '/api/auth/register',
+    login: '/api/v1/auth/login',
+    register: '/api/v1/auth/register',
   },
   mail: {
     list: '/api/mail/list',
