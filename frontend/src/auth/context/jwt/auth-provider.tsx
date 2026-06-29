@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
-import axios, { endpoints } from 'src/utils/axios';
+import axiosInstance, { endpoints } from 'src/utils/axios';
 
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken } from './utils';
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: Props) {
         setSession(accessToken);
 
         try {
-          const res = await axios.get(endpoints.auth.me);
+          const res = await axiosInstance.get(endpoints.auth.me);
           const user = res.data?.data;
 
           dispatch({
@@ -176,7 +176,7 @@ export function AuthProvider({ children }: Props) {
         role,
       };
 
-      const res = await axios.post('http://localhost:8080/api/v1/auth/login', data);
+      const res = await axiosInstance.post(endpoints.auth.login, data);
 
       // Handle new API response format: { code, message, data: { token } }
       const token = res.data.data?.token || res.data.accessToken;
@@ -227,7 +227,7 @@ export function AuthProvider({ children }: Props) {
         role,
       };
 
-      const res = await axios.post('http://localhost:8080/api/v1/auth/register', data);
+      const res = await axiosInstance.post(endpoints.auth.register, data);
 
       // Handle new API response format: { code, message, data: { token } }
       const token = res.data.data?.token || res.data.accessToken;
