@@ -3,11 +3,9 @@ package com.example.soulcare.controller;
 import com.example.soulcare.dto.AiChatRequest;
 import com.example.soulcare.dto.AiChatResponse;
 import com.example.soulcare.dto.DiaryResponse;
-import com.example.soulcare.model.User;
-import com.example.soulcare.repository.PatientRepository;
-import com.example.soulcare.repository.UserRepository;
 import com.example.soulcare.service.AiAssistantService;
 import com.example.soulcare.service.DiaryService;
+import com.example.soulcare.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +20,13 @@ public class AiAssistantController {
 
     private final AiAssistantService aiAssistantService;
     private final DiaryService diaryService;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
+    private final UserService userService;
 
-    public AiAssistantController(AiAssistantService aiAssistantService, DiaryService diaryService, 
-                                 UserRepository userRepository, PatientRepository patientRepository) {
+    public AiAssistantController(AiAssistantService aiAssistantService, DiaryService diaryService,
+                                 UserService userService) {
         this.aiAssistantService = aiAssistantService;
         this.diaryService = diaryService;
-        this.userRepository = userRepository;
-        this.patientRepository = patientRepository;
+        this.userService = userService;
     }
 
     @PostMapping("/chat")
@@ -60,10 +56,6 @@ public class AiAssistantController {
 
     private UUID getPatientIdFromAuth(Authentication authentication) {
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return patientRepository.findByUserId(user.getId())
-                .map(p -> p.getId())
-                .orElseThrow(() -> new RuntimeException("Patient profile not found"));
+        return userService.getPatientIdByEmail(email);
     }
 }

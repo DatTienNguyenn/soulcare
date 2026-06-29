@@ -1,11 +1,7 @@
 package com.example.soulcare.controller;
 
-import com.example.soulcare.dto.TestResultRequest;
-import com.example.soulcare.dto.TestResultResponse;
-import com.example.soulcare.dto.TestResultHistoryResponse;
-import com.example.soulcare.model.User;
-import com.example.soulcare.repository.PatientRepository;
-import com.example.soulcare.repository.UserRepository;
+import com.example.soulcare.dto.*;
+import com.example.soulcare.service.UserService;
 import com.example.soulcare.service.TestResultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,8 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TestResultController {
     private final TestResultService resultService;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
+    private final UserService userService; // Inject UserService thay vì các repository
 
     /**
      * Submit test answers and save result
@@ -107,11 +102,6 @@ public class TestResultController {
 
     private UUID getPatientIdFromAuth(Authentication authentication) {
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        return patientRepository.findByUserId(user.getId())
-                .map(patient -> patient.getId())
-                .orElseThrow(() -> new RuntimeException("Patient profile not found for this user"));
+        return userService.getPatientIdByEmail(email);
     }
 }

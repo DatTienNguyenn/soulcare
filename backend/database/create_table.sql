@@ -58,15 +58,15 @@ CREATE TABLE pictures (
     last_update timestamp DEFAULT now()
 );
 
-CREATE TABLE ai_sentiment (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    diary_id uuid REFERENCES diaries(id),
-    picture_id uuid REFERENCES pictures(id),
-    mood_score int,
-    sentiment_label varchar(50),
-    summary_for_expert text, -- AI tổng hợp cho chuyên gia xem
-    CHECK (diary_id IS NOT NULL OR picture_id IS NOT NULL) -- Ít nhất phải có 1 trong 2
-);
+-- CREATE TABLE ai_sentiment (
+--     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     diary_id uuid REFERENCES diaries(id),
+--     picture_id uuid REFERENCES pictures(id),
+--     mood_score int,
+--     sentiment_label varchar(50),
+--     summary_for_expert text, -- AI tổng hợp cho chuyên gia xem
+--     CHECK (diary_id IS NOT NULL OR picture_id IS NOT NULL) -- Ít nhất phải có 1 trong 2
+-- );
 
 -- Mental Health Tests (Test Definitions)
 CREATE TABLE mental_health_tests (
@@ -137,13 +137,13 @@ CREATE INDEX idx_test_questions_test_id ON test_questions(test_id);
 CREATE INDEX idx_question_options_question_id ON question_options(question_id);
 
 -- Keep backward compatibility with old psychological_tests structure
-CREATE TABLE psychological_tests (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title varchar(255),
-    description text,
-    config jsonb,
-    DEPRECATED BOOLEAN DEFAULT true
-);
+-- CREATE TABLE psychological_tests (
+--     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     title varchar(255),
+--     description text,
+--     config jsonb,
+--     DEPRECATED BOOLEAN DEFAULT true
+-- );
 
 -- --- PHÂN HỆ TƯ VẤN & EHR (BỆNH ÁN ĐIỆN TỬ) ---
 

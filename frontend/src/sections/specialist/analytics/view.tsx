@@ -58,7 +58,7 @@ export default function SpecialistAnalyticsView() {
       });
 
     return data;
-  }, []);
+  }, [bookings]);
 
   // Prepare data for booking status pie chart
   const bookingStatusData = useMemo(() => {
@@ -79,7 +79,7 @@ export default function SpecialistAnalyticsView() {
         color: '#FF8042',
       },
     ].filter((item) => item.value > 0);
-  }, [bookings]);
+  }, [bookings, t]);
 
   // Prepare data for therapy type distribution
   const therapyTypeData = useMemo(() => {
@@ -123,7 +123,7 @@ export default function SpecialistAnalyticsView() {
         count,
       }))
       .filter((item) => item.count > 0);
-  }, [bookings]);
+  }, [bookings, t]);
 
   // Prepare top patients data
   const topPatients = useMemo(() => {

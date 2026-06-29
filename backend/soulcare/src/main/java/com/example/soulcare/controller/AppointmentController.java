@@ -2,12 +2,9 @@ package com.example.soulcare.controller;
 
 import com.example.soulcare.dto.AppointmentRequest;
 import com.example.soulcare.dto.AppointmentResponse;
-import com.example.soulcare.model.ElectronicHealthRecord;
 import com.example.soulcare.model.AppointmentStatus;
-import com.example.soulcare.repository.PatientRepository;
-import com.example.soulcare.repository.SpecialistRepository;
-import com.example.soulcare.repository.UserRepository;
 import com.example.soulcare.service.AppointmentService;
+import com.example.soulcare.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import com.example.soulcare.model.ElectronicHealthRecord;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,9 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppointmentController {
     private final AppointmentService appointmentService;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
-    private final SpecialistRepository specialistRepository;
+    private final UserService userService;
 
     /**
      * Create a new appointment (patient books a specialist)
@@ -214,11 +210,7 @@ public class AppointmentController {
      */
     private UUID getPatientIdFromAuth(Authentication authentication) {
         String email = authentication.getName();
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        var patient = patientRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-        return patient.getId();
+        return userService.getPatientIdByEmail(email);
     }
 
     /**
@@ -226,10 +218,6 @@ public class AppointmentController {
      */
     private UUID getSpecialistIdFromAuth(Authentication authentication) {
         String email = authentication.getName();
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        var specialist = specialistRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Specialist not found"));
-        return specialist.getId();
+        return userService.getSpecialistIdByEmail(email);
     }
 }
