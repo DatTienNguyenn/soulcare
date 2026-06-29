@@ -5,9 +5,8 @@ import com.example.soulcare.dto.AvailabilityResponse;
 import com.example.soulcare.dto.SessionPricingRequest;
 import com.example.soulcare.dto.SessionPricingResponse;
 import com.example.soulcare.dto.UpdateSpecialistProfileRequest;
-import com.example.soulcare.repository.SpecialistRepository;
-import com.example.soulcare.repository.UserRepository;
 import com.example.soulcare.service.SpecialistProfileService;
+import com.example.soulcare.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SpecialistProfileController {
     private final SpecialistProfileService profileService;
-    private final UserRepository userRepository;
-    private final SpecialistRepository specialistRepository;
+    private final UserService userService;
 
     // ========== SESSION PRICING ENDPOINTS ==========
 
@@ -225,10 +223,6 @@ public class SpecialistProfileController {
 
     private UUID getSpecialistIdFromAuth(Authentication authentication) {
         String email = authentication.getName();
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        var specialist = specialistRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Specialist not found"));
-        return specialist.getId();
+        return userService.getSpecialistIdByEmail(email);
     }
 }

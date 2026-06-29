@@ -5,15 +5,20 @@ import org.springframework.stereotype.Service;
 
 import com.example.soulcare.dto.UserProfileResponse;
 import com.example.soulcare.model.User;
+import com.example.soulcare.repository.PatientRepository;
+import com.example.soulcare.repository.SpecialistRepository;
 import com.example.soulcare.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
+    private final SpecialistRepository specialistRepository;
 
     public UserProfileResponse getCurrentUserProfile(String email) {
         User user = userRepository.findByEmail(email)
@@ -39,6 +44,22 @@ public class UserService {
                         .photoURL(user.getAvatarUrl())
                         .build())
                 .toList();
+    }
+
+    public UUID getPatientIdByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return patientRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Patient profile not found for user: " + email)).getId();
+    }
+
+    public UUID getSpecialistIdByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return specialistRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Specialist profile not found for user: " + email)).getId();
     }
 
     private String toDisplayName(String email) {

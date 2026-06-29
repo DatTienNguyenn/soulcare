@@ -3,10 +3,8 @@ package com.example.soulcare.controller;
 import com.example.soulcare.dto.DiaryFrequencyResponse;
 import com.example.soulcare.dto.PictureSaveRequest;
 import com.example.soulcare.dto.PictureResponse;
-import com.example.soulcare.model.User;
-import com.example.soulcare.repository.PatientRepository;
-import com.example.soulcare.repository.UserRepository;
 import com.example.soulcare.service.PictureService;
+import com.example.soulcare.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PictureController {
     private final PictureService pictureService;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<PictureResponse> savePicture(
@@ -78,25 +75,8 @@ public class PictureController {
     }
 
     private UUID getPatientIdFromAuth(Authentication authentication) {
-        // Extract username (email) from authentication
         String email = authentication.getName();
-        // Find user by email
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        // Block admin role from accessing picture APIs
-        if (user.getRole() == com.example.soulcare.model.Role.ADMIN) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.FORBIDDEN,
-                "Admins cannot access picture data"
-            );
-        }
-        // Find patient by user ID
-        return patientRepository.findByUserId(user.getId())
-                .map(patient -> patient.getId())
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.FORBIDDEN,
-                    "Patient profile not found for this user"
-                ));
+        return userService.getPatientIdByEmail(email);
     }
 
     // Get all pictures for a specific patient
