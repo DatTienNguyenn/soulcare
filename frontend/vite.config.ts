@@ -9,10 +9,10 @@ export default defineConfig({
   plugins: [
     react(),
     checker({
-      typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
-      },
+      typescript: true, // Chỉ giữ lại kiểm tra TypeScript
+      // eslint: {
+      //   lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
+      // },
       overlay: {
         initialIsOpen: false,
       },

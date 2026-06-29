@@ -1,0 +1,217 @@
+
+
+C:\4_Hust\Thesis\soulcare\frontend\src\routes\sections\auth.tsx
+  28:30  error  Value must be omitted for boolean attribute `login`  react/jsx-boolean-value
+
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\patient-reporting\view.tsx
+  109:18  error    Do not nest ternary expressions                                                no-nested-ternary
+  143:26  error    Do not nest ternary expressions                                                no-nested-ternary
+  147:29  error    Do not nest ternary expressions                                                no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\question-management\question-form.tsx
+   75:62  error    Missing radix parameter                                                      radix
+  103:64  error    Missing radix parameter                                                      radix
+  256:12  error    Do not nest ternary expressions                                              no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\question-management\questions-list.tsx
+ 81:10  error    Do not nest ternary expressions                                              no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\test-management\components\ScoringGuideSection.tsx
+  67:62  error    Missing radix parameter                                          radix
+  76:62  error    Missing radix parameter                                          radix
+  85:41  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  85:60  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\test-management\components\TestFormDialog.tsx
+  159:12  error    Do not nest ternary expressions                                                  no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\test-management\view.tsx
+ 217:11  error    Missing radix parameter                                                                    radix
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\admin\user-management\view.tsx
+ 227:12  error    Do not nest ternary expressions                                                       no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\analytics\componants\AnalyticsHeatmapCard.tsx
+  49:35  error    Unary operator '++' used                                               no-plusplus
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\analytics\componants\AnalyticsScoreChartCard.tsx
+  22:3  error    Do not nest ternary expressions                                        no-nested-ternary
+  24:7  error    Do not nest ternary expressions                                        no-nested-ternary
+  26:9  error    Do not nest ternary expressions                                        no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\analytics\view.tsx
+  101:6   error    React Hook useEffect has a missing dependency: 'selectedTest'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\auth\jwt\user-settings.tsx
+   47:6  error    React Hook useEffect has a missing dependency: 'loadProfileData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\history\AllSessionsTab.tsx
+  60:15  error    Do not nest ternary expressions                                     no-nested-ternary
+  61:19  error    Do not nest ternary expressions                                     no-nested-ternary
+
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\history\SessionDetailsDialog.tsx
+ 188:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`     react/no-unescaped-entities
+  188:57  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`     react/no-unescaped-entities
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\history\TreatmentHistoryView.tsx
+  22:1   error    `src/sections/calling/ReasonDialog` import should occur before import of `./SummaryCards`    import/order
+  23:1   error    `src/hooks/use-booking-history` import should occur before import of `./SummaryCards`        import/order
+  24:1   error    `src/hooks/use-therapy-booking` import should occur before import of `./SummaryCards`        import/order
+  25:1   error    `src/utils/axios` import should occur before import of `./SummaryCards`                      import/order
+  51:7   error    Do not nest ternary expressions                                                              no-nested-ternary
+  53:11  error    Do not nest ternary expressions                                                              no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\view\BookingConfirmDialog.tsx
+   19:31  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times        import/no-duplicates
+   20:26  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times        import/no-duplicates
+   68:34  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+  143:57  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+  159:73  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\view\DateCard.tsx
+  2:31  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times  import/no-duplicates
+  3:26  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times  import/no-duplicates
+ 
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\view\SelectSlotsTab.tsx
+  114:12  error    Do not nest ternary expressions                                                         no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\view\TherapyBookingView.tsx
+  105:25  error    Missing radix parameter                                                                        radix
+  105:42  error    Missing radix parameter                                                                        radix
+  112:31  error    Missing radix parameter                                                                        radix
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\booking\view\TimeSlotCard.tsx
+  2:31  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times  import/no-duplicates
+  3:26  error    'C:\4_Hust\Thesis\soulcare\frontend\node_modules\date-fns\typings.d.ts' imported multiple times  import/no-duplicates
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\calling\view.tsx
+  219:5   error    Arrow function expected no return value                                                               consistent-return
+  224:6   error    React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  236:14  error    'error' is already declared in the upper scope on line 30 column 10                                   @typescript-eslint/no-shadow
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\diary\componants\AiAssistantFab.tsx
+  39:16  error    Expected to return a value at the end of arrow function                           consistent-return
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\diary\componants\DiaryRecentEntries.tsx
+  108:32  error    Do not nest ternary expressions                                           no-nested-ternary
+  109:28  error    Do not nest ternary expressions                                           no-nested-ternary
+  132:30  error    Do not nest ternary expressions                                           no-nested-ternary
+
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\draw\componants\LoadDrawingDialog.tsx
+   50:6   error    React Hook useEffect has a missing dependency: 'onLoadPictures'. Either include it or remove the dependency array. If 'onLoadPictures' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+  84:12  error    Do not nest ternary expressions                                                                                                                                                                                                              no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\draw\history\view.tsx
+  76:6   error    React Hook useEffect has missing dependencies: 'loadPicture' and 'loadPictures'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\draw\view.tsx
+   13:1   error    `src/utils/drawing-serializer` import should occur before import of `./componants/DrawHeader`                     import/order
+   19:1   error    `src/utils/canvas-coordinates` import should occur before import of `./componants/DrawHeader`                     import/order
+   20:1   error    `src/utils/drawing-metadata` import should occur before import of `./componants/DrawHeader`                       import/order
+   33:1   error    `src/hooks/use-picture-save` import should occur before import of `./componants/DrawHeader`                       import/order
+   34:1   error    `src/utils/picture-api` import should occur before import of `./componants/DrawHeader`                            import/order
+  105:6   error    React Hook useEffect has a missing dependency: 'saveToHistory'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  252:7   error    Split 'let' declarations into multiple statements                                                                 one-var
+  418:19  error    Unexpected use of '&'                                                                                             no-bitwise
+  418:20  error    Unexpected use of '>>'                                                                                            no-bitwise
+  419:19  error    Unexpected use of '&'                                                                                             no-bitwise
+  419:20  error    Unexpected use of '>>'                                                                                            no-bitwise
+  420:19  error    Unexpected use of '&'                                                                                             no-bitwise
+  429:76  error    Unexpected use of continue statement                                                                              no-continue
+  517:33  error    Unary operator '++' used                                                                                          no-plusplus
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\self-test\componants\SelfTestResultView.tsx
+  91:12  error    Do not nest ternary expressions                                                        no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\self-test\history\view.tsx
+   62:47  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+  122:76  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\analytics\view.tsx
+ 64:43  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\components\AvailabilityManagement.tsx
+  58:6   error    React Hook useEffect has a missing dependency: 'loadAvailability'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  294:72  error    Missing radix parameter                                                                                              radix
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\components\PricingManagement.tsx
+ 56:6   error    React Hook useEffect has a missing dependency: 'loadPricing'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  305:38  error    Missing radix parameter                                                                                         radix
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\view-booking\all-tabs-content.tsx
+  110:25  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  112:29  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  114:31  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  116:33  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  158:25  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  160:29  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  225:17  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  227:21  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  229:23  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  231:25  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  329:20  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  331:23  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  333:25  error    Do not nest ternary expressions                                                                    no-nested-ternary
+  335:27  error    Do not nest ternary expressions                                                                    no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\view-booking\detail-dialog.tsx
+ 60:20  error    Do not nest ternary expressions                                         no-nested-ternary
+   62:23  error    Do not nest ternary expressions                                         no-nested-ternary
+   64:25  error    Do not nest ternary expressions                                         no-nested-ternary
+   66:27  error    Do not nest ternary expressions                                         no-nested-ternary
+  111:21  error    Do not nest ternary expressions                                         no-nested-ternary
+  113:25  error    Do not nest ternary expressions                                         no-nested-ternary
+  115:27  error    Do not nest ternary expressions                                         no-nested-ternary
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\view-booking\patient-record-data-dialog.tsx
+   126:14  error    Do not nest ternary expressions                                                            no-nested-ternary
+  177:14  error    Do not nest ternary expressions                                                            no-nested-ternary
+  221:14  error    Do not nest ternary expressions                                                            no-nested-ternary
+  299:69  error    Expected property shorthand                                                                object-shorthand
+
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\view-record\view.tsx
+  95:46  error    Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\sections\specialist\view-settings\view.tsx
+ 26:1   error    `src/locale/use-locales` import should occur before import of `../components/PricingManagement`                     import/order
+   55:6   error    React Hook useEffect has a missing dependency: 'loadProfileData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  221:69  error    Missing radix parameter                                                                                             radix
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\canvas-coordinates.ts
+  49:100  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+  59:25   error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\diary-api.ts
+  36:56  error  Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\drawing-metadata.ts
+   28:23  error  Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`  arrow-body-style
+   78:3   error  Unary operator '++' used                                                                                                   no-plusplus
+   85:3   error  Unary operator '++' used                                                                                                   no-plusplus
+   92:3   error  Unary operator '++' used                                                                                                   no-plusplus
+   99:3   error  Unary operator '++' used                                                                                                   no-plusplus
+  114:73  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`                      arrow-body-style
+  121:77  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`                      arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\drawing-serializer.ts
+   31:79  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`                      arrow-body-style
+   42:19  error  Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`  arrow-body-style
+   47:5   error  Expected property shorthand                                                                                                object-shorthand
+   81:5   error  Expected a default case                                                                                                    default-case
+  103:21  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`                      arrow-body-style
+  137:46  error  Unary operator '++' used                                                                                                   no-plusplus
+  155:3   error  Expected a default case                                                                                                    default-case
+  216:26  error  Unary operator '++' used                                                                                                   no-plusplus
+  252:21  error  Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`                      arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\mental-health-api.ts
+  97:69  error  Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`  arrow-body-style
+
+C:\4_Hust\Thesis\soulcare\frontend\src\utils\specialist-api.ts
+  227:53  error  Unexpected string concatenation  prefer-template
+  271:78  error  Unexpected string concatenation  prefer-template
+  290:58  error  Unexpected string concatenation  prefer-template
