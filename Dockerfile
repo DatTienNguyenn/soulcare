@@ -11,13 +11,13 @@ COPY backend/soulcare/.mvn ./.mvn
 COPY backend/soulcare/pom.xml .
 
 # Download dependencies
-RUN mvn dependency:go-offline
+RUN ./mvnw dependency:go-offline
 
 # Copy the rest of your backend source code
 COPY backend/soulcare/src ./src
 
 # Package the application, skipping tests for a faster build
-RUN mvn package -DskipTests
+RUN ./mvnw package -DskipTests
 
 # Stage 2: Create the final, lightweight runtime image
 FROM openjdk:17-jre-slim
