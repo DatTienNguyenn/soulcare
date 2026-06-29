@@ -5,16 +5,20 @@ FROM maven:3.8.5-openjdk-17 AS build
 # Set the working directory inside the container
 WORKDIR /app
 
+# Since the build context is now 'backend/soulcare', the paths are relative to it.
 # Copy the Maven wrapper and pom.xml to leverage Docker's layer caching.
-COPY backend/soulcare/mvnw .
-COPY backend/soulcare/.mvn ./.mvn
-COPY backend/soulcare/pom.xml .
+COPY mvnw .
+COPY .mvn ./.mvn
+COPY pom.xml .
+
+# Grant execute permission to the wrapper script to prevent "Permission Denied" error
+RUN chmod +x ./mvnw
 
 # Download dependencies
 RUN ./mvnw dependency:go-offline
 
 # Copy the rest of your backend source code
-COPY backend/soulcare/src ./src
+COPY src ./src
 
 # Package the application, skipping tests for a faster build
 RUN ./mvnw package -DskipTests
