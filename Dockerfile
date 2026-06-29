@@ -5,9 +5,12 @@ FROM maven:3.8.5-openjdk-17 AS build
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy only the pom.xml to leverage Docker's layer caching.
-# This downloads dependencies only when pom.xml changes.
+# Copy the Maven wrapper and pom.xml to leverage Docker's layer caching.
+COPY backend/soulcare/mvnw .
+COPY backend/soulcare/.mvn ./.mvn
 COPY backend/soulcare/pom.xml .
+
+# Download dependencies
 RUN mvn dependency:go-offline
 
 # Copy the rest of your backend source code
