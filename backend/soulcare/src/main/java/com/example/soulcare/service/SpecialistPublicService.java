@@ -214,10 +214,7 @@ public class SpecialistPublicService {
                 .hourlyRate(hourlyRate)
                 .avatarUrl(user != null ? user.getAvatarUrl() : null)
                 .experience(specialist.getYearsExp() != null ? specialist.getYearsExp() : 0)
-                // .certifications(specializations.isEmpty() ? Arrays.asList("Certified Mental Health Professional") : specializations)
-                // .languages(Arrays.asList("English")) // TODO: add to model
                 .availableHours(availableHours)
-                // .responseTime("Typically responds in 1 hour") // TODO: add to model
                 .specializations(specializations)
                 .build();
     }
@@ -318,6 +315,6 @@ public class SpecialistPublicService {
         LocalDateTime aptStart = apt.getScheduledAt();
         LocalDateTime aptEnd = apt.getScheduledAt().plusMinutes(apt.getDuration() != null ? apt.getDuration() : 60);
         
-        return !(slotEnd.isBefore(aptStart) || slotStart.isAfter(aptEnd));
+        return slotStart.isBefore(aptEnd) && aptStart.isBefore(slotEnd);
     }
 }

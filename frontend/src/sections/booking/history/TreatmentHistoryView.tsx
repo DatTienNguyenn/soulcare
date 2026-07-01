@@ -97,7 +97,6 @@ export default function TreatmentHistoryView() {
   };
 
   const handleSubmitReview = async (rating: number, text: string) => {
-    // TODO: Submit review to backend
     console.log('Review submitted:', { rating, text, appointmentId: selectedBooking?.id });
     setOpenReviewDialog(false);
     setReviewRating(0);

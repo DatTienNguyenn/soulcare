@@ -47,7 +47,7 @@ export default function PricingManagement() {
   const [formData, setFormData] = useState({
     sessionType: '',
     pricePerSession: 0,
-    durationMinutes: 60,
+    durationMinutes: 60, // Duration is fixed
   });
 
   // Load pricing data on component mount
@@ -70,11 +70,11 @@ export default function PricingManagement() {
       setFormData({
         sessionType: pricing.sessionType,
         pricePerSession: pricing.pricePerSession,
-        durationMinutes: pricing.durationMinutes,
+        durationMinutes: 60, // Always 60
       });
     } else {
       setEditingId(null);
-      setFormData({ sessionType: '', pricePerSession: 0, durationMinutes: 60 });
+      setFormData({ sessionType: '', pricePerSession: 0, durationMinutes: 60 }); // Always 60
     }
     setOpenDialog(true);
   };
@@ -280,20 +280,6 @@ export default function PricingManagement() {
               </TextField>
 
               <TextField
-                label={t('specialist.setting.pricing.pricePerSession')}
-                type="number"
-                fullWidth
-                inputProps={{ step: '0.01', min: '0' }}
-                value={formData.pricePerSession}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    pricePerSession: parseFloat(e.target.value),
-                  })
-                }
-              />
-
-              <TextField
                 label={t('specialist.setting.pricing.durationMinutes')}
                 type="number"
                 fullWidth
@@ -303,6 +289,24 @@ export default function PricingManagement() {
                   setFormData({
                     ...formData,
                     durationMinutes: parseInt(e.target.value),
+                  })
+                }
+                disabled={true}
+                InputProps={{
+                  style: { backgroundColor: '#f5f5f5' },
+                }}
+              />
+
+              <TextField
+                label={t('specialist.setting.pricing.pricePerSession')}
+                type="number"
+                fullWidth
+                inputProps={{ step: '0.01', min: '0' }}
+                value={formData.pricePerSession}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    pricePerSession: parseFloat(e.target.value),
                   })
                 }
               />
