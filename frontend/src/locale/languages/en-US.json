@@ -252,7 +252,38 @@
       "notesForSpecialist": "Notes for Specialist",
       "notesPlaceholder": "Share anything you'd like your specialist to know before the session...",
       "saveNotes": "Save Notes",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "pageTitle": "Treatment & Booking History",
+      "pageSubtitle": "View and manage your therapy sessions",
+      "loading": "Loading your booking history...",
+      "summary": {
+        "upcoming": "Upcoming Sessions",
+        "total": "Total Sessions",
+        "completed": "Completed Sessions"
+      },
+      "filters": {
+        "all": "All",
+        "completed": "Completed",
+        "upcoming": "Upcoming"
+      },
+      "table": {
+        "therapist": "Therapist",
+        "type": "Type",
+        "dateTime": "Date & Time",
+        "duration": "Duration",
+        "price": "Price",
+        "status": "Status",
+        "action": "Action",
+        "view": "View",
+        "details": "Details",
+        "cancel": "Cancel"
+      },
+      "cancelDialog": {
+        "title": "Cancel Booking",
+        "description": "Please provide a reason for cancelling this booking. This will be shared with the specialist."
+      },
+      "minutes": "minutes",
+      "therapy": "Therapy"
     },
     "bookingDetails": {
       "title": "Therapy Session Details",
@@ -408,7 +439,8 @@
       "update": "Update",
       "scoringLevels": "Scoring Levels",
       "scoringGuide": "Scoring Guide (JSON format)",
-      "scoringGuideHelper": "Example: {\"Normal\": {\"min\": 0, \"max\": 9}, \"Mild\": {\"min\": 10, \"max\": 13}, \"Moderate\": {\"min\": 14, \"max\": 20}, \"Severe\": {\"min\": 21, \"max\": 27}, \"Very Severe\": {\"min\": 28, \"max\": 42}}"
+      "scoringGuideHelper": "Example: {\"Normal\": {\"min\": 0, \"max\": 9}, \"Mild\": {\"min\": 10, \"max\": 13}, \"Moderate\": {\"min\": 14, \"max\": 20}, \"Severe\": {\"min\": 21, \"max\": 27}, \"Very Severe\": {\"min\": 28, \"max\": 42}}",
+      "noScoringGuide": "Scoring levels not set. Click \"Use Default Levels\" to add the standard 5-level scale (Normal, Mild, Moderate, Severe, Very Severe), or you can customize them later."
     },
     "actions": {
       "edit": "Edit",
@@ -728,5 +760,54 @@
     "answer": "Answer",
     "reject": "Reject",
     "ready": "Ready to make or receive a call"
+  },
+  "patientSettings": {
+    "subtitle": "Manage your personal information and profile settings",
+    "personalProfile": "Personal Profile",
+    "editProfile": "Edit Profile",
+    "changeAvatar": "Change Avatar",
+    "fullName": "Full Name",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "notSpecified": "Not specified",
+    "updateSuccess": "Your profile has been updated successfully!",
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say"
+    }
+  },
+  "reviewDialog": {
+    "title": "Leave a Review",
+    "subtitle": "How was your session?",
+    "feedbackLabel": "Your Feedback",
+    "feedbackPlaceholder": "Share your experience with this therapist...",
+    "submit": "Submit Review"
+  },
+  "sessionDetails": {
+    "title": "Session Details",
+    "adminNote": "Admin note:",
+    "summarizing": "Summarizing...",
+    "summarizeCta": "Summary Diary by AI",
+    "summarizeNote": "By clicking the \"Summary Diary by AI\" button, you allow the system to access your diary entries and generate a summary to help the specialist better understand your circumstances and emotions.",
+    "completedOn": "Session completed on {{date}}",
+    "leaveReview": "Leave Review"
+  },
+  "completedSessions": {
+    "dateTime": "Date & Time",
+    "duration": "Duration",
+    "yourReview": "Your Review",
+    "reviewPlaceholder": "Great session, very helpful with my anxiety concerns.",
+    "price": "Price",
+    "viewDetails": "View Details"
+  },
+  "aiAssistant": {
+    "tooltip": "Talk to AI Assistant",
+    "initialMessage": "Hi there! I'm your Soulcare Companion. How are you feeling today?",
+    "errorMessage": "I'm sorry, I encountered an error. Please try again.",
+    "title": "Soulcare Companion",
+    "privacyTooltip": "AI chat cannot access your personal data. It only uses the context you provide and the conversation history to generate responses.",
+    "placeholder": "Type a message..."
   }
 }

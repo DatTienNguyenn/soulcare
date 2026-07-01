@@ -89,7 +89,7 @@ export function SessionDetailsDialog({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Session Details</DialogTitle>
+      <DialogTitle>{t('sessionDetails.title')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         {booking && (
           <Stack spacing={2.5}>
@@ -123,7 +123,7 @@ export function SessionDetailsDialog({
                   {t('specialist.bookings.dialogs.duration')}
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                  {booking.duration} minutes
+                  {booking.duration} {t('treatment.history.minutes')}
                 </Typography>
               </Grid>
 
@@ -151,7 +151,7 @@ export function SessionDetailsDialog({
             <Box>
               {booking.status === 'reported' && (
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                  Admin note:
+                  {t('sessionDetails.adminNote')}
                 </Typography>
               )}
               {booking.status !== 'reported' && (
@@ -178,16 +178,16 @@ export function SessionDetailsDialog({
                       disabled={isSummarizing}
                       startIcon={isSummarizing ? <CircularProgress size={16} /> : null}
                     >
-                      {isSummarizing ? 'Summarizing...' : 'Summary Diary by AI'}
+                      {isSummarizing
+                        ? t('sessionDetails.summarizing')
+                        : t('sessionDetails.summarizeCta')}
                     </Button>
                   </Box>
                   <Typography
                     variant="caption"
                     sx={{ mt: 1, display: 'block', color: 'text.secondary' }}
                   >
-                    By clicking the "Summary Diary by AI" button, you allow the system to access
-                    your diary entries and generate a summary to help the specialist better
-                    understand your circumstances and emotions.
+                    {t('sessionDetails.summarizeNote')}
                   </Typography>
                 </>
               )}
@@ -195,7 +195,9 @@ export function SessionDetailsDialog({
 
             {booking.status === 'completed' && (
               <Alert severity="success">
-                Session completed on {format(booking.completedAt || new Date(), 'MMM dd, yyyy')}
+                {t('sessionDetails.completedOn', {
+                  date: format(booking.completedAt || new Date(), 'MMM dd, yyyy'),
+                })}
               </Alert>
             )}
           </Stack>
@@ -210,7 +212,7 @@ export function SessionDetailsDialog({
         )}
         {booking?.status === 'completed' && (
           <Button onClick={onReview} variant="contained">
-            Leave Review
+            {t('sessionDetails.leaveReview')}
           </Button>
         )}
       </DialogActions>

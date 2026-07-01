@@ -61,7 +61,6 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Cho phép các nguồn cụ thể (Origin) - React của bạn thường là 3000 hoặc 5173
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:8080", 
             "http://localhost:8081", 

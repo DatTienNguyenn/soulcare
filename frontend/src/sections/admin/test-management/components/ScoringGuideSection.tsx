@@ -81,10 +81,7 @@ export default function ScoringGuideSection({
           ))}
         </Stack>
       ) : (
-        <Alert severity="info">
-          Scoring levels not set. Click "Use Default Levels" to add the standard 5-level scale
-          (Normal, Mild, Moderate, Severe, Very Severe), or you can customize them later.
-        </Alert>
+        <Alert severity="info">{t('testManagement.dialog.noScoringGuide')}</Alert>
       )}
     </Box>
   );

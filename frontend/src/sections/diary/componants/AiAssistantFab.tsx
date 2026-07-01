@@ -13,6 +13,7 @@ import {
 import Iconify from 'src/components/iconify';
 import { chatWithAi, MessageHistory } from 'src/utils/ai-api';
 import Scrollbar from 'src/components/scrollbar';
+import { useLocales } from 'src/locale/use-locales';
 import ReactMarkdown from 'react-markdown';
 
 const Markdown = ReactMarkdown as any;
@@ -23,11 +24,10 @@ type Props = {
 
 export default function AiAssistantFab({ diaryContext }: Props) {
   const [open, setOpen] = useState(false);
+  const { t } = useLocales();
   const [message, setMessage] = useState('');
-  const [history, setHistory] = useState<MessageHistory[]>([
-    { role: 'model', content: "Hi there! I'm your Soulcare Companion. How are you feeling today?" },
-  ]);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<MessageHistory[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -35,6 +35,10 @@ export default function AiAssistantFab({ diaryContext }: Props) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   };
+
+  useEffect(() => {
+    setHistory([{ role: 'model', content: t('aiAssistant.initialMessage') }]);
+  }, [t]);
 
   useEffect(() => {
     if (open) {
@@ -60,19 +64,12 @@ export default function AiAssistantFab({ diaryContext }: Props) {
       const response = await chatWithAi({
         message: userMessage,
         context: diaryContext,
-        history: history.filter(
-          (h) =>
-            h.role !== 'model' ||
-            h.content !== "Hi there! I'm your Soulcare Companion. How are you feeling today?"
-        ),
+        history: history.filter((h) => h.content !== t('aiAssistant.initialMessage')),
       });
 
       setHistory([...newHistory, { role: 'model', content: response.response }]);
     } catch (error) {
-      setHistory([
-        ...newHistory,
-        { role: 'model', content: "I'm sorry, I encountered an error. Please try again." },
-      ]);
+      setHistory([...newHistory, { role: 'model', content: t('aiAssistant.errorMessage') }]);
     } finally {
       setLoading(false);
     }
@@ -80,7 +77,7 @@ export default function AiAssistantFab({ diaryContext }: Props) {
 
   return (
     <>
-      <Tooltip title="Talk to AI Assistant">
+      <Tooltip title={t('aiAssistant.tooltip')}>
         <Fab
           color="primary"
           sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1000 }}
@@ -110,13 +107,9 @@ export default function AiAssistantFab({ diaryContext }: Props) {
             justifyContent="space-between"
             sx={{ p: 2, borderBottom: (theme) => `dashed 1px ${theme.palette.divider}` }}
           >
-            <Tooltip
-              title="AI chat can not access to your personal data. It only uses the context you provide and
-            the conversation history to generate responses."
-              placement="top"
-            >
+            <Tooltip title={t('aiAssistant.privacyTooltip')} placement="top">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="subtitle1">Soulcare Companion</Typography>
+                <Typography variant="subtitle1">{t('aiAssistant.title')}</Typography>
                 <Iconify icon="eva:info-outline" width={16} sx={{ ml: 0.5 }} />
               </Box>
             </Tooltip>
@@ -180,7 +173,7 @@ export default function AiAssistantFab({ diaryContext }: Props) {
               <TextField
                 fullWidth
                 size="small"
-                placeholder="Type a message..."
+                placeholder={t('aiAssistant.placeholder')}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={(e) => {

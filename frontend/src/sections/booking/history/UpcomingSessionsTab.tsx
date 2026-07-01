@@ -1,6 +1,7 @@
 import { Avatar, Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { TherapyBooking } from 'src/type/therapist';
+import { useLocales } from 'src/locale/use-locales';
 
 interface UpcomingSessionsTabProps {
   bookings: TherapyBooking[];
@@ -13,6 +14,7 @@ export function UpcomingSessionsTab({
   onViewDetails,
   onCancel,
 }: UpcomingSessionsTabProps) {
+  const { t } = useLocales();
   const upcomingBookings = bookings.filter((b) => b.status === 'booked');
 
   return (
@@ -32,7 +34,8 @@ export function UpcomingSessionsTab({
               <Box>
                 <Typography variant="h6">{booking.therapistName}</Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} Therapy
+                  {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)}{' '}
+                  {t('treatment.history.therapy')}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
                   <Typography variant="body2">📅 {format(booking.date, 'MMM dd, yyyy')}</Typography>
@@ -45,10 +48,10 @@ export function UpcomingSessionsTab({
             </Stack>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
               <Button variant="outlined" onClick={() => onViewDetails(booking)}>
-                Details
+                {t('treatment.history.table.details')}
               </Button>
               <Button variant="outlined" color="error" onClick={() => onCancel(booking)}>
-                Cancel
+                {t('treatment.history.table.cancel')}
               </Button>
             </Stack>
           </Stack>

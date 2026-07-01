@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { TherapyBooking } from 'src/type/therapist';
+import { useLocales } from 'src/locale/use-locales';
 
 interface AllSessionsTabProps {
   bookings: TherapyBooking[];
@@ -23,6 +24,7 @@ interface AllSessionsTabProps {
 }
 
 export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps) {
+  const { t } = useLocales();
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'booked'>('all');
 
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
@@ -47,9 +49,9 @@ export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps)
     <Stack spacing={2}>
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         {[
-          { label: 'All', value: 'all' as const },
-          { label: 'Completed', value: 'completed' as const },
-          { label: 'Upcoming', value: 'booked' as const },
+          { label: t('treatment.history.filters.all'), value: 'all' as const },
+          { label: t('treatment.history.filters.completed'), value: 'completed' as const },
+          { label: t('treatment.history.filters.upcoming'), value: 'booked' as const },
         ].map((filter) => (
           <Chip
             key={filter.value}
@@ -73,13 +75,13 @@ export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps)
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: 'background.neutral' }}>
-              <TableCell>Therapist</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Date & Time</TableCell>
-              <TableCell>Duration</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell>{t('treatment.history.table.therapist')}</TableCell>
+              <TableCell>{t('treatment.history.table.type')}</TableCell>
+              <TableCell>{t('treatment.history.table.dateTime')}</TableCell>
+              <TableCell>{t('treatment.history.table.duration')}</TableCell>
+              <TableCell>{t('treatment.history.table.price')}</TableCell>
+              <TableCell>{t('treatment.history.table.status')}</TableCell>
+              <TableCell align="right">{t('treatment.history.table.action')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -111,7 +113,9 @@ export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps)
                     </Typography>
                   </Box>
                 </TableCell>
-                <TableCell>{booking.duration} min</TableCell>
+                <TableCell>
+                  {booking.duration} {t('treatment.history.minutes')}
+                </TableCell>
                 <TableCell>
                   <Typography variant="subtitle2" sx={{ color: 'success.main', fontWeight: 600 }}>
                     ${booking.totalPrice}
@@ -127,7 +131,7 @@ export function AllSessionsTab({ bookings, onViewDetails }: AllSessionsTabProps)
                 </TableCell>
                 <TableCell align="right">
                   <Button size="small" onClick={() => onViewDetails(booking)} variant="text">
-                    View
+                    {t('treatment.history.table.view')}
                   </Button>
                 </TableCell>
               </TableRow>

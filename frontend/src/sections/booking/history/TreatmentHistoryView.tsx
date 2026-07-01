@@ -23,6 +23,7 @@ import { ReasonDialog } from 'src/sections/calling/ReasonDialog';
 import { useBookingHistory } from 'src/hooks/use-booking-history';
 import { useTherapyBooking } from 'src/hooks/use-therapy-booking';
 import axios from 'src/utils/axios';
+import { useLocales } from 'src/locale/use-locales';
 
 // -------------------------------------------------------
 
@@ -63,6 +64,7 @@ function convertAppointmentToTherapyBooking(
 }
 
 export default function TreatmentHistoryView() {
+  const { t } = useLocales();
   const [tabValue, setTabValue] = useState(0);
   const [selectedBooking, setSelectedBooking] = useState<TherapyBooking | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -153,7 +155,7 @@ export default function TreatmentHistoryView() {
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack alignItems="center" justifyContent="center" sx={{ minHeight: '400px' }}>
           <CircularProgress />
-          <Typography sx={{ mt: 2 }}>Loading your booking history...</Typography>
+          <Typography sx={{ mt: 2 }}>{t('treatment.history.loading')}</Typography>
         </Stack>
       </Container>
     );
@@ -162,17 +164,17 @@ export default function TreatmentHistoryView() {
   return (
     <>
       <Helmet>
-        <title>Treatment History | SoulCare</title>
+        <title>{t('pages.treatmentHistory.title')} | SoulCare</title>
       </Helmet>
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack spacing={3}>
           <Box>
             <Typography variant="h3" sx={{ mb: 1 }}>
-              Treatment & Booking History
+              {t('treatment.history.pageTitle')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              View and manage your therapy sessions
+              {t('treatment.history.pageSubtitle')}
             </Typography>
           </Box>
 
@@ -188,9 +190,9 @@ export default function TreatmentHistoryView() {
           {/* Tabs */}
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange}>
-              <Tab label="All Sessions" />
-              <Tab label="Completed Sessions" />
-              <Tab label="Upcoming Sessions" />
+              <Tab label={t('treatment.history.filters.all')} />
+              <Tab label={t('treatment.history.filters.completed')} />
+              <Tab label={t('treatment.history.filters.upcoming')} />
             </Tabs>
           </Box>
 
@@ -239,8 +241,8 @@ export default function TreatmentHistoryView() {
         open={openCancelDialog}
         onClose={() => setOpenCancelDialog(false)}
         onSubmit={handleConfirmCancel}
-        title="Cancel Booking"
-        description="Please provide a reason for cancelling this booking. This will be shared with the specialist."
+        title={t('treatment.history.cancelDialog.title')}
+        description={t('treatment.history.cancelDialog.description')}
       />
     </>
   );
