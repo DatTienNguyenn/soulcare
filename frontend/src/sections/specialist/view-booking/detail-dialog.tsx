@@ -125,7 +125,7 @@ export function BookingDetailsDialog({
               </Grid>
             </Grid>
 
-            {selectedBooking.status === 'completed' && selectedBooking.rating && (
+            {selectedBooking.rating && (
               <Box sx={{ p: 2, backgroundColor: 'info.lighter', borderRadius: 1 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                   {t('specialist.bookings.dialogs.patientFeedback')}
@@ -139,7 +139,7 @@ export function BookingDetailsDialog({
         )}
       </DialogContent>
       <DialogActions>
-        {onViewPatientRecords && (
+        {onViewPatientRecords && !selectedBooking.rating && selectedBooking.status === 'booked' && (
           <Button
             onClick={onViewPatientRecords}
             variant="contained"
@@ -150,7 +150,7 @@ export function BookingDetailsDialog({
           </Button>
         )}
         <Button onClick={onClose}>{t('specialist.bookings.dialogs.close')}</Button>
-        {selectedBooking?.status === 'completed' && (
+        {(selectedBooking?.status === 'cancelled' || selectedBooking?.status === 'reported') && (
           <Button onClick={onViewNotes} variant="contained">
             {t('specialist.bookings.dialogs.viewNotes')}
           </Button>

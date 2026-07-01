@@ -208,6 +208,7 @@
       "noTherapists": "Không tìm thấy chuyên gia nào. Thử điều chỉnh bộ lọc của bạn.",
       "availableSlots": "{{count}} khung giờ có sẵn",
       "bookAppointment": "Đặt lịch hẹn",
+      "browseTherapist": "Tìm kiếm chuyên gia",
       "bookingSuccess": "Đặt lịch thành công! Bạn sẽ nhận được email xác nhận.",
       "bookingFailed": "Đặt lịch thất bại. Vui lòng thử lại sau.",
       "available": "Khả dụng",
