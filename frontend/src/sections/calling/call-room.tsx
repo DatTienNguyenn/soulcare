@@ -81,83 +81,10 @@ export default function CallRoom({
         )}
 
         <Card sx={{ p: 3 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-            {/* Status & Connection Panel */}
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                  {t('calling.sessionInfo')}
-                </Typography>
-                <Card variant="outlined" sx={{ p: 2 }}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>
-                      {isSpecialist ? t('calling.patient') : t('calling.specialist')}:
-                    </strong>{' '}
-                    {targetName || t('calling.unknownUser')}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-                    <strong>{t('calling.targetPeerId')}</strong> {remotePeerIdValue}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    <strong>{t('calling.yourPeerId')}</strong> {peerId}
-                  </Typography>
-                </Card>
-                <Typography
-                  variant="caption"
-                  sx={{ color: 'text.secondary', mt: 2, display: 'block' }}
-                >
-                  {t('calling.connectionWarning')}
-                </Typography>
-              </Box>
-
-              {!callActive && (
-                <Box>
-                  <Button
-                    fullWidth
-                    size="large"
-                    variant="contained"
-                    color="primary"
-                    onClick={onCall}
-                    disabled={!remotePeerIdValue || isCalling || !!incomingCall}
-                  >
-                    {isCalling
-                      ? t('calling.calling')
-                      : `${t('calling.startCallWith')} ${targetName || t('calling.unknownUser')}`}
-                  </Button>
-
-                  {isCalling && callStatusMessage && (
-                    <Typography
-                      variant="body2"
-                      sx={{ mt: 2, color: 'text.secondary', display: 'flex', alignItems: 'center' }}
-                    >
-                      <CircularProgress size={16} sx={{ mr: 1 }} />
-                      {callStatusMessage}
-                    </Typography>
-                  )}
-                </Box>
-              )}
-
-              {incomingCall && !callActive && (
-                <Alert severity="info" sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2">
-                    {t('calling.incomingCallFrom')} {targetName || t('calling.unknownUser')}...
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                    <Button variant="contained" color="success" onClick={onAnswerCall} size="small">
-                      {t('calling.answer')}
-                    </Button>
-                    <Button variant="contained" color="error" onClick={onRejectCall} size="small">
-                      {t('calling.reject')}
-                    </Button>
-                  </Stack>
-                </Alert>
-              )}
-            </Stack>
-
+          <Stack direction="column" spacing={3}>
             {/* Video Streams Panel */}
             <Box
               sx={{
-                flex: 2,
                 position: 'relative',
                 bgcolor: 'text.primary',
                 borderRadius: 2,
@@ -170,6 +97,33 @@ export default function CallRoom({
             >
               {!callActive && !isCalling && !incomingCall && (
                 <Typography sx={{ color: 'background.paper' }}>{t('calling.ready')}</Typography>
+              )}
+
+              {/* Incoming Call Alert */}
+              {incomingCall && !callActive && (
+                <Alert
+                  severity="info"
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 10,
+                    maxWidth: 'calc(100% - 32px)',
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ textAlign: 'center' }}>
+                    {t('calling.incomingCallFrom')} {targetName || t('calling.unknownUser')}...
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 1, justifyContent: 'center' }}>
+                    <Button variant="contained" color="success" onClick={onAnswerCall} size="small">
+                      {t('calling.answer')}
+                    </Button>
+                    <Button variant="contained" color="error" onClick={onRejectCall} size="small">
+                      {t('calling.reject')}
+                    </Button>
+                  </Stack>
+                </Alert>
               )}
 
               {/* Remote Video (Main) */}
@@ -263,6 +217,36 @@ export default function CallRoom({
                 </Stack>
               )}
             </Box>
+
+            {/* Status & Connection Panel */}
+            <Stack spacing={2} sx={{ pt: 1 }}>
+              {!callActive && (
+                <Box sx={{ maxWidth: 480, mx: 'auto', width: '100%' }}>
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={onCall}
+                    disabled={!remotePeerIdValue || isCalling || !!incomingCall}
+                  >
+                    {isCalling
+                      ? t('calling.calling')
+                      : `${t('calling.startCallWith')} ${targetName || t('calling.unknownUser')}`}
+                  </Button>
+
+                  {isCalling && callStatusMessage && (
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 2, color: 'text.secondary', display: 'flex', alignItems: 'center' }}
+                    >
+                      <CircularProgress size={16} sx={{ mr: 1 }} />
+                      {callStatusMessage}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </Stack>
           </Stack>
         </Card>
       </Stack>
