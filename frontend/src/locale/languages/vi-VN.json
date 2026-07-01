@@ -247,7 +247,38 @@
       "therapistName": "Tên chuyên gia",
       "treatmentType": "Loại trị liệu",
       "date": "Ngày",
-      "notes": "Ghi chú buổi trị liệu"
+      "notes": "Ghi chú buổi trị liệu",
+      "pageTitle": "Lịch sử Trị liệu & Đặt hẹn",
+      "pageSubtitle": "Xem và quản lý các buổi trị liệu của bạn",
+      "loading": "Đang tải lịch sử đặt hẹn của bạn...",
+      "summary": {
+        "upcoming": "Buổi trị liệu sắp tới",
+        "total": "Tổng số buổi",
+        "completed": "Buổi đã hoàn thành"
+      },
+      "filters": {
+        "all": "Tất cả",
+        "completed": "Đã hoàn thành",
+        "upcoming": "Sắp tới"
+      },
+      "table": {
+        "therapist": "Chuyên gia",
+        "type": "Loại",
+        "dateTime": "Ngày & Giờ",
+        "duration": "Thời lượng",
+        "price": "Giá",
+        "status": "Trạng thái",
+        "action": "Hành động",
+        "view": "Xem",
+        "details": "Chi tiết",
+        "cancel": "Hủy"
+      },
+      "cancelDialog": {
+        "title": "Hủy Đặt hẹn",
+        "description": "Vui lòng cung cấp lý do hủy đặt hẹn này. Thông tin sẽ được chia sẻ với chuyên gia."
+      },
+      "minutes": "phút",
+      "therapy": "Trị liệu"
     },
     "bookingDetails": {
       "title": "Chi tiết Buổi trị liệu",
@@ -404,7 +435,8 @@
       "update": "Cập Nhật",
       "scoringLevels": "Cấp độ điểm",
       "scoringGuide": "Bảng điểm (định dạng JSON)",
-      "scoringGuideHelper": "Ví dụ: {\"Bình thường\": {\"min\": 0, \"max\": 9}, \"Nhẹ\": {\"min\": 10, \"max\": 13}, \"Trung bình\": {\"min\": 14, \"max\": 20}, \"Nặng\": {\"min\": 21, \"max\": 27}, \"Rất nặng\": {\"min\": 28, \"max\": 42}}"
+      "scoringGuideHelper": "Ví dụ: {\"Bình thường\": {\"min\": 0, \"max\": 9}, \"Nhẹ\": {\"min\": 10, \"max\": 13}, \"Trung bình\": {\"min\": 14, \"max\": 20}, \"Nặng\": {\"min\": 21, \"max\": 27}, \"Rất nặng\": {\"min\": 28, \"max\": 42}}",
+      "noScoringGuide": "Chưa đặt cấp độ điểm. Nhấp \"Sử dụng Cấp độ Mặc định\" để thêm thang điểm 5 cấp tiêu chuẩn (Bình thường, Nhẹ, Trung bình, Nặng, Rất nặng), hoặc bạn có thể tùy chỉnh chúng sau."
     },
     "actions": {
       "edit": "Chỉnh sửa",
@@ -724,5 +756,54 @@
     "answer": "Trả lời",
     "reject": "Từ chối",
     "ready": "Sẵn sàng thực hiện hoặc nhận cuộc gọi"
+  },
+  "patientSettings": {
+    "subtitle": "Quản lý thông tin cá nhân và cài đặt hồ sơ",
+    "personalProfile": "Hồ sơ cá nhân",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "changeAvatar": "Thay đổi ảnh đại diện",
+    "fullName": "Tên đầy đủ",
+    "dateOfBirth": "Ngày sinh",
+    "gender": "Giới tính",
+    "notSpecified": "Không được chỉ định",
+    "updateSuccess": "Hồ sơ của bạn đã được cập nhật thành công!",
+    "genders": {
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác",
+      "preferNotToSay": "Ưu tiên không nói"
+    }
+  },
+  "reviewDialog": {
+    "title": "Để lại đánh giá",
+    "subtitle": "Buổi trị liệu của bạn thế nào?",
+    "feedbackLabel": "Phản hồi của bạn",
+    "feedbackPlaceholder": "Chia sẻ trải nghiệm của bạn với chuyên gia này...",
+    "submit": "Gửi đánh giá"
+  },
+  "sessionDetails": {
+    "title": "Chi tiết Buổi trị liệu",
+    "adminNote": "Ghi chú của quản trị viên:",
+    "summarizing": "Đang tóm tắt...",
+    "summarizeCta": "Tóm tắt Nhật ký bằng AI",
+    "summarizeNote": "Bằng cách nhấp vào nút \"Tóm tắt Nhật ký bằng AI\", bạn cho phép hệ thống truy cập các mục nhật ký của mình và tạo một bản tóm tắt để giúp chuyên gia hiểu rõ hơn về hoàn cảnh và cảm xúc của bạn.",
+    "completedOn": "Buổi trị liệu đã hoàn thành vào {{date}}",
+    "leaveReview": "Để lại đánh giá"
+  },
+  "completedSessions": {
+    "dateTime": "Ngày & Giờ",
+    "duration": "Thời lượng",
+    "yourReview": "Đánh giá của bạn",
+    "reviewPlaceholder": "Buổi trị liệu tuyệt vời, rất hữu ích với những lo lắng của tôi.",
+    "price": "Giá",
+    "viewDetails": "Xem chi tiết"
+  },
+  "aiAssistant": {
+    "tooltip": "Trò chuyện với Trợ lý AI",
+    "initialMessage": "Chào bạn! Tôi là Soulcare Companion của bạn. Hôm nay bạn cảm thấy thế nào?",
+    "errorMessage": "Xin lỗi, tôi đã gặp lỗi. Vui lòng thử lại.",
+    "title": "Soulcare Companion",
+    "privacyTooltip": "Trò chuyện AI không thể truy cập dữ liệu cá nhân của bạn. Nó chỉ sử dụng ngữ cảnh bạn cung cấp và lịch sử cuộc trò chuyện để tạo phản hồi.",
+    "placeholder": "Nhập tin nhắn..."
   }
 }

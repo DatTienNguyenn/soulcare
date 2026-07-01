@@ -19,16 +19,10 @@ import { Save as SaveIcon } from 'lucide-react';
 import { usePatientProfile } from 'src/hooks/use-patient-profile';
 import { useLocales } from 'src/locale/use-locales';
 
-const GENDER_OPTIONS = [
-  { value: 'MALE', label: 'Male' },
-  { value: 'FEMALE', label: 'Female' },
-  { value: 'OTHER', label: 'Other' },
-  { value: 'PREFER_NOT_TO_SAY', label: 'Prefer not to say' },
-];
-
 export default function UserSettingView() {
   const { loading: apiLoading, error: apiError, fetchProfile, updateProfile } = usePatientProfile();
 
+  const { t } = useLocales();
   const [profileData, setProfileData] = useState({
     fullName: '',
     dateOfBirth: '',
@@ -40,7 +34,13 @@ export default function UserSettingView() {
   const [editData, setEditData] = useState(profileData);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const { t } = useLocales();
+
+  const GENDER_OPTIONS = [
+    { value: 'MALE', label: t('patientSettings.genders.male') },
+    { value: 'FEMALE', label: t('patientSettings.genders.female') },
+    { value: 'OTHER', label: t('patientSettings.genders.other') },
+    { value: 'PREFER_NOT_TO_SAY', label: t('patientSettings.genders.preferNotToSay') },
+  ];
 
   useEffect(() => {
     loadProfileData();
@@ -125,15 +125,13 @@ export default function UserSettingView() {
             {t('pages.settings.title')}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            Manage your personal information and profile settings
+            {t('patientSettings.subtitle')}
           </Typography>
         </Box>
 
         {loadError && <Alert severity="error">{loadError}</Alert>}
         {apiError && <Alert severity="error">{apiError}</Alert>}
-        {saveSuccess && (
-          <Alert severity="success">Your profile has been updated successfully!</Alert>
-        )}
+        {saveSuccess && <Alert severity="success">{t('patientSettings.updateSuccess')}</Alert>}
 
         {apiLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
@@ -142,11 +140,11 @@ export default function UserSettingView() {
         ) : (
           <Card>
             <CardHeader
-              title="Personal Profile"
+              title={t('patientSettings.personalProfile')}
               action={
                 !isEditing && (
                   <Button variant="outlined" onClick={handleEditClick}>
-                    {t('common.edit')} Profile
+                    {t('patientSettings.editProfile')}
                   </Button>
                 )
               }
@@ -161,7 +159,7 @@ export default function UserSettingView() {
                     />
                     {isEditing && (
                       <Button variant="outlined" size="small" component="label">
-                        Change Avatar
+                        {t('patientSettings.changeAvatar')}
                         <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
                       </Button>
                     )}
@@ -173,13 +171,13 @@ export default function UserSettingView() {
                     {isEditing ? (
                       <>
                         <TextField
-                          label="Full Name"
+                          label={t('patientSettings.fullName')}
                           fullWidth
                           value={editData.fullName}
                           onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
                         />
                         <TextField
-                          label="Date of Birth"
+                          label={t('patientSettings.dateOfBirth')}
                           type="date"
                           fullWidth
                           value={editData.dateOfBirth}
@@ -192,7 +190,7 @@ export default function UserSettingView() {
                         />
                         <TextField
                           select
-                          label="Gender"
+                          label={t('patientSettings.gender')}
                           fullWidth
                           value={editData.gender}
                           onChange={(e) => setEditData({ ...editData, gender: e.target.value })}
@@ -225,28 +223,28 @@ export default function UserSettingView() {
                       <>
                         <Box>
                           <Typography variant="subtitle2" color="textSecondary">
-                            Full Name
+                            {t('patientSettings.fullName')}
                           </Typography>
                           <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {profileData.fullName || 'Not specified'}
+                            {profileData.fullName || t('patientSettings.notSpecified')}
                           </Typography>
                         </Box>
                         <Box>
                           <Typography variant="subtitle2" color="textSecondary">
-                            Date of Birth
+                            {t('patientSettings.dateOfBirth')}
                           </Typography>
                           <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {profileData.dateOfBirth || 'Not specified'}
+                            {profileData.dateOfBirth || t('patientSettings.notSpecified')}
                           </Typography>
                         </Box>
                         <Box>
                           <Typography variant="subtitle2" color="textSecondary">
-                            Gender
+                            {t('patientSettings.gender')}
                           </Typography>
                           <Typography variant="body1" sx={{ fontWeight: 500 }}>
                             {GENDER_OPTIONS.find((g) => g.value === profileData.gender)?.label ||
                               profileData.gender ||
-                              'Not specified'}
+                              t('patientSettings.notSpecified')}
                           </Typography>
                         </Box>
                       </>

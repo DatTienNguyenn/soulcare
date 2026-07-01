@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { TherapyBooking } from 'src/type/therapist';
+import { useLocales } from 'src/locale/use-locales';
 
 interface CompletedSessionsTabProps {
   bookings: TherapyBooking[];
@@ -18,6 +19,7 @@ interface CompletedSessionsTabProps {
 }
 
 export function CompletedSessionsTab({ bookings, onViewDetails }: CompletedSessionsTabProps) {
+  const { t } = useLocales();
   const completedBookings = bookings.filter((b) => b.status === 'completed');
 
   return (
@@ -45,7 +47,7 @@ export function CompletedSessionsTab({ bookings, onViewDetails }: CompletedSessi
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Date & Time
+                    {t('completedSessions.dateTime')}
                   </Typography>
                   <Typography variant="body1">
                     {format(booking.date, 'MMM dd, yyyy')} at {booking.startTime}
@@ -54,24 +56,26 @@ export function CompletedSessionsTab({ bookings, onViewDetails }: CompletedSessi
 
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Duration
+                    {t('completedSessions.duration')}
                   </Typography>
-                  <Typography variant="body1">{booking.duration} minutes</Typography>
+                  <Typography variant="body1">
+                    {booking.duration} {t('treatment.history.minutes')}
+                  </Typography>
                 </Box>
 
                 <Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Your Review
+                    {t('completedSessions.yourReview')}
                   </Typography>
                   <Rating value={3.5} readOnly size="small" />
                   <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                    Great session, very helpful with my anxiety concerns.
+                    {t('completedSessions.reviewPlaceholder')}
                   </Typography>
                 </Box>
 
                 <Box sx={{ pt: 1 }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Price
+                    {t('completedSessions.price')}
                   </Typography>
                   <Typography variant="h6" sx={{ color: 'success.main' }}>
                     ${booking.totalPrice}
@@ -81,7 +85,7 @@ export function CompletedSessionsTab({ bookings, onViewDetails }: CompletedSessi
             </CardContent>
             <Box sx={{ p: 2, pt: 0 }}>
               <Button fullWidth variant="outlined" onClick={() => onViewDetails(booking)}>
-                View Details
+                {t('completedSessions.viewDetails')}
               </Button>
             </Box>
           </Card>

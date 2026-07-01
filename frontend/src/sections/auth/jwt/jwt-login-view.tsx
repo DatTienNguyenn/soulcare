@@ -60,9 +60,9 @@ export default function JwtLoginView() {
   });
 
   const defaultValues = {
-    email: 'dn841746@gmail.com',
-    password: 'Dat@12345',
-    role: 'PATIENT',
+    email: '',
+    password: '',
+    role: '',
   };
 
   const methods = useForm({

@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useLocales } from 'src/locale/use-locales';
 
 interface ReviewDialogProps {
   open: boolean;
@@ -30,14 +31,15 @@ export function ReviewDialog({
   text,
   onTextChange,
 }: ReviewDialogProps) {
+  const { t } = useLocales();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Leave a Review</DialogTitle>
+      <DialogTitle>{t('reviewDialog.title')}</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
           <Box>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              How was your session?
+              {t('reviewDialog.subtitle')}
             </Typography>
             <Rating
               value={rating}
@@ -48,24 +50,24 @@ export function ReviewDialog({
             />
           </Box>
           <TextField
-            label="Your Feedback"
+            label={t('reviewDialog.feedbackLabel')}
             multiline
             rows={4}
             value={text}
             onChange={(e) => onTextChange(e.target.value)}
-            placeholder="Share your experience with this therapist..."
+            placeholder={t('reviewDialog.feedbackPlaceholder')}
           />
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{t('common.cancel')}</Button>
         <Button
           onClick={() => {
             onSubmit(rating, text);
           }}
           variant="contained"
         >
-          Submit Review
+          {t('reviewDialog.submit')}
         </Button>
       </DialogActions>
     </Dialog>
