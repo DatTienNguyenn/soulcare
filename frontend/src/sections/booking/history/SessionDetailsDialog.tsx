@@ -85,7 +85,18 @@ export function SessionDetailsDialog({
     }
   };
 
-  const isEditable = booking?.status === 'booked';
+  const isSessionFinished = () => {
+    if (!booking || !booking.date || !booking.endTime) {
+      return false;
+    }
+    const [endHour, endMinute] = booking.endTime.split(':').map(Number);
+    const sessionEndDate = new Date(booking.date);
+    sessionEndDate.setHours(endHour, endMinute, 0, 0);
+
+    return new Date() > sessionEndDate;
+  };
+
+  const isEditable = booking?.status === 'booked' && isSessionFinished() === false;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -210,7 +221,7 @@ export function SessionDetailsDialog({
             {isSaving ? t('treatment.history.saving') : t('treatment.history.saveNotes')}
           </Button>
         )}
-        {booking?.status === 'completed' && (
+        {booking?.status === 'booked' && isSessionFinished() && (
           <Button onClick={onReview} variant="contained">
             {t('sessionDetails.leaveReview')}
           </Button>
