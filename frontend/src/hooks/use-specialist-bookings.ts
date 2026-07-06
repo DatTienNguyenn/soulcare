@@ -116,7 +116,7 @@ export function useSpecialistBookings() {
       cancelledCount: bookings.filter((b) => b.status === 'cancelled').length,
       reportedCount: bookings.filter((b) => b.status === 'reported').length,
       totalRevenue: bookings
-        .filter((b) => b.status !== 'cancelled')
+        .filter((b) => b.status !== 'cancelled' && b.status !== 'reported')
         .reduce((sum, b) => sum + b.totalPrice, 0),
       averageRating:
         bookings.filter((b) => b.rating).length > 0

@@ -520,6 +520,7 @@
     "recordSession": "Record Session",
     "sessionRecording": "Session Recording",
     "recordTitle": "Electronic Health Records",
+    "recordDescription": "Manage and update patient health records for confirmed therapy sessions",
     "patientName": "Patient Name",
     "writeRecord": "Write Record",
     "setting": {
@@ -730,6 +731,7 @@
     "treatmentPlanPlaceholder": "Enter treatment plan...",
     "submitRecord": "Submit Record",
     "selectSession": "Select a Session to Call",
+    "selectSessionDescription": "Please select a pending session to proceed with the call, report, or cancel.",
     "noSessions": "No upcoming sessions available.",
     "unknownUser": "Unknown User",
     "session": "Session",

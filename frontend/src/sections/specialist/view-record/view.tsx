@@ -82,6 +82,9 @@ export default function SpecialistEHRView() {
     <Container maxWidth="lg">
       <Stack spacing={3}>
         <Typography variant="h4">{t('specialist.recordTitle')}</Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {t('specialist.recordDescription')}
+        </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>

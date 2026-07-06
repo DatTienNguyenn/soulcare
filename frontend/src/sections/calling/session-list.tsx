@@ -44,6 +44,9 @@ export default function SessionList({
     <Container maxWidth="lg">
       <Stack spacing={3}>
         <Typography variant="h4">{t('calling.selectSession')}</Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {t('calling.selectSessionDescription')}
+        </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>

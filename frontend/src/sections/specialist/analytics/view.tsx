@@ -136,7 +136,9 @@ export default function SpecialistAnalyticsView() {
             existing.totalRating += booking.rating;
             existing.ratedCount += 1;
           }
-          existing.totalSpent += booking.totalPrice;
+          if (booking?.status !== 'cancelled' && booking?.status !== 'reported') {
+            existing.totalSpent += booking.totalPrice;
+          }
           existing.averageRating =
             existing.ratedCount > 0 ? existing.totalRating / existing.ratedCount : 0;
         } else {

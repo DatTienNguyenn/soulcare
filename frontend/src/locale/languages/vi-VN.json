@@ -517,6 +517,7 @@
     "recordSession": "Ghi chép phiên trị liệu",
     "sessionRecording": "Đang ghi chép phiên trị liệu...",
     "recordTitle": "Ghi chép hồ sơ phiên trị liệu",
+    "recordDescription": "Quản lý và cập nhật hồ sơ sức khỏe của bệnh nhân cho các phiên trị liệu đã được bệnh nhân xác nhận hoàn thành",
     "patientName": "Tên bệnh nhân",
     "writeRecord": "Ghi chép hồ sơ",
     "setting": {
@@ -727,6 +728,7 @@
     "treatmentPlanPlaceholder": "Nhập kế hoạch điều trị...",
     "submitRecord": "Gửi hồ sơ",
     "selectSession": "Chọn một phiên để gọi",
+    "selectSessionDescription": "Vui lòng chọn một phiên đã được đặt để tiếp tục cuộc gọi, báo cáo hoặc hủy.",
     "noSessions": "Không có phiên nào sắp tới.",
     "unknownUser": "Người dùng không xác định",
     "session": "Phiên",

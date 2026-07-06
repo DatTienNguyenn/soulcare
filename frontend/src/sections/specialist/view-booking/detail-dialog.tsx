@@ -89,7 +89,7 @@ export function BookingDetailsDialog({
                   {t('specialist.bookings.dialogs.duration')}
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                  {selectedBooking.duration} minutes
+                  {selectedBooking.duration} {t('treatment.history.minutes')}
                 </Typography>
               </Grid>
 
@@ -139,16 +139,18 @@ export function BookingDetailsDialog({
         )}
       </DialogContent>
       <DialogActions>
-        {onViewPatientRecords && !selectedBooking.rating && selectedBooking.status === 'booked' && (
-          <Button
-            onClick={onViewPatientRecords}
-            variant="contained"
-            color="primary"
-            sx={{ mr: 'auto' }}
-          >
-            {t('specialist.bookings.dialogs.viewPatientRecords') || 'View Patient Records'}
-          </Button>
-        )}
+        {onViewPatientRecords &&
+          !selectedBooking?.rating &&
+          selectedBooking?.status === 'booked' && (
+            <Button
+              onClick={onViewPatientRecords}
+              variant="contained"
+              color="primary"
+              sx={{ mr: 'auto' }}
+            >
+              {t('specialist.bookings.dialogs.viewPatientRecords') || 'View Patient Records'}
+            </Button>
+          )}
         <Button onClick={onClose}>{t('specialist.bookings.dialogs.close')}</Button>
         {(selectedBooking?.status === 'cancelled' || selectedBooking?.status === 'reported') && (
           <Button onClick={onViewNotes} variant="contained">
