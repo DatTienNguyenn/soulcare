@@ -50,6 +50,14 @@ public class AppointmentService {
                 .status(AppointmentStatus.PENDING)
                 .build();
 
+        // Check if appointment time is available for the booking
+        List<Appointment> existingAppointments = appointmentRepository
+                .findBySpecialistIdAndScheduledAt(request.getSpecialistId(), request.getScheduledAt());
+        if (!existingAppointments.isEmpty()) {
+            appointment.setStatus(AppointmentStatus.CANCELLED);
+            appointment.setCancelledReason("Time slot already booked");
+        }
+
         Appointment savedAppointment = appointmentRepository.save(appointment);
         return mapToResponse(savedAppointment, patient, specialist);
     }

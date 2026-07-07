@@ -59,4 +59,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             @Param("status") AppointmentStatus status,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+
+        // Find appointments for a specialist at a specific time
+        List<Appointment> findBySpecialistIdAndScheduledAt(UUID specialistId, LocalDateTime scheduledAt);
 }
