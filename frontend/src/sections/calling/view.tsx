@@ -191,9 +191,15 @@ export default function CallingView() {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
+
+          { urls: 'stun:openrelay.metered.ca:80' },
           {
-            urls: 'stun:stun.relay.metered.ca:80',
+            urls: 'turn:openrelay.metered.ca:80',
+            username: 'openrelayproject',
+            credential: 'openrelayproject',
           },
+
+          { urls: 'stun:stun.relay.metered.ca:80' },
           {
             urls: 'turn:global.relay.metered.ca:80',
             username: 'd74c570ded24965293eada86',
