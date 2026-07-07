@@ -186,7 +186,14 @@ export default function CallingView() {
     setRemotePeerIdValue(targetId);
 
     // Initialize PeerJS with the deterministic ID
-    const peer = new Peer(myId);
+    const peer = new Peer(myId, {
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+        ],
+      },
+    });
 
     peer.on('open', (id) => {
       setPeerId(id);
