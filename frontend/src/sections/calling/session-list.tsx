@@ -11,6 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { useLocales } from 'src/locale/use-locales';
 import { AppointmentResponse } from 'src/utils/specialist-api';
+import Iconify from 'src/components/iconify/iconify';
 
 interface SessionListProps {
   appointments: AppointmentResponse[];
@@ -23,6 +24,7 @@ interface SessionListProps {
   onWriteRecord?: (booking: AppointmentResponse) => void;
   onCancelSession?: (booking: AppointmentResponse) => void;
   onReportSession?: (booking: AppointmentResponse) => void;
+  onReload: () => void;
 }
 
 export default function SessionList({
@@ -36,6 +38,7 @@ export default function SessionList({
   onWriteRecord,
   onCancelSession,
   onReportSession,
+  onReload,
 }: SessionListProps) {
   const { t } = useLocales();
   const upcomingBookings = appointments.filter((b) => b.status === 'PENDING');
@@ -43,10 +46,18 @@ export default function SessionList({
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
-        <Typography variant="h4">{t('calling.selectSession')}</Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {t('calling.selectSessionDescription')}
-        </Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="h4">{t('calling.selectSession')}</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {t('calling.selectSessionDescription')}
+            </Typography>
+          </Box>
+          <Button variant="outlined" onClick={onReload} sx={{ height: '40px' }}>
+            <Iconify icon="eva:refresh-fill" sx={{ mr: 1 }} />
+            {t('common.reload')}
+          </Button>
+        </Stack>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>

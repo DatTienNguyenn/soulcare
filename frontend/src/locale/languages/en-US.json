@@ -32,7 +32,8 @@
     "search": "Search",
     "filter": "Filter",
     "noData": "No data available",
-    "create": "Create"
+    "create": "Create",
+    "reload": "Reload"
   },
   "language": {
     "title": "Language",

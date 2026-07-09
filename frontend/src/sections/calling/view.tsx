@@ -147,29 +147,29 @@ export default function CallingView() {
     [handleEndCall]
   );
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        let data: AppointmentResponse[] = [];
-        if (isSpecialist) {
-          data = await getSpecialistAppointments();
-        } else {
-          data = await getPatientAppointments();
-        }
-        setAppointments(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch appointments');
-      } finally {
-        setLoading(false);
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      let data: AppointmentResponse[] = [];
+      if (isSpecialist) {
+        data = await getSpecialistAppointments();
+      } else {
+        data = await getPatientAppointments();
       }
-    };
+      setAppointments(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch appointments');
+    } finally {
+      setLoading(false);
+    }
+  }, [isSpecialist]);
 
+  useEffect(() => {
     if (user) {
       fetchAppointments();
     }
-  }, [user, isSpecialist]);
+  }, [user, fetchAppointments]);
 
   useEffect(() => {
     if (!selectedBooking) return;
@@ -472,6 +472,7 @@ export default function CallingView() {
           onWriteRecord={handleOpenRecordDialog}
           onCancelSession={handleCancelSession}
           onReportSession={handleReportSession}
+          onReload={fetchAppointments}
         />
 
         <ReviewDialog

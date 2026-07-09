@@ -8,6 +8,7 @@ import {
   Tabs,
   Alert,
   CircularProgress,
+  Button,
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 
@@ -24,6 +25,7 @@ import { useBookingHistory } from 'src/hooks/use-booking-history';
 import { useTherapyBooking } from 'src/hooks/use-therapy-booking';
 import axios from 'src/utils/axios';
 import { useLocales } from 'src/locale/use-locales';
+import Iconify from 'src/components/iconify/iconify';
 
 // -------------------------------------------------------
 
@@ -131,6 +133,10 @@ export default function TreatmentHistoryView() {
     }
   };
 
+  const handleReload = () => {
+    fetchAppointments();
+  };
+
   const handleSaveNotes = async (notes: string) => {
     if (!selectedBooking) return;
 
@@ -178,14 +184,20 @@ export default function TreatmentHistoryView() {
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack spacing={3}>
-          <Box>
-            <Typography variant="h3" sx={{ mb: 1 }}>
-              {t('treatment.history.pageTitle')}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {t('treatment.history.pageSubtitle')}
-            </Typography>
-          </Box>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <Typography variant="h3" sx={{ mb: 1 }}>
+                {t('treatment.history.pageTitle')}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {t('treatment.history.pageSubtitle')}
+              </Typography>
+            </Box>
+            <Button variant="outlined" onClick={handleReload} sx={{ height: '40px' }}>
+              <Iconify icon="eva:refresh-fill" sx={{ mr: 1 }} />
+              {t('common.reload')}
+            </Button>
+          </Stack>
 
           {error && (
             <Alert severity="error" onClose={() => {}}>

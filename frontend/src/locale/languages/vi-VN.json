@@ -32,7 +32,8 @@
     "search": "Tìm kiếm",
     "filter": "Lọc",
     "noData": "Không có dữ liệu",
-    "create": "Tạo mới"
+    "create": "Tạo mới",
+    "reload": "Làm mới"
   },
   "language": {
     "title": "Ngôn ngữ",

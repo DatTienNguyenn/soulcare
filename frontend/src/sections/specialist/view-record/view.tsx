@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 
 import Box from '@mui/material/Box';
@@ -17,6 +17,7 @@ import {
 } from 'src/utils/specialist-api';
 import { RecordDialog } from 'src/sections/calling/RecordDialog';
 import { useLocales } from 'src/locale/use-locales';
+import Iconify from 'src/components/iconify';
 
 export default function SpecialistEHRView() {
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
@@ -30,22 +31,22 @@ export default function SpecialistEHRView() {
   const [diagnosis, setDiagnosis] = useState('');
   const [treatmentPlan, setTreatmentPlan] = useState('');
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getSpecialistAppointments();
-        setAppointments(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch appointments');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAppointments();
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getSpecialistAppointments();
+      setAppointments(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch appointments');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
 
   const confirmedBookings = appointments.filter(
     (b) => b.status === 'CONFIRMED' && b.cancelledReason !== 'EHR submitted'
@@ -56,6 +57,10 @@ export default function SpecialistEHRView() {
     setRecordDialogOpen(true);
     setDiagnosis('');
     setTreatmentPlan('');
+  };
+
+  const handleReload = () => {
+    fetchAppointments();
   };
 
   const handleCloseRecordDialog = () => {
@@ -83,10 +88,18 @@ export default function SpecialistEHRView() {
   return (
     <Container maxWidth="lg">
       <Stack spacing={3}>
-        <Typography variant="h4">{t('specialist.recordTitle')}</Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {t('specialist.recordDescription')}
-        </Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="h4">{t('specialist.recordTitle')}</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {t('specialist.recordDescription')}
+            </Typography>
+          </Box>
+          <Button variant="outlined" onClick={handleReload} sx={{ height: '40px' }}>
+            <Iconify icon="eva:refresh-fill" sx={{ mr: 1 }} />
+            {t('common.reload')}
+          </Button>
+        </Stack>
         {error && <Alert severity="error">{error}</Alert>}
         {loading && (
           <Box display="flex" justifyContent="center" my={5}>

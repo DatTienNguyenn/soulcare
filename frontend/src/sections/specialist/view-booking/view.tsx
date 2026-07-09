@@ -8,6 +8,7 @@ import {
   Tabs,
   CircularProgress,
   Alert,
+  Button,
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 
@@ -29,6 +30,7 @@ import {
 import { NotesDialog } from './note-detail';
 import { PatientRecordDataDialog } from './patient-record-data-dialog';
 import { BookingDetailsDialog } from './detail-dialog';
+import Iconify from 'src/components/iconify/iconify';
 
 // -------------------------------------------------------
 
@@ -51,7 +53,8 @@ export default function SpecialistBookingView() {
   const [loadingTestResults, setLoadingTestResults] = useState(false);
 
   // Use the specialist bookings hook
-  const { bookings, loading, error, getBookingsByStatus, getStatistics } = useSpecialistBookings();
+  const { bookings, loading, error, getBookingsByStatus, getStatistics, fetchBookings } =
+    useSpecialistBookings();
   const { t } = useLocales();
 
   const stats = getStatistics();
@@ -81,6 +84,10 @@ export default function SpecialistBookingView() {
   const handleSaveNote = () => {
     setOpenNoteDialog(false);
     setNoteText('');
+  };
+
+  const handleReload = () => {
+    fetchBookings();
   };
 
   const handleViewPatientRecords = async () => {
@@ -158,14 +165,20 @@ export default function SpecialistBookingView() {
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Stack spacing={3}>
-          <Box>
-            <Typography variant="h3" sx={{ mb: 1 }}>
-              {t('specialist.bookings.title')}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {t('specialist.bookings.description')}
-            </Typography>
-          </Box>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <Typography variant="h3" sx={{ mb: 1 }}>
+                {t('specialist.bookings.title')}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {t('specialist.bookings.description')}
+              </Typography>
+            </Box>
+            <Button variant="outlined" onClick={handleReload} sx={{ height: '40px' }}>
+              <Iconify icon="eva:refresh-fill" sx={{ mr: 1 }} />
+              {t('common.reload')}
+            </Button>
+          </Stack>
 
           {error && <Alert severity="error">{error}</Alert>}
 
