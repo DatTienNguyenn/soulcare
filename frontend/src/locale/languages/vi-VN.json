@@ -622,7 +622,8 @@
       "status": {
         "completed": "Đã hoàn thành",
         "booked": "Đã đặt",
-        "cancelled": "Đã hủy"
+        "cancelled": "Đã hủy",
+        "report": "Đã báo cáo"
       },
       "chartLabels": {
         "bookings": "Lượt đặt lịch",

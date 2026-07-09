@@ -113,10 +113,17 @@ export function useSpecialistBookings() {
   const getStatistics = useCallback(
     () => ({
       totalBookings: bookings.length,
-      completedCount: bookings.filter((b) => b.status === 'completed').length,
-      upcomingCount: bookings.filter((b) => b.status === 'booked').length,
+      completedCount: bookings.filter(
+        (b) => b?.cancelledReason === 'EHR submitted' || b?.status === 'completed'
+      ).length,
       cancelledCount: bookings.filter((b) => b.status === 'cancelled').length,
       reportedCount: bookings.filter((b) => b.status === 'reported').length,
+      upcomingCount:
+        bookings.length -
+        bookings.filter((b) => b?.cancelledReason === 'EHR submitted' || b.status === 'completed')
+          .length -
+        bookings.filter((b) => b.status === 'cancelled').length -
+        bookings.filter((b) => b.status === 'reported').length,
       totalRevenue: bookings
         .filter((b) => b.status !== 'cancelled' && b.status !== 'reported')
         .reduce((sum, b) => sum + b.totalPrice, 0),

@@ -625,7 +625,8 @@
       "status": {
         "completed": "Completed",
         "booked": "Booked",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "report": "Reported"
       },
       "chartLabels": {
         "bookings": "Bookings",

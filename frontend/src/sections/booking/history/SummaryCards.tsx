@@ -8,7 +8,9 @@ interface SummaryCardsProps {
 export function SummaryCards({ bookings }: SummaryCardsProps) {
   const completed = bookings.filter((b) => b.status === 'completed').length;
   const upcoming = bookings.filter((b) => b.status === 'booked').length;
-  const totalSpent = bookings.reduce((sum, b) => sum + b.totalPrice, 0);
+  const totalSpent = bookings
+    .filter((b) => b.status !== 'cancelled' && b.status !== 'reported')
+    .reduce((sum, b) => sum + b.totalPrice, 0);
 
   const stats = [
     {

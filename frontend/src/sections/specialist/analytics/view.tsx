@@ -65,18 +65,30 @@ export default function SpecialistAnalyticsView() {
     return [
       {
         name: t('specialist.analytics.status.completed'),
-        value: bookings.filter((b) => b.status === 'completed').length,
+        value: bookings.filter(
+          (b) => b?.cancelledReason === 'EHR submitted' || b.status === 'completed'
+        ).length,
         color: '#00C49F',
       },
       {
         name: t('specialist.analytics.status.booked'),
-        value: bookings.filter((b) => b.status === 'booked').length,
+        value:
+          bookings.length -
+          bookings.filter((b) => b?.cancelledReason === 'EHR submitted' || b.status === 'completed')
+            .length -
+          bookings.filter((b) => b.status === 'cancelled').length -
+          bookings.filter((b) => b.status === 'reported').length,
         color: '#FFBB28',
       },
       {
         name: t('specialist.analytics.status.cancelled'),
         value: bookings.filter((b) => b.status === 'cancelled').length,
         color: '#FF8042',
+      },
+      {
+        name: t('specialist.analytics.status.report'),
+        value: bookings.filter((b) => b.status === 'reported').length,
+        color: '#FF0000',
       },
     ].filter((item) => item.value > 0);
   }, [bookings, t]);
@@ -177,7 +189,7 @@ export default function SpecialistAnalyticsView() {
     const revenueData: { [key: string]: number } = {};
 
     bookings
-      .filter((b) => b.status !== 'cancelled')
+      .filter((b) => b.status !== 'cancelled' && b.status !== 'reported')
       .forEach((booking) => {
         revenueData[booking.type] = (revenueData[booking.type] || 0) + booking.totalPrice;
       });
