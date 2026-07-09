@@ -245,10 +245,6 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findByIdAndPatientId(appointmentId, patientId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        if (appointment.getStatus() != AppointmentStatus.PENDING) {
-            throw new RuntimeException("Can only review pending appointments");
-        }
-
         // Create or update review
         Review review = reviewRepository.findByAppointmentId(appointmentId)
                 .orElse(Review.builder().appointmentId(appointmentId).build());
@@ -289,8 +285,9 @@ public class AppointmentService {
         
         // Update appointment status to COMPLETED
         if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
-        appointment.setStatus(AppointmentStatus.COMPLETED);
-        appointment = appointmentRepository.save(appointment);
+            appointment.setStatus(AppointmentStatus.COMPLETED);
+            appointment.setCancelledReason("EHR submitted");
+            appointment = appointmentRepository.save(appointment);
         }
 
         if (appointment.getStatus() == AppointmentStatus.PENDING) {

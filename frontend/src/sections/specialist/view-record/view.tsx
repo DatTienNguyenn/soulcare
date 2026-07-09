@@ -47,7 +47,9 @@ export default function SpecialistEHRView() {
     fetchAppointments();
   }, []);
 
-  const confirmedBookings = appointments.filter((b) => b.status === 'CONFIRMED');
+  const confirmedBookings = appointments.filter(
+    (b) => b.status === 'CONFIRMED' && b.cancelledReason !== 'EHR submitted'
+  );
 
   const handleOpenRecordDialog = (booking: AppointmentResponse) => {
     setSelectedBookingForRecord(booking);

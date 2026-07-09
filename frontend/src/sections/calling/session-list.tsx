@@ -97,7 +97,13 @@ export default function SessionList({
                             {t('calling.sessionEnded')}
                           </Button>
                           {isSpecialist ? (
-                            <></>
+                            <Button
+                              variant="contained"
+                              color="info"
+                              onClick={() => onWriteRecord?.(booking)}
+                            >
+                              {t('calling.writeRecord')}
+                            </Button>
                           ) : (
                             <Button
                               variant="contained"

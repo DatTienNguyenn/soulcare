@@ -22,6 +22,7 @@ export interface SpecialistBooking {
   rating?: number;
   feedback?: string;
   notes?: string;
+  cancelledReason?: string;
 }
 
 export function useSpecialistBookings() {
@@ -57,6 +58,7 @@ export function useSpecialistBookings() {
       rating: appointment.reviewRating,
       feedback: appointment.reviewComment,
       notes: appointment.sessionNotes,
+      cancelledReason: appointment.cancelledReason,
     };
   };
 

@@ -155,7 +155,8 @@ export function AllBookingsTab({
                   <TableCell>
                     <Chip
                       label={
-                        booking.status === 'completed'
+                        booking.status === 'completed' ||
+                        booking?.cancelledReason === 'EHR submitted'
                           ? t('specialist.analytics.status.completed')
                           : booking.status === 'booked'
                             ? t('specialist.analytics.status.booked')
@@ -165,7 +166,11 @@ export function AllBookingsTab({
                                 String(booking.status).slice(1)
                       }
                       size="small"
-                      color={getStatusColor(booking.status)}
+                      color={
+                        booking?.cancelledReason === 'EHR submitted'
+                          ? 'success'
+                          : getStatusColor(booking.status)
+                      }
                       variant="outlined"
                     />
                   </TableCell>
