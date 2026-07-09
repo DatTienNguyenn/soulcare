@@ -285,7 +285,6 @@ public class AppointmentService {
         
         // Update appointment status to COMPLETED
         if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
-            appointment.setStatus(AppointmentStatus.COMPLETED);
             appointment.setCancelledReason("EHR submitted");
             appointment = appointmentRepository.save(appointment);
         }
