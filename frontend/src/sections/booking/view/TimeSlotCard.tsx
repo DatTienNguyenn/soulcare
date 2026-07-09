@@ -48,7 +48,9 @@ export function TimeSlotCard({ slot, onClick }: TimeSlotCardProps) {
           }}
         >
           <Chip
-            label={isAvailable ? t('treatment.booking.available') : t('treatment.booking.booked')}
+            label={
+              isAvailable ? t('treatment.booking.available') : t('treatment.booking.unavailable')
+            }
             size="small"
             color={isAvailable ? 'success' : 'default'}
             variant="outlined"

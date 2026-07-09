@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material';
+import { useLocales } from 'src/locale';
 
 interface SaveDrawingDialogProps {
   open: boolean;
@@ -29,6 +30,7 @@ export default function SaveDrawingDialog({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
+  const {t} = useLocales();
 
   const handleSave = async () => {
     setLocalError(null);

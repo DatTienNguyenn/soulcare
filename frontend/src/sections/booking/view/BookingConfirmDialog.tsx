@@ -120,7 +120,7 @@ export function BookingConfirmDialog({
               ${displayPrice}
             </Typography>
           </Box>
-          <TextField
+          {/* <TextField
             label={t('treatment.booking.notesOptional')}
             multiline
             rows={3}
@@ -128,7 +128,7 @@ export function BookingConfirmDialog({
             onChange={(e) => onNotesChange(e.target.value)}
             placeholder={t('treatment.booking.notesPlaceholder')}
             disabled={loading}
-          />
+          /> */}
         </Stack>
       </DialogContent>
       <DialogActions>

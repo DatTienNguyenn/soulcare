@@ -293,6 +293,12 @@ public class AppointmentService {
         appointment = appointmentRepository.save(appointment);
         }
 
+        if (appointment.getStatus() == AppointmentStatus.PENDING) {
+            appointment.setStatus(AppointmentStatus.COMPLETED);
+            appointment.setCancelledReason("EHR submitted");
+            appointment = appointmentRepository.save(appointment);
+        }
+
         return ehr;
     }
 

@@ -290,13 +290,21 @@ public class SpecialistPublicService {
             boolean isBooked = bookedAppointments.stream()
                     .anyMatch(apt -> isConflicting(apt, slotDateTime, slotEndDateTime));
             
+            String slotStatus = "available";
+            if (isBooked) {
+                slotStatus = "booked";
+            } else if (date.isEqual(LocalDate.now()) && currentSlotStart.isBefore(LocalTime.now())) {
+                slotStatus = "unavailable";
+            }
+
+
             AvailableSlotDTO slot = AvailableSlotDTO.builder()
                     .id(UUID.randomUUID())
                     .specialistId(specialistId)
                     .date(date)
                     .startTime(String.format("%02d:%02d", currentSlotStart.getHour(), currentSlotStart.getMinute()))
                     .endTime(String.format("%02d:%02d", currentSlotEnd.getHour(), currentSlotEnd.getMinute()))
-                    .status(isBooked ? "booked" : "available")
+                    .status(slotStatus)
                     .price(defaultPrice)
                     .sessionType(filterSessionType != null ? filterSessionType : "standard")
                     .build();

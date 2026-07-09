@@ -12,7 +12,7 @@ import {
 import { Helmet } from 'react-helmet-async';
 
 import { TherapyBooking } from 'src/type/therapist';
-import { AppointmentResponse, PublicSpecialistDTO } from 'src/utils/specialist-api';
+import { AppointmentResponse, PublicSpecialistDTO, submitReview } from 'src/utils/specialist-api';
 import { SummaryCards } from './SummaryCards';
 import { AllSessionsTab } from './AllSessionsTab';
 import { CompletedSessionsTab } from './CompletedSessionsTab';
@@ -49,13 +49,15 @@ function convertAppointmentToTherapyBooking(
     endTime: appointment.endTime,
     duration: appointment.duration,
     status:
-      appointment.status === 'COMPLETED' || appointment.status === 'CONFIRMED'
+      appointment.status === 'CONFIRMED'
         ? 'completed'
         : appointment.status === 'CANCELLED'
           ? 'cancelled'
           : appointment.status === 'NO_SHOW'
             ? 'reported'
-            : 'booked', // PENDING is upcoming
+            : appointment.status === 'COMPLETED' && appointment?.cancelledReason === 'EHR submitted'
+              ? 'booked'
+              : 'booked', // PENDING is upcoming
     notes: appointment.sessionNotes,
     totalPrice: Number(appointment.totalPrice),
     createdAt: new Date(appointment.createdAt),
@@ -97,8 +99,16 @@ export default function TreatmentHistoryView() {
   };
 
   const handleSubmitReview = async (rating: number, text: string) => {
-    console.log('Review submitted:', { rating, text, appointmentId: selectedBooking?.id });
-    setOpenReviewDialog(false);
+    if (!selectedBooking) return;
+    try {
+      await submitReview(selectedBooking.id, selectedBooking.userId, rating, text);
+      // Show success message (e.g. snackbar)
+    } catch (err) {
+      console.error(err);
+      // Show error message
+    } finally {
+      setOpenReviewDialog(false);
+    }
     setReviewRating(0);
     setReviewText('');
   };

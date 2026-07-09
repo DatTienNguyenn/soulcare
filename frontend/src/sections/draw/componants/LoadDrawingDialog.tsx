@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { PictureListItem } from 'src/utils/picture-api';
+import { useLocales } from 'src/locale/use-locales';
 
 interface LoadDrawingDialogProps {
   open: boolean;
@@ -40,6 +41,7 @@ export default function LoadDrawingDialog({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const { t } = useLocales();
 
   useEffect(() => {
     if (open) {
