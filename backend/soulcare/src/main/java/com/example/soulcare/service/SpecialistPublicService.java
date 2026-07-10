@@ -164,7 +164,7 @@ public class SpecialistPublicService {
         
         // Calculate average rating from reviews manually
         List<Appointment> completedAppointments = appointmentRepository
-                .findBySpecialistIdAndStatusOrderByScheduledAtDesc(specialist.getId(), AppointmentStatus.COMPLETED);
+                .findBySpecialistIdAndStatusOrderByScheduledAtDesc(specialist.getId(), AppointmentStatus.CONFIRMED);
         
         BigDecimal averageRating = BigDecimal.ZERO;
         int reviewCount = 0;

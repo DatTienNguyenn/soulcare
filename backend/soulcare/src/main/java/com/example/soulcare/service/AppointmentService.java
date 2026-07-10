@@ -280,6 +280,7 @@ public class AppointmentService {
 
         ehr.setDiagnosis(diagnosis);
         ehr.setTreatmentPlan(treatmentPlan);
+        ehr.setCreatedAt(LocalDateTime.now());
         ehrRepository.save(ehr);
 
         
