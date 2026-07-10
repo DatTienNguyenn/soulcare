@@ -134,10 +134,6 @@ export default function JwtLoginView() {
         <MenuItem value="ADMIN">Admin</MenuItem>
       </RHFSelect>
 
-      <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        {t('login.forgotPassword')}
-      </Link>
-
       <LoadingButton
         fullWidth
         color="inherit"
