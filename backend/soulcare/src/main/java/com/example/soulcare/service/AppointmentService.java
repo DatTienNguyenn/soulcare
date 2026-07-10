@@ -291,7 +291,6 @@ public class AppointmentService {
         }
 
         if (appointment.getStatus() == AppointmentStatus.PENDING) {
-            appointment.setStatus(AppointmentStatus.COMPLETED);
             appointment.setCancelledReason("EHR submitted");
             appointment = appointmentRepository.save(appointment);
         }
